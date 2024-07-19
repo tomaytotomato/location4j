@@ -5,18 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class State {
     private Integer id;
     @JsonIgnore
     private Integer countryId;
-    @JsonIgnore
-    private String countryName;
-    @JsonIgnore
-    private String countryIso2Code;
-    @JsonIgnore
-    private String countryIso3Code;
-
     private String name;
     private String type;
     @JsonProperty("state_code")
@@ -28,8 +22,12 @@ public class State {
     public State() {
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -42,30 +40,6 @@ public class State {
 
     public void setCountryId(Integer countryId) {
         this.countryId = countryId;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public void setCountryIso2Code(String countryIso2Code) {
-        this.countryIso2Code = countryIso2Code;
-    }
-
-    public String getCountryIso2Code() {
-        return countryIso2Code;
-    }
-
-    public String getCountryIso3Code() {
-        return countryIso3Code;
-    }
-
-    public void setCountryIso3Code(String countryIso3Code) {
-        this.countryIso3Code = countryIso3Code;
     }
 
     public String getName() {
@@ -116,4 +90,16 @@ public class State {
         this.longitude = longitude;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        State state = (State) o;
+        return Objects.equals(getId(), state.getId()) && Objects.equals(getCountryId(), state.getCountryId()) && Objects.equals(getName(), state.getName()) && Objects.equals(getType(), state.getType()) && Objects.equals(getStateCode(), state.getStateCode()) && Objects.equals(getCities(), state.getCities()) && Objects.equals(getLatitude(), state.getLatitude()) && Objects.equals(getLongitude(), state.getLongitude());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCountryId(), getName(), getType(), getStateCode(), getCities(), getLatitude(), getLongitude());
+    }
 }

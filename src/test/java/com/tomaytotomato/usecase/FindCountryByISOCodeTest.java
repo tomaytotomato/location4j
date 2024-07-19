@@ -2,15 +2,11 @@ package com.tomaytotomato.usecase;
 
 
 import com.tomaytotomato.LocationService;
-import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,10 +16,8 @@ class FindCountryByISOCodeTest {
 
     private final FindCountry locationService;
 
-    public FindCountryByISOCodeTest() throws IOException {
-        var textNormaliser = new DefaultTextNormaliser();
-        var dataLoader = new DefaultCountriesDataLoaderImpl();
-        locationService = new LocationService(textNormaliser, dataLoader);
+    public FindCountryByISOCodeTest() {
+        locationService = new LocationService();
     }
 
     @DisplayName("Get Country By ISO2 Code, when null or blank then throw exception")

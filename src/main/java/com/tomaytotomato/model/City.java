@@ -4,23 +4,14 @@ package com.tomaytotomato.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class City {
     private Integer id;
     @JsonIgnore
     private Integer countryId;
     @JsonIgnore
-    private String countryName;
-    @JsonIgnore
-    private String countryIso2Code;
-    @JsonIgnore
-    private String countryIso3Code;
-    @JsonIgnore
     private Integer stateId;
-    @JsonIgnore
-    private String stateName;
-    @JsonIgnore
-    private String stateCode;
     private String name;
     private BigDecimal latitude;
     private BigDecimal longitude;
@@ -28,68 +19,28 @@ public class City {
     public City() {
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public Integer getCountryId() {
+    public int getCountryId() {
         return countryId;
     }
 
-    public void setCountryId(Integer countryId) {
+    public void setCountryId(int countryId) {
         this.countryId = countryId;
     }
 
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public String getCountryIso2Code() {
-        return countryIso2Code;
-    }
-
-    public void setCountryIso2Code(String countryIso2Code) {
-        this.countryIso2Code = countryIso2Code;
-    }
-
-    public String getCountryIso3Code() {
-        return countryIso3Code;
-    }
-
-    public void setCountryIso3Code(String countryIso3Code) {
-        this.countryIso3Code = countryIso3Code;
-    }
-
-    public Integer getStateId() {
+    public int getStateId() {
         return stateId;
     }
 
-    public void setStateId(Integer stateId) {
+    public void setStateId(int stateId) {
         this.stateId = stateId;
-    }
-
-    public String getStateCode() {
-        return stateCode;
-    }
-
-    public void setStateCode(String stateCode) {
-        this.stateCode = stateCode;
-    }
-
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
     }
 
     public String getName() {
@@ -114,5 +65,18 @@ public class City {
 
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return getId() == city.getId() && getCountryId() == city.getCountryId() && getStateId() == city.getStateId() && Objects.equals(getName(), city.getName()) && Objects.equals(getLatitude(), city.getLatitude()) && Objects.equals(getLongitude(), city.getLongitude());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCountryId(), getStateId(), getName(), getLatitude(), getLongitude());
     }
 }

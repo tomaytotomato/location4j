@@ -2,16 +2,12 @@ package com.tomaytotomato.usecase;
 
 
 import com.tomaytotomato.LocationService;
-import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,10 +17,8 @@ class FindCityTest {
 
     private final FindCity locationService;
 
-    public FindCityTest() throws IOException {
-        var textNormaliser = new DefaultTextNormaliser();
-        var dataLoader = new DefaultCountriesDataLoaderImpl();
-        locationService = new LocationService(textNormaliser, dataLoader);
+    public FindCityTest() {
+        locationService = new LocationService();
     }
 
     @Description("Find City By ID, when null then throw exception")
