@@ -1,9 +1,8 @@
 package com.tomaytotomato.usecase;
 
 import com.tomaytotomato.LocationSearchService;
-import com.tomaytotomato.LocationService;
 import com.tomaytotomato.util.DefaultTextNormaliser;
-import com.tomaytotomato.util.DefaultTextTokeniser;
+import com.tomaytotomato.util.SimpleTokeniser;
 import com.tomaytotomato.util.TextNormaliser;
 import com.tomaytotomato.util.TextTokeniser;
 import jdk.jfr.Description;
@@ -21,13 +20,11 @@ class SearchTest {
 
     private final TextNormaliser textNormaliser;
     private final TextTokeniser textTokeniser;
-    private final LocationService locationService;
     private final Search searchService;
 
     public SearchTest() {
         textNormaliser = new DefaultTextNormaliser();
-        textTokeniser = new DefaultTextTokeniser();
-        locationService = new LocationService();
+        textTokeniser = new SimpleTokeniser();
         searchService = new LocationSearchService(textTokeniser, textNormaliser);
     }
 

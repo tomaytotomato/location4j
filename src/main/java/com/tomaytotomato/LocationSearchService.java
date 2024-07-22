@@ -74,7 +74,6 @@ public class LocationSearchService implements Search {
             iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
 
             country.getStates().forEach(state -> {
-
                 state.setCountryId(country.getId());
                 state.setCountryName(country.getName());
                 state.setCountryIso2Code(country.getIso2());
@@ -90,6 +89,7 @@ public class LocationSearchService implements Search {
                     city.setCountryIso3Code(country.getIso3());
                     city.setStateId(state.getId());
                     city.setStateName(state.getName());
+                    city.setStateCode(state.getStateCode());
                     cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()), k -> new ArrayList<>()).add(city);
                     cityIdToCityMap.put(city.getId(), city);
                 });
@@ -99,9 +99,19 @@ public class LocationSearchService implements Search {
     }
 
     private void specialMappings() {
-        iso2CodeToCountryMap.put("uk", iso2CodeToCountryMap.get("gb"));
-    }
 
+        // Add special mappings for Scotland, England, Northern Ireland, and Wales
+        Country ukCountry = countryNameToCountryMap.get(keyMaker("United Kingdom"));
+        if (ukCountry != null) {
+            countryNameToCountryMap.put(keyMaker("Scotland"), ukCountry);
+            countryNameToCountryMap.put(keyMaker("England"), ukCountry);
+            countryNameToCountryMap.put(keyMaker("Northern Ireland"), ukCountry);
+            countryNameToCountryMap.put(keyMaker("Wales"), ukCountry);
+            iso2CodeToCountryMap.put("uk", ukCountry);
+        } else {
+            logger.warning("United Kingdom not found in the country map, unable to add special mappings for Scotland, England, Northern Ireland, and Wales.");
+        }
+    }
 
     private void parseJsonFile(InputStream inputStream) {
         var objectMapper = new ObjectMapper();
@@ -132,216 +142,179 @@ public class LocationSearchService implements Search {
             return List.of();
         }
 
+
         text = textNormaliser.normalise(text);
-        var tokenHits = directMatchTextCountry(text);
-
-        if (tokenHits.isEmpty()) {
-            tokenHits = directMatchTextState(text);
-        }
-        if (tokenHits.isEmpty()) {
-            tokenHits = directMatchTextCity(text);
-        }
-
-        if (tokenHits.isEmpty()) {
-            // time to tokenize
-            var tokenizedText = textTokeniser.tokenise(text);
-            var locations = recursiveMatcher(new ArrayList<>(), tokenizedText);
-            if (!locations.isEmpty()) {
-                tokenHits.put("location", locations);
-            }
-        }
-
-        return tokenHits.values().stream().flatMap(List::stream).toList();
-    }
 
 
-    private Map<String, Integer> countryHitsCount = new HashMap<>();
-    private Map<String, Integer> stateHitsCount = new HashMap<>();
-    private Map<String, Integer> cityHitsCount = new HashMap<>();
-
-    private List<Location> recursiveMatcher(List<Location> locations, List<String> tokens) {
-        if (tokens.isEmpty()) {
-            return locations;
-        }
-
-        String token = tokens.get(0);
-        List<String> remainingTokens = tokens.subList(1, tokens.size());
-
-
-        // Try to match the token against a country
-        if (countryNameToCountryMap.containsKey(token)) {
-            if (!locations.isEmpty()) {
-                var country = countryNameToCountryMap.get(token);
-
-                var filteredMatches = locations.stream().filter(location -> {
-                    return location.getCountryName().equals(country.getName());
-                }).toList();
-                recursiveMatcher(filteredMatches, remainingTokens);
-
-            } else {
-                var matchedCountries = List.of(countryNameToCountryMap.get(token)).stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                locations.addAll(matchedCountries);
-                recursiveMatcher(matchedCountries, remainingTokens);
-            }
-        }
-
-        // Try to match the token against a country
-        if (iso2CodeToCountryMap.containsKey(token)) {
-            if (!locations.isEmpty()) {
-                var country = iso2CodeToCountryMap.get(token);
-
-                var filteredMatches = locations.stream().filter(location -> {
-                    return location.getCountryIso2Code().equals(country.getIso2());
-                }).toList();
-                recursiveMatcher(filteredMatches, remainingTokens);
-            } else {
-                var matchedCountries = List.of(iso2CodeToCountryMap.get(token)).stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedCountries, remainingTokens);
-            }
-        }
-
-        if (iso3CodeToCountryMap.containsKey(token)) {
-            if (!locations.isEmpty()) {
-                var country = iso3CodeToCountryMap.get(token);
-
-                var filteredMatches = locations.stream().filter(location -> {
-                    return location.getCountryIso3Code().equals(country.getIso3());
-                }).toList();
-                recursiveMatcher(filteredMatches, remainingTokens);
-            } else {
-                var matchedCountries = List.of(iso3CodeToCountryMap.get(token)).stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedCountries, remainingTokens);
-            }
-        }
-
-        // Try to match the token against a city
-        if (cityNameToCitiesMap.containsKey(token)) {
-            if (!locations.isEmpty()) {
-
-                var citiesMatches = cityNameToCitiesMap.get(token);
-
-                var countriesMatched = locations.stream().map(Location::getCountryName).toList();
-                var statesMatches = locations.stream().map(Location::getState).toList();
-
-                var citiesFiltered = citiesMatches.stream().filter(city -> {
-                    var country = countryIdToCountryMap.get(city.getCountryId());
-                    return countriesMatched.contains(country.getName());
-                }).filter(city -> {
-                    var state = stateIdToStateMap.get(city.getStateId());
-                    return countriesMatched.contains(state.getName());
-                }).toList();
-                var matchedCities = citiesFiltered.stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedCities, remainingTokens);
-            } else {
-
-                var matchedCities = cityNameToCitiesMap.get(token).stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedCities, remainingTokens);
-            }
-        }
-
-        // Try to match the token against a state
-        if (stateCodeToStatesMap.containsKey(token)) {
-
-            if (!locations.isEmpty()) {
-                var statesMatched = stateCodeToStatesMap.get(token);
-
-                var countriesMatched = locations.stream().map(Location::getCountryName).toList();
-
-                var citiesFiltered = statesMatched.stream().filter(state -> {
-                    var country = countryIdToCountryMap.get(state.getCountryId());
-                    return countriesMatched.contains(country.getName());
-                }).toList();
-                var matchedCities = citiesFiltered.stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedCities, remainingTokens);
-
-            } else {
-                var matchedStates = stateNameToStatesMap.get(token).stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedStates, remainingTokens);
-            }
-        }
-
-        // Try to match the token against a state
-        if (stateNameToStatesMap.containsKey(token)) {
-
-            if (!locations.isEmpty()) {
-
-                var statesMatched = stateNameToStatesMap.get(token);
-
-                var countriesMatched = locations.stream().map(Location::getCountryName).toList();
-
-                var citiesFiltered = statesMatched.stream().filter(state -> {
-                    var country = countryIdToCountryMap.get(state.getCountryId());
-                    return countriesMatched.contains(country.getName());
-                }).toList();
-                var matchedCities = citiesFiltered.stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedCities, remainingTokens);
-            } else {
-                var matchedStates = stateNameToStatesMap.get(token).stream()
-                        .map(locationMapper::toLocation)
-                        .toList();
-                recursiveMatcher(matchedStates, remainingTokens);
-            }
-        }
-
-        // If no match is found, continue with the remaining tokens
-        return recursiveMatcher(locations, remainingTokens);
-    }
-
-    private Map<String, List<Location>> directMatchTextCity(String text) {
-        var matches = new HashMap<String, List<Location>>();
-
-        if (cityNameToCitiesMap.containsKey(text)) {
-            var cityLocations = cityNameToCitiesMap.get(text).stream().map(locationMapper::toLocation).toList();
-            matches.put("city", cityLocations);
-        }
-        return matches;
-    }
-
-    private Map<String, List<Location>> directMatchTextState(String text) {
-        var matches = new HashMap<String, List<Location>>();
-
-        if (stateNameToStatesMap.containsKey(text)) {
-            var stateLocations = stateNameToStatesMap.get(text).stream().map(locationMapper::toLocation).toList();
-            matches.put("state", stateLocations);
-        }
-        if (stateCodeToStatesMap.containsKey(text)) {
-            var stateLocations = stateCodeToStatesMap.get(text).stream().map(locationMapper::toLocation).toList();
-            matches.put("state", stateLocations);
-        }
-        return matches;
-    }
-
-    private Map<String, List<Location>> directMatchTextCountry(String text) {
-        var matches = new HashMap<String, List<Location>>();
-
+        //try and direct match
         if (countryNameToCountryMap.containsKey(text)) {
             var country = countryNameToCountryMap.get(text);
-            matches.put("country", List.of(locationMapper.toLocation(country)));
+            return List.of(locationMapper.toLocation(country));
         }
+
         if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
             var country = iso3CodeToCountryMap.get(text);
-            matches.put("country", List.of(locationMapper.toLocation(country)));
+            return List.of(locationMapper.toLocation(country));
         }
-        if (text.length() == 2 && iso2CodeToCountryMap.containsKey(text)) {
-            var country = iso2CodeToCountryMap.get(text);
-            matches.put("country", List.of(locationMapper.toLocation(country)));
+
+        if (text.length() == 2 && iso2CodeToCountryMap.containsKey(text) || stateCodeToStatesMap.containsKey(text)) {
+            var country = locationMapper.toLocation(iso2CodeToCountryMap.get(text));
+            var states = new ArrayList<>(stateCodeToStatesMap.get(text).stream().map(locationMapper::toLocation).toList());
+            states.add(country);
+            return states;
         }
-        return matches;
+
+        if(stateNameToStatesMap.containsKey(text)) {
+            var states = stateNameToStatesMap.get(text);
+            return states.stream().map(locationMapper::toLocation).toList();
+        }
+
+        if (cityNameToCitiesMap.containsKey(text)) {
+            var cities = cityNameToCitiesMap.get(text);
+            return cities.stream().map(locationMapper::toLocation).toList();
+        }
+
+
+        //if no direct match
+
+        var tokenizedText = textTokeniser.tokenise(text);
+
+        Map<String, Integer> countryHitsCount = new HashMap<>();
+        Map<String, Integer> stateHitsCount = new HashMap<>();
+        Map<String, Integer> cityHitsCount = new HashMap<>();
+
+        var iterator = tokenizedText.iterator();
+
+        var countryFound = false;
+        while (iterator.hasNext()) {
+            var token = iterator.next();
+            if (countryNameToCountryMap.containsKey(token)) {
+                //strongest match
+                var country = countryNameToCountryMap.get(token);
+                countryHitsCount.put(country.getName(), countryHitsCount.getOrDefault(token, 0) + 1);
+                countryFound = true;
+                iterator.remove();
+                break;
+            }
+            if (iso3CodeToCountryMap.containsKey(token)) {
+                var country = iso3CodeToCountryMap.get(token);
+                countryHitsCount.put(country.getName(), countryHitsCount.getOrDefault(token, 0) + 1);
+                countryFound = true;
+                iterator.remove();
+                break;
+            }
+        }
+
+        if (!countryFound) {
+            for (String token : tokenizedText) {
+                if (stateNameToStatesMap.containsKey(token)) {
+                    stateNameToStatesMap.get(token).forEach(state -> {
+                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
+                        countryHitsCount.put(state.getCountryName(), countryHitsCount.getOrDefault(state.getCountryName(), 0) + 1);
+                    });
+                }
+                if (stateCodeToStatesMap.containsKey(token)) {
+                    // Recompute country hits count by iterating through each state and getting its country
+                    stateCodeToStatesMap.get(token).forEach(state -> {
+                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
+                        countryHitsCount.put(state.getCountryName(), countryHitsCount.getOrDefault(state.getCountryName(), 0) + 1);
+                    });
+                }
+                if (cityNameToCitiesMap.containsKey(token)) {
+                    var cities = cityNameToCitiesMap.get(token);
+
+                    cities.forEach(city -> {
+                        cityHitsCount.put(city.getName(), cityHitsCount.getOrDefault(city.getName(), 0) + 1);
+                        stateHitsCount.put(city.getStateName(), stateHitsCount.getOrDefault(city.getStateName(), 0) + 1);
+                        countryHitsCount.put(city.getCountryName(), countryHitsCount.getOrDefault(city.getCountryName(), 0) + 1);
+                    });
+                }
+            }
+        } else {
+            for (String token : tokenizedText) {
+                if (stateNameToStatesMap.containsKey(token)) {
+                    stateNameToStatesMap.get(token).stream().filter(state -> {
+
+                        String topCountry = countryHitsCount.entrySet().stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .orElse(null);
+
+                        return state.getCountryName().equals(topCountry);
+
+                    }).forEach(state -> {
+                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
+                    });
+                }
+                if (stateCodeToStatesMap.containsKey(token)) {
+                    // Recompute country hits count by iterating through each state and getting its country
+                    stateCodeToStatesMap.get(token).stream().filter(state -> {
+
+                        String topCountry = countryHitsCount.entrySet().stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .orElse(null);
+
+                        return state.getCountryName().equals(topCountry);
+
+                    }).forEach(state -> {
+                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
+                    });
+                }
+                if (cityNameToCitiesMap.containsKey(token)) {
+                    var cities = cityNameToCitiesMap.get(token);
+
+                    cities.stream().filter(state -> {
+
+                        String topCountry = countryHitsCount.entrySet().stream()
+                                .max(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .orElse(null);
+
+                        return state.getCountryName().equals(topCountry);
+
+                    }).forEach(city -> {
+                        cityHitsCount.put(city.getName(), cityHitsCount.getOrDefault(city.getName(), 0) + 1);
+                        stateHitsCount.put(city.getStateName(), stateHitsCount.getOrDefault(city.getStateName(), 0) + 1);
+                    });
+                }
+            }
+        }
+
+
+        // Get the highest scoring hits
+        String topCountry = countryHitsCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        String topState = stateHitsCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        if (Objects.isNull(topState)) {
+            var country = countryNameToCountryMap.get(topCountry.toLowerCase());
+            return List.of(locationMapper.toLocation(country));
+        }
+
+        String topCity = cityHitsCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        // Validate the combination of country, state, and city
+        if (topCity != null && topState != null && topCountry != null) {
+            var cityMatches = cityNameToCitiesMap.get(topCity.toLowerCase());
+
+            for (City city : cityMatches) {
+                if (city.getStateName().equals(topState) && city.getCountryName().equals(topCountry)) {
+                    return List.of(locationMapper.toLocation(city));
+                }
+            }
+        }
+
+        // If no valid combination is found, return an empty list
+        return List.of();
     }
 }

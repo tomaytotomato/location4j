@@ -28,6 +28,7 @@ public class LocationMapperImpl implements LocationMapper {
                 .countryIso3Code(state.getCountryIso3Code())
                 .stateId(state.getId())
                 .state(state.getName())
+                .stateCode(state.getStateCode())
                 .cityId(state.getId())
                 .latitude(state.getLatitude())
                 .longitude(state.getLongitude())

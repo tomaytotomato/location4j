@@ -104,6 +104,7 @@ class DefaultTextTokeniserTest {
         assertThat(textTokeniser.tokenise("Santa Clara California USA")).containsAll(Stream.of("Santa Clara", "California", "USA").toList());
         assertThat(textTokeniser.tokenise("Santa Clara, California, United States")).containsAll(Stream.of("Santa Clara", "California", "United States").toList());
         assertThat(textTokeniser.tokenise("US CA Santa Clara")).containsAll(Stream.of("Santa Clara", "CA", "US").toList());
+        assertThat(textTokeniser.tokenise("Tel Aviv Israel")).containsAll(Stream.of("Aviv", "Tel", "Israel").toList());
     }
 
 }
