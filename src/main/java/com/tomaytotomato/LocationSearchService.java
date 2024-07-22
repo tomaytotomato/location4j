@@ -2,6 +2,8 @@ package com.tomaytotomato;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tomaytotomato.mapper.LocationMapper;
+import com.tomaytotomato.mapper.LocationMapperImpl;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
@@ -47,6 +49,8 @@ public class LocationSearchService implements Search {
 
     private final Logger logger = Logger.getLogger(this.getClass().getPackage().getName() + this.getClass().getName());
 
+    private LocationMapper locationMapper = new LocationMapperImpl();
+
     private void init() {
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILENAME)) {
@@ -72,21 +76,25 @@ public class LocationSearchService implements Search {
             country.getStates().forEach(state -> {
 
                 state.setCountryId(country.getId());
-
+                state.setCountryName(country.getName());
+                state.setCountryIso2Code(country.getIso2());
+                state.setCountryIso3Code(country.getIso3());
                 stateIdToStateMap.put(state.getId(), state);
                 stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>()).add(state);
                 stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>()).add(state);
 
                 state.getCities().forEach(city -> {
                     city.setCountryId(country.getId());
+                    city.setCountryName(country.getName());
+                    city.setCountryIso2Code(country.getIso2());
+                    city.setCountryIso3Code(country.getIso3());
                     city.setStateId(state.getId());
+                    city.setStateName(state.getName());
                     cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()), k -> new ArrayList<>()).add(city);
                     cityIdToCityMap.put(city.getId(), city);
                 });
             });
         });
-
-
         specialMappings();
     }
 
@@ -146,6 +154,11 @@ public class LocationSearchService implements Search {
         return tokenHits.values().stream().flatMap(List::stream).toList();
     }
 
+
+    private Map<String, Integer> countryHitsCount = new HashMap<>();
+    private Map<String, Integer> stateHitsCount = new HashMap<>();
+    private Map<String, Integer> cityHitsCount = new HashMap<>();
+
     private List<Location> recursiveMatcher(List<Location> locations, List<String> tokens) {
         if (tokens.isEmpty()) {
             return locations;
@@ -153,6 +166,7 @@ public class LocationSearchService implements Search {
 
         String token = tokens.get(0);
         List<String> remainingTokens = tokens.subList(1, tokens.size());
+
 
         // Try to match the token against a country
         if (countryNameToCountryMap.containsKey(token)) {
@@ -162,22 +176,14 @@ public class LocationSearchService implements Search {
                 var filteredMatches = locations.stream().filter(location -> {
                     return location.getCountryName().equals(country.getName());
                 }).toList();
-                return recursiveMatcher(filteredMatches, remainingTokens);
+                recursiveMatcher(filteredMatches, remainingTokens);
 
             } else {
                 var matchedCountries = List.of(countryNameToCountryMap.get(token)).stream()
-                        .map(country -> {
-                            Location location = new Location();
-                            location.setCountryName(country.getName());
-                            location.setCountryIso2Code(country.getIso2());
-                            location.setCountryIso3Code(country.getIso3());
-                            location.setLatitude(country.getLatitude());
-                            location.setLongitude(country.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
                 locations.addAll(matchedCountries);
-                return recursiveMatcher(matchedCountries, remainingTokens);
+                recursiveMatcher(matchedCountries, remainingTokens);
             }
         }
 
@@ -189,20 +195,12 @@ public class LocationSearchService implements Search {
                 var filteredMatches = locations.stream().filter(location -> {
                     return location.getCountryIso2Code().equals(country.getIso2());
                 }).toList();
-                return recursiveMatcher(filteredMatches, remainingTokens);
+                recursiveMatcher(filteredMatches, remainingTokens);
             } else {
                 var matchedCountries = List.of(iso2CodeToCountryMap.get(token)).stream()
-                        .map(country -> {
-                            Location location = new Location();
-                            location.setCountryName(country.getName());
-                            location.setCountryIso2Code(country.getIso2());
-                            location.setCountryIso3Code(country.getIso3());
-                            location.setLatitude(country.getLatitude());
-                            location.setLongitude(country.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedCountries, remainingTokens);
+                recursiveMatcher(matchedCountries, remainingTokens);
             }
         }
 
@@ -213,23 +211,14 @@ public class LocationSearchService implements Search {
                 var filteredMatches = locations.stream().filter(location -> {
                     return location.getCountryIso3Code().equals(country.getIso3());
                 }).toList();
-                return recursiveMatcher(filteredMatches, remainingTokens);
+                recursiveMatcher(filteredMatches, remainingTokens);
             } else {
                 var matchedCountries = List.of(iso3CodeToCountryMap.get(token)).stream()
-                        .map(country -> {
-                            Location location = new Location();
-                            location.setCountryName(country.getName());
-                            location.setCountryIso2Code(country.getIso2());
-                            location.setCountryIso3Code(country.getIso3());
-                            location.setLatitude(country.getLatitude());
-                            location.setLongitude(country.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedCountries, remainingTokens);
+                recursiveMatcher(matchedCountries, remainingTokens);
             }
         }
-
 
         // Try to match the token against a city
         if (cityNameToCitiesMap.containsKey(token)) {
@@ -248,40 +237,15 @@ public class LocationSearchService implements Search {
                     return countriesMatched.contains(state.getName());
                 }).toList();
                 var matchedCities = citiesFiltered.stream()
-                        .map(city -> {
-                            Location location = new Location();
-                            var country = countryIdToCountryMap.get(city.getCountryId());
-                            location.setCountryName(country.getName());
-                            location.setCountryIso2Code(country.getIso2());
-                            location.setCountryIso3Code(country.getIso3());
-                            location.setCity(city.getName());
-                            location.setState(stateIdToStateMap.get(city.getStateId()).getName());
-                            location.setCountryName(countryIdToCountryMap.get(city.getCountryId()).getName());
-                            location.setLatitude(city.getLatitude());
-                            location.setLongitude(city.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedCities, remainingTokens);
+                recursiveMatcher(matchedCities, remainingTokens);
             } else {
 
                 var matchedCities = cityNameToCitiesMap.get(token).stream()
-                        .map(city -> {
-                            Location location = new Location();
-
-                            var country = countryIdToCountryMap.get(city.getCountryId());
-                            location.setCountryName(country.getName());
-                            location.setCountryIso2Code(country.getIso2());
-                            location.setCountryIso3Code(country.getIso3());
-                            location.setCity(city.getName());
-                            location.setState(stateIdToStateMap.get(city.getStateId()).getName());
-                            location.setCountryName(countryIdToCountryMap.get(city.getCountryId()).getName());
-                            location.setLatitude(city.getLatitude());
-                            location.setLongitude(city.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedCities, remainingTokens);
+                recursiveMatcher(matchedCities, remainingTokens);
             }
         }
 
@@ -298,30 +262,15 @@ public class LocationSearchService implements Search {
                     return countriesMatched.contains(country.getName());
                 }).toList();
                 var matchedCities = citiesFiltered.stream()
-                        .map(state -> {
-                            Location location = new Location();
-                            location.setState(state.getName());
-                            location.setCountryName(countryIdToCountryMap.get(state.getCountryId()).getName());
-                            location.setLatitude(state.getLatitude());
-                            location.setLongitude(state.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedCities, remainingTokens);
-
+                recursiveMatcher(matchedCities, remainingTokens);
 
             } else {
                 var matchedStates = stateNameToStatesMap.get(token).stream()
-                        .map(state -> {
-                            Location location = new Location();
-                            location.setState(state.getName());
-                            location.setCountryName(countryIdToCountryMap.get(state.getCountryId()).getName());
-                            location.setLatitude(state.getLatitude());
-                            location.setLongitude(state.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedStates, remainingTokens);
+                recursiveMatcher(matchedStates, remainingTokens);
             }
         }
 
@@ -339,28 +288,14 @@ public class LocationSearchService implements Search {
                     return countriesMatched.contains(country.getName());
                 }).toList();
                 var matchedCities = citiesFiltered.stream()
-                        .map(state -> {
-                            Location location = new Location();
-                            location.setState(state.getName());
-                            location.setCountryName(countryIdToCountryMap.get(state.getCountryId()).getName());
-                            location.setLatitude(state.getLatitude());
-                            location.setLongitude(state.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedCities, remainingTokens);
+                recursiveMatcher(matchedCities, remainingTokens);
             } else {
                 var matchedStates = stateNameToStatesMap.get(token).stream()
-                        .map(state -> {
-                            Location location = new Location();
-                            location.setState(state.getName());
-                            location.setCountryName(countryIdToCountryMap.get(state.getCountryId()).getName());
-                            location.setLatitude(state.getLatitude());
-                            location.setLongitude(state.getLongitude());
-                            return location;
-                        })
+                        .map(locationMapper::toLocation)
                         .toList();
-                return recursiveMatcher(matchedStates, remainingTokens);
+                recursiveMatcher(matchedStates, remainingTokens);
             }
         }
 
@@ -372,7 +307,7 @@ public class LocationSearchService implements Search {
         var matches = new HashMap<String, List<Location>>();
 
         if (cityNameToCitiesMap.containsKey(text)) {
-            var cityLocations = cityNameToCitiesMap.get(text).stream().map(this::mapCityToLocation).toList();
+            var cityLocations = cityNameToCitiesMap.get(text).stream().map(locationMapper::toLocation).toList();
             matches.put("city", cityLocations);
         }
         return matches;
@@ -382,11 +317,11 @@ public class LocationSearchService implements Search {
         var matches = new HashMap<String, List<Location>>();
 
         if (stateNameToStatesMap.containsKey(text)) {
-            var stateLocations = stateNameToStatesMap.get(text).stream().map(this::mapStateToLocation).toList();
+            var stateLocations = stateNameToStatesMap.get(text).stream().map(locationMapper::toLocation).toList();
             matches.put("state", stateLocations);
         }
         if (stateCodeToStatesMap.containsKey(text)) {
-            var stateLocations = stateCodeToStatesMap.get(text).stream().map(this::mapStateToLocation).toList();
+            var stateLocations = stateCodeToStatesMap.get(text).stream().map(locationMapper::toLocation).toList();
             matches.put("state", stateLocations);
         }
         return matches;
@@ -396,67 +331,17 @@ public class LocationSearchService implements Search {
         var matches = new HashMap<String, List<Location>>();
 
         if (countryNameToCountryMap.containsKey(text)) {
-            var countryEntity = countryNameToCountryMap.get(text);
-            matches.put("country", List.of(mapCountryToLocation(countryEntity)));
+            var country = countryNameToCountryMap.get(text);
+            matches.put("country", List.of(locationMapper.toLocation(country)));
         }
         if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
-            var countryEntity = iso3CodeToCountryMap.get(text);
-            matches.put("country", List.of(mapCountryToLocation(countryEntity)));
+            var country = iso3CodeToCountryMap.get(text);
+            matches.put("country", List.of(locationMapper.toLocation(country)));
         }
         if (text.length() == 2 && iso2CodeToCountryMap.containsKey(text)) {
-            var countryEntity = iso2CodeToCountryMap.get(text);
-            matches.put("country", List.of(mapCountryToLocation(countryEntity)));
+            var country = iso2CodeToCountryMap.get(text);
+            matches.put("country", List.of(locationMapper.toLocation(country)));
         }
         return matches;
-    }
-
-    private Location mapStateToLocation(State state) {
-        if (Objects.isNull(state.getCountryId())) {
-            logger.warning("State , " + state.getName() + " has no Country ID");
-            return null;
-        }
-        var country = countryIdToCountryMap.get(state.getCountryId());
-
-        return Location.builder()
-                .countryName(country.getName())
-                .countryIso2Code(country.getIso2())
-                .countryIso3Code(country.getIso3())
-                .state(state.getName())
-                .latitude(state.getLatitude())
-                .longitude(state.getLongitude())
-                .build();
-    }
-
-    private Location mapCityToLocation(City city) {
-        if (Objects.isNull(city.getCountryId())) {
-            logger.warning("City , " + city.getName() + " has no Country ID");
-            return null;
-        }
-        if (Objects.isNull(city.getStateId())) {
-            logger.warning("City , " + city.getName() + " has no State ID");
-            return null;
-        }
-        var country = countryIdToCountryMap.get(city.getCountryId());
-        var state = stateIdToStateMap.get(city.getStateId());
-
-        return Location.builder()
-                .countryName(country.getName())
-                .countryIso2Code(country.getIso2())
-                .countryIso3Code(country.getIso3())
-                .state(state.getName())
-                .city(city.getName())
-                .latitude(city.getLatitude())
-                .longitude(city.getLongitude())
-                .build();
-    }
-
-    private Location mapCountryToLocation(Country country) {
-        return Location.builder()
-                .countryName(country.getName())
-                .countryIso2Code(country.getIso2())
-                .countryIso3Code(country.getIso3())
-                .latitude(country.getLatitude())
-                .longitude(country.getLongitude())
-                .build();
     }
 }
