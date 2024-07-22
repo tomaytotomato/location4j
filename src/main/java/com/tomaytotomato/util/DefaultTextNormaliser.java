@@ -9,6 +9,6 @@ public class DefaultTextNormaliser implements TextNormaliser {
         if (Objects.isNull(text) || text.isEmpty()) {
             throw new IllegalArgumentException("Text cannot be null or empty");
         }
-        return text.trim().toLowerCase();
+        return text.trim().toLowerCase().replaceAll("\\s+", " ");
     }
 }

@@ -64,14 +64,14 @@ class DefaultTextNormaliserTest {
         assertThat(result).isEqualTo("helloworld");
     }
 
-    @Description("Normalise, when text has multiple spaces between words, then return lowercased text with spaces intact")
+    @Description("Normalise, when text has multiple spaces between words, then return lowercased text with spaces minimised to one")
     @Test
-    void normalise_WhenTextHasMultipleSpacesBetweenWords_ThenReturnLowercasedTextWithSpacesIntact() {
+    void normalise_WhenTextHasMultipleSpacesBetweenWords_ThenReturnLowercasedTextWithOneSpace() {
         // When
         var result = textNormaliser.normalise("Hello    World");
 
         // Then
-        assertThat(result).isEqualTo("hello    world");
+        assertThat(result).isEqualTo("hello world");
     }
 
     @Description("Normalise, when text contains punctuation, then return lowercased text with punctuation intact")

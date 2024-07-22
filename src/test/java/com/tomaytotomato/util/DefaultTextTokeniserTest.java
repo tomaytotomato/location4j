@@ -7,13 +7,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultTextTokeniserTest {
 
     private TextTokeniser textTokeniser = new DefaultTextTokeniser();
-    private TextNormaliser textNormaliser = new DefaultTextNormaliser();
 
     @Description("Tokenise, when text only has one word, then return one word")
     @Test
@@ -48,7 +49,7 @@ class DefaultTextTokeniserTest {
         assertThat(result).isNotEmpty().hasSize(1).contains("Dallas");
     }
 
-    @Description("Tokenise, when text only has one word with valid characters, then return one word")
+    @Description("Tokenise, when text has one or more words, then return appropriate amount of tokens")
     @ParameterizedTest
     @CsvSource({
             "Aberdeen, Aberdeen",
@@ -84,15 +85,25 @@ class DefaultTextTokeniserTest {
             "\"***New York&&&\", New York",
             "\"Los**Angeles^^^\", Los Angeles",
     })
-    void tokenise_WhenTextHasOneWordWithValidCharacters_ThenReturnOneToken(String text, String expectedTokens) {
+    void tokenise_WhenTextHasValidWordsWithPrefixes_ThenReturnCorrectTokens(String text, String expectedTokens) {
 
         // When
-        var result = textTokeniser.tokenise(textNormaliser.normalise(text));
+        var result = textTokeniser.tokenise(text);
 
         // Then
-        expectedTokens = textNormaliser.normalise(expectedTokens);
         var expectedNames = expectedTokens.split("\\|");
         assertThat(result).isNotEmpty().hasSize(expectedNames.length).contains(expectedNames);
+    }
+
+    @Description("Tokenise, when text only has one word with valid characters, then return one word")
+    @Test
+    void tokenise_WhenTextHasMultipleWordsWithPrefixes_ThenReturnCorrectTokens() {
+
+        // When Then
+        assertThat(textTokeniser.tokenise("Santa Clara CA, United States")).containsAll(Stream.of("Santa Clara", "CA", "United States").toList());
+        assertThat(textTokeniser.tokenise("Santa Clara California USA")).containsAll(Stream.of("Santa Clara", "California", "USA").toList());
+        assertThat(textTokeniser.tokenise("Santa Clara, California, United States")).containsAll(Stream.of("Santa Clara", "California", "United States").toList());
+        assertThat(textTokeniser.tokenise("US CA Santa Clara")).containsAll(Stream.of("Santa Clara", "CA", "US").toList());
     }
 
 }

@@ -13,7 +13,7 @@ public class DefaultTextTokeniser implements TextTokeniser {
     private static final Set<String> PREFIXES = new LinkedHashSet<>(Arrays.asList(
             "san", "los", "la", "el", "las", "st.", "st", "saint", "new", "district", "banileu",
             "fort", "port", "villa", "santa", "santo", "são", "ste.", "de", "del", "rio",
-            "north", "south", "east", "west", "mount", "upper", "lower", "great", "little"
+            "north", "south", "east", "west", "mount", "upper", "lower", "great", "little", "united"
     ));
 
     @Override
@@ -22,14 +22,14 @@ public class DefaultTextTokeniser implements TextTokeniser {
             return new ArrayList<>();
         }
 
-        text = text.replaceAll("[^\\p{L}\\p{N}\\s\\-'.]", " ").trim().toLowerCase();
+        text = text.replaceAll("[^\\p{L}\\p{N}\\s\\-'.]", " ").trim();
         String[] parts = text.split("\\s+");
 
         var tokenBuilder = new StringBuilder();
 
         List<String> tokenParts = Stream.of(parts)
                 .flatMap(part -> {
-                    if (PREFIXES.contains(part) && !tokenBuilder.isEmpty()) {
+                    if (isPrefixWord(part) && !tokenBuilder.isEmpty()) {
                         tokenBuilder.append(" ").append(part);
                         return Stream.empty();
                     } else {
@@ -37,7 +37,7 @@ public class DefaultTextTokeniser implements TextTokeniser {
                             String token = tokenBuilder.append(" ").append(part).toString();
                             tokenBuilder.setLength(0);
                             return Stream.of(token);
-                        } else if (PREFIXES.contains(part)) {
+                        } else if (isPrefixWord(part)) {
                             tokenBuilder.append(part);
                             return Stream.empty();
                         } else {
@@ -52,5 +52,9 @@ public class DefaultTextTokeniser implements TextTokeniser {
         }
 
         return new ArrayList<>(tokenParts);
+    }
+
+    private boolean isPrefixWord(String word) {
+        return PREFIXES.contains(word.toLowerCase());
     }
 }
