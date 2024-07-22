@@ -17,13 +17,14 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * LocationSearchService provides search functionalities to find locations (countries, states, cities) based on text input.
+ */
 public class LocationSearchService implements Search {
 
     private final TextTokeniser textTokeniser;
     private final TextNormaliser textNormaliser;
-    /**
-     * One-to-one mappings (1:1)
-     */
+
     private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
     private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
     private final Map<String, Country> countryNativeNameToCountry = new HashMap<>();
@@ -31,12 +32,15 @@ public class LocationSearchService implements Search {
     private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
     private final Map<Integer, State> stateIdToStateMap = new HashMap<>();
     private final Map<Integer, City> cityIdToCityMap = new HashMap<>();
-    /**
-     * One-to-many mappings (1:n)
-     */
     private final Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
     private final Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
     private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
+
+    private static final String FILENAME = "location4j-countries.json";
+    private List<Country> countries;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final LocationMapper locationMapper = new LocationMapperImpl();
 
     public LocationSearchService(TextTokeniser textTokeniser, TextNormaliser textNormaliser) {
         this.textTokeniser = textTokeniser;
@@ -44,15 +48,10 @@ public class LocationSearchService implements Search {
         init();
     }
 
-    private static final String FILENAME = "location4j-countries.json";
-    private List<Country> countries;
-
-    private final Logger logger = Logger.getLogger(this.getClass().getPackage().getName() + this.getClass().getName());
-
-    private LocationMapper locationMapper = new LocationMapperImpl();
-
+    /**
+     * Initializes the service by loading and parsing the JSON file containing location data.
+     */
     private void init() {
-
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILENAME)) {
             if (inputStream == null) {
                 throw new IllegalArgumentException("File not found: " + FILENAME);
@@ -63,67 +62,100 @@ public class LocationSearchService implements Search {
         }
 
         countries.forEach(country -> {
-            countryIdToCountryMap.put(country.getId(), country);
-            countryNameToCountryMap.put(keyMaker(country.getName()), country);
-            if (Objects.isNull(country.getNativeName()) || country.getNativeName().isEmpty()) {
-                logger.warning("Country has null native name, skipping mapping: " + country.getName());
-            } else {
-                countryNativeNameToCountry.put(keyMaker(country.getNativeName()), country);
-            }
-            iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
-            iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
-
-            country.getStates().forEach(state -> {
-                state.setCountryId(country.getId());
-                state.setCountryName(country.getName());
-                state.setCountryIso2Code(country.getIso2());
-                state.setCountryIso3Code(country.getIso3());
-                stateIdToStateMap.put(state.getId(), state);
-                stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>()).add(state);
-                stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>()).add(state);
-
-                state.getCities().forEach(city -> {
-                    city.setCountryId(country.getId());
-                    city.setCountryName(country.getName());
-                    city.setCountryIso2Code(country.getIso2());
-                    city.setCountryIso3Code(country.getIso3());
-                    city.setStateId(state.getId());
-                    city.setStateName(state.getName());
-                    city.setStateCode(state.getStateCode());
-                    cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()), k -> new ArrayList<>()).add(city);
-                    cityIdToCityMap.put(city.getId(), city);
-                });
-            });
+            mapCountry(country);
+            country.getStates().forEach(state -> mapState(state, country));
         });
         specialMappings();
     }
 
-    private void specialMappings() {
-
-        // Add special mappings for Scotland, England, Northern Ireland, and Wales
-        Country ukCountry = countryNameToCountryMap.get(keyMaker("United Kingdom"));
-        if (ukCountry != null) {
-            countryNameToCountryMap.put(keyMaker("Scotland"), ukCountry);
-            countryNameToCountryMap.put(keyMaker("England"), ukCountry);
-            countryNameToCountryMap.put(keyMaker("Northern Ireland"), ukCountry);
-            countryNameToCountryMap.put(keyMaker("Wales"), ukCountry);
-            iso2CodeToCountryMap.put("uk", ukCountry);
-        } else {
-            logger.warning("United Kingdom not found in the country map, unable to add special mappings for Scotland, England, Northern Ireland, and Wales.");
-        }
-    }
-
+    /**
+     * Parses the JSON file to load countries data.
+     *
+     * @param inputStream InputStream of the JSON file.
+     */
     private void parseJsonFile(InputStream inputStream) {
         var objectMapper = new ObjectMapper();
         try {
-            countries = objectMapper.readValue(inputStream, new TypeReference<>() {
-            });
+            countries = objectMapper.readValue(inputStream, new TypeReference<List<Country>>() {});
             logger.info("Successfully parsed countries file");
         } catch (IOException e) {
             logger.severe("Failed to read countries file: " + e.getMessage());
         }
     }
 
+    /**
+     * Adds special mappings for countries.
+     */
+    private void specialMappings() {
+        Country ukCountry = countryNameToCountryMap.get(keyMaker("United Kingdom"));
+        if (ukCountry != null) {
+            mapCountryAliases(ukCountry, "Scotland", "England", "Northern Ireland", "Wales");
+            iso2CodeToCountryMap.put("uk", ukCountry);
+        } else {
+            logger.warning("United Kingdom not found in the country map, unable to add special mappings for Scotland, England, Northern Ireland, and Wales.");
+        }
+    }
+
+    /**
+     * Maps a country to various lookup maps.
+     *
+     * @param country The country to be mapped.
+     */
+    private void mapCountry(Country country) {
+        countryIdToCountryMap.put(country.getId(), country);
+        countryNameToCountryMap.put(keyMaker(country.getName()), country);
+        if (!Objects.isNull(country.getNativeName()) && !country.getNativeName().isEmpty()) {
+            countryNativeNameToCountry.put(keyMaker(country.getNativeName()), country);
+        }
+        iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
+        iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
+    }
+
+    /**
+     * Maps state and its associated cities to various lookup maps.
+     *
+     * @param state   The state to be mapped.
+     * @param country The country the state belongs to.
+     */
+    private void mapState(State state, Country country) {
+        state.setCountryId(country.getId());
+        state.setCountryName(country.getName());
+        state.setCountryIso2Code(country.getIso2());
+        state.setCountryIso3Code(country.getIso3());
+
+        stateIdToStateMap.put(state.getId(), state);
+        stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>()).add(state);
+        stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>()).add(state);
+
+        state.getCities().forEach(city -> mapCity(city, state, country));
+    }
+
+    /**
+     * Maps a city to various lookup maps.
+     *
+     * @param city    The city to be mapped.
+     * @param state   The state the city belongs to.
+     * @param country The country the city belongs to.
+     */
+    private void mapCity(City city, State state, Country country) {
+        city.setCountryId(country.getId());
+        city.setCountryName(country.getName());
+        city.setCountryIso2Code(country.getIso2());
+        city.setCountryIso3Code(country.getIso3());
+        city.setStateId(state.getId());
+        city.setStateName(state.getName());
+        city.setStateCode(state.getStateCode());
+
+        cityIdToCityMap.put(city.getId(), city);
+        cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()), k -> new ArrayList<>()).add(city);
+    }
+
+    /**
+     * Normalizes a key for consistent lookup.
+     *
+     * @param key The key to be normalized.
+     * @return The normalized key.
+     */
     private String keyMaker(String key) {
         if (Objects.isNull(key) || key.isEmpty()) {
             throw new IllegalArgumentException("Key cannot be null or empty");
@@ -131,182 +163,209 @@ public class LocationSearchService implements Search {
         return textNormaliser.normalise(key);
     }
 
+    /**
+     * Adds aliases for a given country.
+     *
+     * @param country The country to which aliases will be mapped.
+     * @param aliases Aliases for the country.
+     */
+    private void mapCountryAliases(Country country, String... aliases) {
+        for (String alias : aliases) {
+            countryNameToCountryMap.put(keyMaker(alias), country);
+        }
+    }
+
     @Override
     public List<Location> search(String text) {
-
         if (Objects.isNull(text) || text.isEmpty()) {
             throw new IllegalArgumentException("Search Text cannot be null or empty");
         }
 
-        if (text.length() < 2) {
-            return List.of();
-        }
-
-
         text = textNormaliser.normalise(text);
 
+        // Direct matches
+        List<Location> directMatches = findDirectMatches(text);
+        if (!directMatches.isEmpty()) {
+            return directMatches;
+        }
 
-        //try and direct match
+        // Tokenized search
+        return findTokenizedMatches(textTokeniser.tokenise(text));
+    }
+
+    /**
+     * Finds direct matches by looking up the text against various lookup maps
+     *
+     * @param text The normalized search text.
+     * @return A list of matching locations.
+     */
+    private List<Location> findDirectMatches(String text) {
+        List<Location> matches = new ArrayList<>();
+
         if (countryNameToCountryMap.containsKey(text)) {
-            var country = countryNameToCountryMap.get(text);
-            return List.of(locationMapper.toLocation(country));
+            matches.add(locationMapper.toLocation(countryNameToCountryMap.get(text)));
         }
 
         if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
-            var country = iso3CodeToCountryMap.get(text);
-            return List.of(locationMapper.toLocation(country));
+            matches.add(locationMapper.toLocation(iso3CodeToCountryMap.get(text)));
         }
 
-        if (text.length() == 2 && iso2CodeToCountryMap.containsKey(text) || stateCodeToStatesMap.containsKey(text)) {
-            var country = locationMapper.toLocation(iso2CodeToCountryMap.get(text));
-            var states = new ArrayList<>(stateCodeToStatesMap.get(text).stream().map(locationMapper::toLocation).toList());
-            states.add(country);
-            return states;
+        if (text.length() == 2) {
+            if (iso2CodeToCountryMap.containsKey(text)) {
+                matches.add(locationMapper.toLocation(iso2CodeToCountryMap.get(text)));
+            }
+            if (stateCodeToStatesMap.containsKey(text)) {
+                stateCodeToStatesMap.get(text).forEach(state -> matches.add(locationMapper.toLocation(state)));
+            }
         }
 
-        if(stateNameToStatesMap.containsKey(text)) {
-            var states = stateNameToStatesMap.get(text);
-            return states.stream().map(locationMapper::toLocation).toList();
+        if (stateNameToStatesMap.containsKey(text)) {
+            stateNameToStatesMap.get(text).forEach(state -> matches.add(locationMapper.toLocation(state)));
         }
 
         if (cityNameToCitiesMap.containsKey(text)) {
-            var cities = cityNameToCitiesMap.get(text);
-            return cities.stream().map(locationMapper::toLocation).toList();
+            cityNameToCitiesMap.get(text).forEach(city -> matches.add(locationMapper.toLocation(city)));
         }
 
+        return matches;
+    }
 
-        //if no direct match
-
-        var tokenizedText = textTokeniser.tokenise(text);
-
+    /**
+     * Finds matches for the given tokenized text.
+     *
+     * @param tokenizedText The tokenized search text.
+     * @return A list of matching locations.
+     */
+    private List<Location> findTokenizedMatches(List<String> tokenizedText) {
         Map<String, Integer> countryHitsCount = new HashMap<>();
         Map<String, Integer> stateHitsCount = new HashMap<>();
         Map<String, Integer> cityHitsCount = new HashMap<>();
 
-        var iterator = tokenizedText.iterator();
-
-        var countryFound = false;
-        while (iterator.hasNext()) {
-            var token = iterator.next();
-            if (countryNameToCountryMap.containsKey(token)) {
-                //strongest match
-                var country = countryNameToCountryMap.get(token);
-                countryHitsCount.put(country.getName(), countryHitsCount.getOrDefault(token, 0) + 1);
-                countryFound = true;
-                iterator.remove();
-                break;
-            }
-            if (iso3CodeToCountryMap.containsKey(token)) {
-                var country = iso3CodeToCountryMap.get(token);
-                countryHitsCount.put(country.getName(), countryHitsCount.getOrDefault(token, 0) + 1);
-                countryFound = true;
-                iterator.remove();
-                break;
-            }
-        }
+        boolean countryFound = populateCountryHits(tokenizedText, countryHitsCount);
 
         if (!countryFound) {
-            for (String token : tokenizedText) {
-                if (stateNameToStatesMap.containsKey(token)) {
-                    stateNameToStatesMap.get(token).forEach(state -> {
-                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
-                        countryHitsCount.put(state.getCountryName(), countryHitsCount.getOrDefault(state.getCountryName(), 0) + 1);
-                    });
-                }
-                if (stateCodeToStatesMap.containsKey(token)) {
-                    // Recompute country hits count by iterating through each state and getting its country
-                    stateCodeToStatesMap.get(token).forEach(state -> {
-                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
-                        countryHitsCount.put(state.getCountryName(), countryHitsCount.getOrDefault(state.getCountryName(), 0) + 1);
-                    });
-                }
-                if (cityNameToCitiesMap.containsKey(token)) {
-                    var cities = cityNameToCitiesMap.get(token);
-
-                    cities.forEach(city -> {
-                        cityHitsCount.put(city.getName(), cityHitsCount.getOrDefault(city.getName(), 0) + 1);
-                        stateHitsCount.put(city.getStateName(), stateHitsCount.getOrDefault(city.getStateName(), 0) + 1);
-                        countryHitsCount.put(city.getCountryName(), countryHitsCount.getOrDefault(city.getCountryName(), 0) + 1);
-                    });
-                }
-            }
+            populateStateAndCityHits(tokenizedText, countryHitsCount, stateHitsCount, cityHitsCount);
         } else {
-            for (String token : tokenizedText) {
-                if (stateNameToStatesMap.containsKey(token)) {
-                    stateNameToStatesMap.get(token).stream().filter(state -> {
-
-                        String topCountry = countryHitsCount.entrySet().stream()
-                                .max(Map.Entry.comparingByValue())
-                                .map(Map.Entry::getKey)
-                                .orElse(null);
-
-                        return state.getCountryName().equals(topCountry);
-
-                    }).forEach(state -> {
-                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
-                    });
-                }
-                if (stateCodeToStatesMap.containsKey(token)) {
-                    // Recompute country hits count by iterating through each state and getting its country
-                    stateCodeToStatesMap.get(token).stream().filter(state -> {
-
-                        String topCountry = countryHitsCount.entrySet().stream()
-                                .max(Map.Entry.comparingByValue())
-                                .map(Map.Entry::getKey)
-                                .orElse(null);
-
-                        return state.getCountryName().equals(topCountry);
-
-                    }).forEach(state -> {
-                        stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
-                    });
-                }
-                if (cityNameToCitiesMap.containsKey(token)) {
-                    var cities = cityNameToCitiesMap.get(token);
-
-                    cities.stream().filter(state -> {
-
-                        String topCountry = countryHitsCount.entrySet().stream()
-                                .max(Map.Entry.comparingByValue())
-                                .map(Map.Entry::getKey)
-                                .orElse(null);
-
-                        return state.getCountryName().equals(topCountry);
-
-                    }).forEach(city -> {
-                        cityHitsCount.put(city.getName(), cityHitsCount.getOrDefault(city.getName(), 0) + 1);
-                        stateHitsCount.put(city.getStateName(), stateHitsCount.getOrDefault(city.getStateName(), 0) + 1);
-                    });
-                }
-            }
+            filterAndPopulateStateAndCityHits(tokenizedText, countryHitsCount, stateHitsCount, cityHitsCount);
         }
 
+        return getTopMatchingLocations(countryHitsCount, stateHitsCount, cityHitsCount);
+    }
 
-        // Get the highest scoring hits
-        String topCountry = countryHitsCount.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
+    /**
+     * Populates country hit counts based on tokenized text.
+     *
+     * @param tokenizedText    The tokenized search text.
+     * @param countryHitsCount The map to populate with country hits.
+     * @return true if a country is found, false otherwise.
+     */
+    private boolean populateCountryHits(List<String> tokenizedText, Map<String, Integer> countryHitsCount) {
+        Iterator<String> iterator = tokenizedText.iterator();
 
-        String topState = stateHitsCount.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
+        while (iterator.hasNext()) {
+            String token = iterator.next();
+            if (countryNameToCountryMap.containsKey(token)) {
+                countryHitsCount.put(token, countryHitsCount.getOrDefault(token, 0) + 1);
+                iterator.remove();
+                return true;
+            }
+            if (iso3CodeToCountryMap.containsKey(token)) {
+                countryHitsCount.put(token, countryHitsCount.getOrDefault(token, 0) + 1);
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Populates state and city hit counts based on tokenized text without filtering.
+     *
+     * @param tokenizedText    The tokenized search text.
+     * @param countryHitsCount The map to populate with country hits.
+     * @param stateHitsCount   The map to populate with state hits.
+     * @param cityHitsCount    The map to populate with city hits.
+     */
+    private void populateStateAndCityHits(List<String> tokenizedText, Map<String, Integer> countryHitsCount,
+                                          Map<String, Integer> stateHitsCount, Map<String, Integer> cityHitsCount) {
+        for (String token : tokenizedText) {
+            if (stateNameToStatesMap.containsKey(token)) {
+                stateNameToStatesMap.get(token).forEach(state -> {
+                    stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
+                    countryHitsCount.put(state.getCountryName(), countryHitsCount.getOrDefault(state.getCountryName(), 0) + 1);
+                });
+            }
+            if (stateCodeToStatesMap.containsKey(token)) {
+                stateCodeToStatesMap.get(token).forEach(state -> {
+                    stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1);
+                    countryHitsCount.put(state.getCountryName(), countryHitsCount.getOrDefault(state.getCountryName(), 0) + 1);
+                });
+            }
+            if (cityNameToCitiesMap.containsKey(token)) {
+                cityNameToCitiesMap.get(token).forEach(city -> {
+                    cityHitsCount.put(city.getName(), cityHitsCount.getOrDefault(city.getName(), 0) + 1);
+                    stateHitsCount.put(city.getStateName(), stateHitsCount.getOrDefault(city.getStateName(), 0) + 1);
+                    countryHitsCount.put(city.getCountryName(), countryHitsCount.getOrDefault(city.getCountryName(), 0) + 1);
+                });
+            }
+        }
+    }
+
+    /**
+     * Filters and populates state and city hit counts based on tokenized text.
+     *
+     * @param tokenizedText    The tokenized search text.
+     * @param countryHitsCount The map to populate with country hits.
+     * @param stateHitsCount   The map to populate with state hits.
+     * @param cityHitsCount    The map to populate with city hits.
+     */
+    private void filterAndPopulateStateAndCityHits(List<String> tokenizedText, Map<String, Integer> countryHitsCount,
+                                                   Map<String, Integer> stateHitsCount, Map<String, Integer> cityHitsCount) {
+        String topCountry = getTopCountry(countryHitsCount);
+
+        for (String token : tokenizedText) {
+            if (stateNameToStatesMap.containsKey(token)) {
+                stateNameToStatesMap.get(token).stream()
+                        .filter(state -> state.getCountryName().equals(topCountry))
+                        .forEach(state -> stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1));
+            }
+            if (stateCodeToStatesMap.containsKey(token)) {
+                stateCodeToStatesMap.get(token).stream()
+                        .filter(state -> state.getCountryName().equals(topCountry))
+                        .forEach(state -> stateHitsCount.put(state.getName(), stateHitsCount.getOrDefault(state.getName(), 0) + 1));
+            }
+            if (cityNameToCitiesMap.containsKey(token)) {
+                cityNameToCitiesMap.get(token).stream()
+                        .filter(city -> city.getCountryName().equals(topCountry))
+                        .forEach(city -> {
+                            cityHitsCount.put(city.getName(), cityHitsCount.getOrDefault(city.getName(), 0) + 1);
+                            stateHitsCount.put(city.getStateName(), stateHitsCount.getOrDefault(city.getStateName(), 0) + 1);
+                        });
+            }
+        }
+    }
+
+    /**
+     * Retrieves the top matching locations based on hit counts.
+     *
+     * @param countryHitsCount The map of country hits.
+     * @param stateHitsCount   The map of state hits.
+     * @param cityHitsCount    The map of city hits.
+     * @return A list of top matching locations.
+     */
+    private List<Location> getTopMatchingLocations(Map<String, Integer> countryHitsCount, Map<String, Integer> stateHitsCount,
+                                                   Map<String, Integer> cityHitsCount) {
+        String topCountry = getTopCountry(countryHitsCount);
+        String topState = getTopHit(stateHitsCount);
 
         if (Objects.isNull(topState)) {
-            var country = countryNameToCountryMap.get(topCountry.toLowerCase());
-            return List.of(locationMapper.toLocation(country));
+            return List.of(locationMapper.toLocation(countryNameToCountryMap.get(topCountry)));
         }
 
-        String topCity = cityHitsCount.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
+        String topCity = getTopHit(cityHitsCount);
 
-        // Validate the combination of country, state, and city
         if (topCity != null && topState != null && topCountry != null) {
-            var cityMatches = cityNameToCitiesMap.get(topCity.toLowerCase());
-
+            var cityMatches = cityNameToCitiesMap.get(topCity);
             for (City city : cityMatches) {
                 if (city.getStateName().equals(topState) && city.getCountryName().equals(topCountry)) {
                     return List.of(locationMapper.toLocation(city));
@@ -314,7 +373,32 @@ public class LocationSearchService implements Search {
             }
         }
 
-        // If no valid combination is found, return an empty list
         return List.of();
+    }
+
+    /**
+     * Gets the top country based on hit counts.
+     *
+     * @param countryHitsCount The map of country hits.
+     * @return The top country name.
+     */
+    private String getTopCountry(Map<String, Integer> countryHitsCount) {
+        return countryHitsCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    /**
+     * Gets the top hit from the given hit count map.
+     *
+     * @param hitsCount The map of hits.
+     * @return The top hit name.
+     */
+    private String getTopHit(Map<String, Integer> hitsCount) {
+        return hitsCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 }
