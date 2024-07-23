@@ -1,11 +1,9 @@
 # location4j 🌎4️⃣♨️
 
-
-
 ![GitHub branch status](https://img.shields.io/github/checks-status/tomaytotomato/location4j/master)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tomaytotomato/location4j/master.yml)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://choosealicense.com/licenses/agpl-3.0/)
-
 
 location4j is a library that provides location data and location searching within a simple API.
 There are no calls to 3rd party location services or LLMs. Just a simple location service for your
