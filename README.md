@@ -2,7 +2,7 @@
 
 ![GitHub branch status](https://img.shields.io/github/checks-status/tomaytotomato/location4j/master)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://choosealicense.com/licenses/agpl-3.0/)
 
 
 location4j is a library that provides location data and location searching within a simple API.
@@ -118,5 +118,5 @@ Data sourced from [dr5shn/countries-states-cities-database](https://github.com/d
 
 ## License
 
-[AGPL3](https://choosealicense.com/licenses/agpl-3.0/#)
+[GNU Affero General Public License v3 (AGPL3)](https://choosealicense.com/licenses/agpl-3.0/)
 
