@@ -11,6 +11,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -70,21 +72,23 @@ class SearchTest {
     @Description("Search, when text contains country ISO2, then return country match")
     @ParameterizedTest
     @CsvSource({
-            "GB, United Kingdom",
-            "DO, Dominican Republic",
-            "RU, Russia",
-            "TR, Turkey",
+            "GB, United Kingdom|Eritrea|Kyrgyzstan|Liberia|Pakistan|Tajikistan",
+            "DO, Dominican Republic|Benin|Malawi|Moldova",
+            "RU, Russia|Malawi",
+            "TR, Turkey|Albania|India|Italy|Romania",
             "UA, Ukraine"
     })
-    void search_WhenTextContainsCountryISO2CodeOnly_ThenReturnCountryMatch(String iso2Code, String expectedCountryName) {
+    void search_WhenTextContainsOnlyTwoLetters_ThenReturnMatchesBasedonISO2CodeOrStateCode(String input, String expectedCountryMatches) {
 
         // When
-        var result = searchService.search(iso2Code);
+        var result = searchService.search(input);
+        var expectedCountries = expectedCountryMatches.split("\\|");
+
 
         // Then
-        assertThat(result).isNotEmpty().hasSize(1)
-                .extracting("countryName", "countryIso2Code")
-                .containsOnly(tuple(expectedCountryName, iso2Code));
+        assertThat(result).isNotEmpty().hasSize(expectedCountries.length)
+                .extracting("countryName")
+                .containsAll(Arrays.asList(expectedCountries));
     }
 
     @Description("Search, when text contains country ISO3, then return country match")

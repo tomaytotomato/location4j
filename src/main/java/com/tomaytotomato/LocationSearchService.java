@@ -76,7 +76,8 @@ public class LocationSearchService implements Search {
     private void parseJsonFile(InputStream inputStream) {
         var objectMapper = new ObjectMapper();
         try {
-            countries = objectMapper.readValue(inputStream, new TypeReference<List<Country>>() {});
+            countries = objectMapper.readValue(inputStream, new TypeReference<List<Country>>() {
+            });
             logger.info("Successfully parsed countries file");
         } catch (IOException e) {
             logger.severe("Failed to read countries file: " + e.getMessage());
@@ -179,6 +180,8 @@ public class LocationSearchService implements Search {
     public List<Location> search(String text) {
         if (Objects.isNull(text) || text.isEmpty()) {
             throw new IllegalArgumentException("Search Text cannot be null or empty");
+        } else if (text.length() < 2) {
+            return List.of();
         }
 
         text = textNormaliser.normalise(text);
@@ -204,10 +207,12 @@ public class LocationSearchService implements Search {
 
         if (countryNameToCountryMap.containsKey(text)) {
             matches.add(locationMapper.toLocation(countryNameToCountryMap.get(text)));
+            return matches;
         }
 
         if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
             matches.add(locationMapper.toLocation(iso3CodeToCountryMap.get(text)));
+            return matches;
         }
 
         if (text.length() == 2) {
@@ -217,14 +222,17 @@ public class LocationSearchService implements Search {
             if (stateCodeToStatesMap.containsKey(text)) {
                 stateCodeToStatesMap.get(text).forEach(state -> matches.add(locationMapper.toLocation(state)));
             }
+            return matches;
         }
 
         if (stateNameToStatesMap.containsKey(text)) {
             stateNameToStatesMap.get(text).forEach(state -> matches.add(locationMapper.toLocation(state)));
+            return matches;
         }
 
         if (cityNameToCitiesMap.containsKey(text)) {
             cityNameToCitiesMap.get(text).forEach(city -> matches.add(locationMapper.toLocation(city)));
+            return matches;
         }
 
         return matches;
@@ -355,17 +363,17 @@ public class LocationSearchService implements Search {
      */
     private List<Location> getTopMatchingLocations(Map<String, Integer> countryHitsCount, Map<String, Integer> stateHitsCount,
                                                    Map<String, Integer> cityHitsCount) {
-        String topCountry = getTopCountry(countryHitsCount);
-        String topState = getTopHit(stateHitsCount);
+        var topCountry = getTopCountry(countryHitsCount);
+        var topState = getTopHit(stateHitsCount);
 
         if (Objects.isNull(topState)) {
             return List.of(locationMapper.toLocation(countryNameToCountryMap.get(topCountry)));
         }
 
-        String topCity = getTopHit(cityHitsCount);
+        var topCity = getTopHit(cityHitsCount);
 
-        if (topCity != null && topState != null && topCountry != null) {
-            var cityMatches = cityNameToCitiesMap.get(topCity);
+        if (!Objects.isNull(topCity) && !Objects.isNull(topState) && !Objects.isNull(topCountry)) {
+            var cityMatches = cityNameToCitiesMap.get(topCity.toLowerCase());
             for (City city : cityMatches) {
                 if (city.getStateName().equals(topState) && city.getCountryName().equals(topCountry)) {
                     return List.of(locationMapper.toLocation(city));
