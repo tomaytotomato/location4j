@@ -1,5 +1,6 @@
 package com.tomaytotomato.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 
 public class TimeZone {
@@ -10,9 +11,9 @@ public class TimeZone {
   private Integer gmtOffset;
   private String gmtOffsetName;
 
-  public TimeZone() {
-  }
+  TimeZone() { }
 
+  @JsonCreator
   public TimeZone(String zoneName, String abbreviation, String tzName, Integer gmtOffset,
       String gmtOffsetName) {
     this.zoneName = zoneName;

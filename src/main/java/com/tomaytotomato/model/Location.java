@@ -1,6 +1,8 @@
 package com.tomaytotomato.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Location {
 
@@ -19,6 +21,7 @@ public class Location {
   public Location() {
   }
 
+  @JsonCreator
   public Location(String countryName, Integer countryId, String countryIso2Code,
       String countryIso3Code, String state, Integer stateId, String stateCode, String city,
       Integer cityId, BigDecimal latitude, BigDecimal longitude) {
@@ -128,6 +131,35 @@ public class Location {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Location location = (Location) o;
+    return Objects.equals(getCountryName(), location.getCountryName())
+        && Objects.equals(getCountryId(), location.getCountryId())
+        && Objects.equals(getCountryIso2Code(), location.getCountryIso2Code())
+        && Objects.equals(getCountryIso3Code(), location.getCountryIso3Code())
+        && Objects.equals(getState(), location.getState()) && Objects.equals(
+        getStateId(), location.getStateId()) && Objects.equals(getStateCode(),
+        location.getStateCode()) && Objects.equals(getCity(), location.getCity())
+        && Objects.equals(getCityId(), location.getCityId()) && Objects.equals(
+        getLatitude(), location.getLatitude()) && Objects.equals(getLongitude(),
+        location.getLongitude());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getCountryName(), getCountryId(), getCountryIso2Code(),
+        getCountryIso3Code(),
+        getState(), getStateId(), getStateCode(), getCity(), getCityId(), getLatitude(),
+        getLongitude());
+  }
+
+  @Override
   public String toString() {
     return "Location{" +
         "countryName='" + countryName + '\'' +
@@ -158,8 +190,7 @@ public class Location {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    public Builder() {
-    }
+    Builder() { }
 
     public Builder countryName(String countryName) {
       this.countryName = countryName;

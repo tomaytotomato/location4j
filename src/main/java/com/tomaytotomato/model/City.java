@@ -3,6 +3,7 @@ package com.tomaytotomato.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class City {
 
@@ -25,8 +26,7 @@ public class City {
   private BigDecimal latitude;
   private BigDecimal longitude;
 
-  public City() {
-  }
+  City() {}
 
   public Integer getId() {
     return id;
@@ -114,5 +114,33 @@ public class City {
 
   public void setLongitude(BigDecimal longitude) {
     this.longitude = longitude;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    City city = (City) o;
+    return Objects.equals(getId(), city.getId()) && Objects.equals(getCountryId(),
+        city.getCountryId()) && Objects.equals(getCountryName(), city.getCountryName())
+        && Objects.equals(getCountryIso2Code(), city.getCountryIso2Code())
+        && Objects.equals(getCountryIso3Code(), city.getCountryIso3Code())
+        && Objects.equals(getStateId(), city.getStateId()) && Objects.equals(
+        getStateName(), city.getStateName()) && Objects.equals(getStateCode(),
+        city.getStateCode()) && Objects.equals(getName(), city.getName())
+        && Objects.equals(getLatitude(), city.getLatitude()) && Objects.equals(
+        getLongitude(), city.getLongitude());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
+        getCountryIso3Code(), getStateId(), getStateName(), getStateCode(), getName(),
+        getLatitude(),
+        getLongitude());
   }
 }

@@ -17,9 +17,8 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
   /**
    * Loads a list of {@link Country} from the location4j-countries.json file
    *
-   * @throws IOException if it cannot read the file
    */
-  public DefaultCountriesDataLoaderImpl() throws IOException {
+  public DefaultCountriesDataLoaderImpl() {
     var logger = Logger.getLogger(this.getClass().getName());
     try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE)) {
       logger.info("Attempting to load countries from " + DEFAULT_FILE);
@@ -30,7 +29,6 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
       loadLocationsFromJson(inputStream, logger);
     } catch (IOException e) {
       logger.severe("Failed to load countries file: " + e.getMessage());
-      throw new IOException("Failed to load countries field : " + e.getMessage());
     }
 
   }
@@ -40,10 +38,9 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
     try {
       this.countries.addAll(objectMapper.readValue(inputStream, new TypeReference<>() {
       }));
-      logger.info("Successfully loaded countries from Json file");
+      logger.info("Successfully loaded countries json file");
     } catch (IOException e) {
       logger.severe("Failed to parse countries file: " + e.getMessage());
-      throw new IOException("Failed to load countries field : " + e.getMessage());
     }
   }
 

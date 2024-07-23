@@ -41,8 +41,7 @@ public class Country {
   private String emoji;
   private String emojiU;
 
-  public Country() {
-  }
+  Country() {}
 
   public int getId() {
     return id;

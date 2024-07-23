@@ -1,9 +1,11 @@
 package com.tomaytotomato.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class State {
 
@@ -25,7 +27,23 @@ public class State {
   private BigDecimal latitude;
   private BigDecimal longitude;
 
-  public State() {
+  State() {}
+
+  @JsonCreator
+  public State(Integer id, Integer countryId, String countryName, String countryIso2Code,
+      String countryIso3Code, String name, String type, String stateCode, List<City> cities,
+      BigDecimal latitude, BigDecimal longitude) {
+    this.id = id;
+    this.countryId = countryId;
+    this.countryName = countryName;
+    this.countryIso2Code = countryIso2Code;
+    this.countryIso3Code = countryIso3Code;
+    this.name = name;
+    this.type = type;
+    this.stateCode = stateCode;
+    this.cities = cities;
+    this.latitude = latitude;
+    this.longitude = longitude;
   }
 
   public Integer getId() {
@@ -116,4 +134,30 @@ public class State {
     this.longitude = longitude;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    State state = (State) o;
+    return Objects.equals(getId(), state.getId()) && Objects.equals(
+        getCountryId(), state.getCountryId()) && Objects.equals(getCountryName(),
+        state.getCountryName()) && Objects.equals(getCountryIso2Code(),
+        state.getCountryIso2Code()) && Objects.equals(getCountryIso3Code(),
+        state.getCountryIso3Code()) && Objects.equals(getName(), state.getName())
+        && Objects.equals(getType(), state.getType()) && Objects.equals(
+        getStateCode(), state.getStateCode()) && Objects.equals(getCities(),
+        state.getCities()) && Objects.equals(getLatitude(), state.getLatitude())
+        && Objects.equals(getLongitude(), state.getLongitude());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
+        getCountryIso3Code(), getName(), getType(), getStateCode(), getCities(), getLatitude(),
+        getLongitude());
+  }
 }
