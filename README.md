@@ -6,8 +6,18 @@
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
 
 location4j is a library that provides location data and location searching within a simple API.
-There are no calls to 3rd party location services or LLMs. Just a simple location service for your
-Java applications!
+
+There are no calls to 3rd party Geolocation services e.g. (Google Maps) or LLMs like ChatGPT. 
+
+location4j can parse and retrieve countries, states and cities from simple text formatted or unformatted.
+
+e.g. 
+
+```
+"Santa Clara CA US" ===> {country:US}. {state:CA}, {city:Santa Clara} ===> 1 location found ===> Santa Clara, California, United States
+"Santa Clara, California, United States" ===> {country:United States}. {state:California}, {city:Santa Clara} ===> 1 location found ===> Santa Clara, California, United States
+"Gloucester" ===> {city:Gloucester} ===> 3 locations found ===> Gloucester, United Kingdom // Gloucester, Australia // Gloucester, United States
+```
 
 ## Motivation 🏗️
 
