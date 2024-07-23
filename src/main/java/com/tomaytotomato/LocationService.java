@@ -9,9 +9,12 @@ import com.tomaytotomato.text.normaliser.TextNormaliser;
 import com.tomaytotomato.usecase.FindCity;
 import com.tomaytotomato.usecase.FindCountry;
 import com.tomaytotomato.usecase.FindState;
-
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class LocationService implements FindCountry, FindState, FindCity {
@@ -38,7 +41,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
 
   private final TextNormaliser textNormaliser;
 
-  public LocationService(TextNormaliser textNormaliser) throws IOException {
+  public LocationService(TextNormaliser textNormaliser) {
     this.textNormaliser = textNormaliser;
     var dataLoader = new DefaultCountriesDataLoaderImpl();
     countries = dataLoader.getCountries();

@@ -13,7 +13,6 @@ import com.tomaytotomato.text.normaliser.TextNormaliser;
 import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
 import com.tomaytotomato.text.tokeniser.TextTokeniser;
 import com.tomaytotomato.usecase.SearchLocation;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +44,7 @@ public class SearchLocationService implements SearchLocation {
   private final TextNormaliser textNormaliser;
   private final LocationMapper locationMapper;
 
-  public SearchLocationService() throws IOException {
+  public SearchLocationService() {
     textTokeniser = new DefaultTextTokeniser();
     textNormaliser = new DefaultTextNormaliser();
     locationMapper = new DefaultLocationMapper();
