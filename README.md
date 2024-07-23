@@ -1,4 +1,6 @@
-# location4j
+# location4j 🌎4️⃣♨️
+
+
 
 ![GitHub branch status](https://img.shields.io/github/checks-status/tomaytotomato/location4j/master)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
@@ -9,7 +11,7 @@ location4j is a library that provides location data and location searching withi
 There are no calls to 3rd party location services or LLMs. Just a simple location service for your
 Java applications!
 
-## Motivation
+## Motivation 🏗️
 
 Location data is very useful to have and provide when creating datasets for analysis, or APIs for
 web/mobile.
@@ -33,7 +35,7 @@ e.g.
 
 ```
 
-## Features
+## Features 🔍
 
 location4j has two classes that provide its functionality.
 
@@ -66,7 +68,7 @@ Provides a location search based on unstructured input
 | Search (free text)           | ✅           | Location |
 | Search (Longitude, Latitude) | ❌           | Location |
 
-## Example Usage
+## Example Usage 🔭
 
 LocationService
 
@@ -113,12 +115,12 @@ public static void main(String[] args) {
 
 ```
 
-## Credits
+## Credits 🙏
 
 Data sourced from [dr5shn/countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database) [![License: ODbL](https://img.shields.io/badge/License-ODbL-brightgreen.svg)](https://opendatacommons.org/licenses/odbl/)
 
 
-## License
+## License 📜
 
 [GNU Affero General Public License v3 (AGPL3)](https://choosealicense.com/licenses/agpl-3.0/)
 
