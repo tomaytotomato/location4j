@@ -4,7 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.LocationService;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.Country;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
+import java.io.IOException;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +16,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class FindCountriesByStateTest {
+class FindCountriesByStateTest {
 
   private final FindCountry locationService;
 
-  public FindCountriesByStateTest() {
-    locationService = new LocationService();
+  public FindCountriesByStateTest() throws IOException {
+    var textNormaliser = new DefaultTextNormaliser();
+    var dataLoader = new DefaultCountriesDataLoaderImpl();
+    locationService = new LocationService(textNormaliser, dataLoader);
   }
 
   @Description("Find All Countries By State Name, when null or blank then throw exception")
@@ -49,8 +54,8 @@ public class FindCountriesByStateTest {
       "Georgia, 1, United States",
       "Ontario, 1, Canada"
   })
-  void findAllCountriesWithStateName_WhenValidStateNameAndExists_ThenReturnCountries(
-      String stateName, Integer expectedCountryCount, String expectedCountryNames) {
+
+  void findAllCountriesWithStateName_WhenValidStateNameAndExists_ThenReturnCountries(String stateName, Integer expectedCountryCount, String expectedCountryNames) {
     // When
     var result = locationService.findAllCountriesByStateName(stateName);
 

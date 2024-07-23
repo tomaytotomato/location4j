@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.LocationService;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.Country;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
+import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,12 +17,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class FindCountryTest {
+class FindCountryTest {
 
-  private FindCountry locationService;
+  private final FindCountry locationService;
 
-  public FindCountryTest() {
-    locationService = new LocationService();
+  public FindCountryTest() throws IOException {
+    var textNormaliser = new DefaultTextNormaliser();
+    var dataLoader = new DefaultCountriesDataLoaderImpl();
+    locationService = new LocationService(textNormaliser, dataLoader);
   }
 
   @DisplayName("Find Country By ID, when valid and exists, then return Country")
@@ -30,8 +35,7 @@ public class FindCountryTest {
       "42, Central African Republic, Africa",
       "125, Liechtenstein, Europe",
   })
-  void findCountryById_WhenValidId_ThenReturnCountry(Integer id, String countryName,
-      String region) {
+  void findCountryById_WhenValidId_ThenReturnCountry(Integer id, String countryName, String region) {
     // When
     var result = locationService.findCountryById(id);
 
@@ -39,7 +43,7 @@ public class FindCountryTest {
     assertThat(result)
         .isNotEmpty()
         .get()
-        .extracting("name", "region")
+        .extracting("name", "region" )
         .contains(countryName, region);
   }
 
@@ -125,8 +129,7 @@ public class FindCountryTest {
       "Nederland, Netherlands",
 
   })
-  void findCountryByNativeName_WhenNativeNameExists_ThenReturnCountry(String nativeName,
-      String expectedCountryName) {
+  void findCountryByNativeName_WhenNativeNameExists_ThenReturnCountry(String nativeName, String expectedCountryName) {
 
     // When
     var result = locationService.findCountryByNativeName(nativeName);

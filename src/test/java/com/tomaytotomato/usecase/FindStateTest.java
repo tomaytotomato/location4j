@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.LocationService;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
+import java.io.IOException;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +16,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class FindStateTest {
+class FindStateTest {
 
   private final FindState locationService;
 
-  public FindStateTest() {
-    locationService = new LocationService();
+  public FindStateTest() throws IOException {
+    var textNormaliser = new DefaultTextNormaliser();
+    var dataLoader = new DefaultCountriesDataLoaderImpl();
+    locationService = new LocationService(textNormaliser, dataLoader);
   }
 
   @Description("Find State By ID, when null then throw exception")
@@ -82,8 +87,7 @@ public class FindStateTest {
     // When Then
     assertThatThrownBy(() -> locationService.findAllStatesByStateName("AT"))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage(
-            "State Name is too short, the shortest State with name is 3 characters (Goa, India)");
+        .hasMessage("State Name is too short, the shortest State with name is 3 characters (Goa, India)");
   }
 
   @DisplayName("Find States By Name, when state name is found then return list of states")
@@ -95,8 +99,7 @@ public class FindStateTest {
       "Saxony,  1",
       "Campania,  1"
   })
-  void findStatesByStateName_WhenStateNameExists_ThenReturnAllStates(String stateName,
-      Integer expectedCount) {
+  void findStatesByStateName_WhenStateNameExists_ThenReturnAllStates(String stateName, Integer expectedCount) {
 
     // When
     var results = locationService.findAllStatesByStateName(stateName);
@@ -133,8 +136,7 @@ public class FindStateTest {
       "SP,  3",
       "SCO,  1"
   })
-  void findStatesByStateCode_WhenStateCodeExists_ThenReturnAllStates(String stateCode,
-      Integer expectedCount) {
+  void findStatesByStateCode_WhenStateCodeExists_ThenReturnAllStates(String stateCode, Integer expectedCount) {
 
     // When
     var results = locationService.findAllStatesByStateCode(stateCode);

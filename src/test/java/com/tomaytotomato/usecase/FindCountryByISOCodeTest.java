@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.LocationService;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
+import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,12 +15,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class FindCountryByISOCodeTest {
+class FindCountryByISOCodeTest {
 
   private final FindCountry locationService;
 
-  public FindCountryByISOCodeTest() {
-    locationService = new LocationService();
+  public FindCountryByISOCodeTest() throws IOException {
+    var textNormaliser = new DefaultTextNormaliser();
+    var dataLoader = new DefaultCountriesDataLoaderImpl();
+    locationService = new LocationService(textNormaliser, dataLoader);
   }
 
   @DisplayName("Get Country By ISO2 Code, when null or blank then throw exception")
@@ -57,8 +62,7 @@ public class FindCountryByISOCodeTest {
       "KR, South Korea, Asia, Won",
       "KY, Cayman Islands, Americas, Cayman Islands dollar"
   })
-  void findCountryByISO2Code_WhenValidCodeAndExists_ThenReturnCountry(String iso2Code,
-      String expectedName, String expectedRegion, String expectedCurrencyName) {
+  void findCountryByISO2Code_WhenValidCodeAndExists_ThenReturnCountry(String iso2Code, String expectedName, String expectedRegion, String expectedCurrencyName) {
     // When
     var result = locationService.findCountryByISO2Code(iso2Code);
 
@@ -107,8 +111,7 @@ public class FindCountryByISOCodeTest {
       "JPN, Japan, Asia, Japanese yen",
       "AUS, Australia, Oceania, Australian dollar"
   })
-  void findCountryByISO3Code_WhenValidCodeAndExists_ThenReturnCountry(String iso3Code,
-      String expectedName, String expectedRegion, String expectedCurrencyName) {
+  void findCountryByISO3Code_WhenValidCodeAndExists_ThenReturnCountry(String iso3Code, String expectedName, String expectedRegion, String expectedCurrencyName) {
     // When
     var result = locationService.findCountryByISO3Code(iso3Code);
 

@@ -27,20 +27,24 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
         throw new IllegalArgumentException("File not found: " + DEFAULT_FILE);
       }
 
-      var objectMapper = new ObjectMapper();
-      try {
-        this.countries.addAll(objectMapper.readValue(inputStream, new TypeReference<>() {
-        }));
-        logger.info("Successfully parsed countries file");
-      } catch (IOException e) {
-        logger.severe("Failed to parse countries file: " + e.getMessage());
-        throw e;
-      }
+      loadLocationsFromJson(inputStream, logger);
     } catch (IOException e) {
       logger.severe("Failed to load countries file: " + e.getMessage());
-      throw e;
+      throw new IOException("Failed to load countries field : " + e.getMessage());
     }
 
+  }
+
+  private void loadLocationsFromJson(InputStream inputStream, Logger logger) throws IOException {
+    var objectMapper = new ObjectMapper();
+    try {
+      this.countries.addAll(objectMapper.readValue(inputStream, new TypeReference<>() {
+      }));
+      logger.info("Successfully loaded countries from Json file");
+    } catch (IOException e) {
+      logger.severe("Failed to parse countries file: " + e.getMessage());
+      throw new IOException("Failed to load countries field : " + e.getMessage());
+    }
   }
 
   @Override
