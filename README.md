@@ -107,5 +107,5 @@ public static void main(String[] args) {
 
 ## License
 
-[GPL](https://choosealicense.com/licenses/mit/)
+[AGPL3](https://choosealicense.com/licenses/agpl-3.0/#)
 
