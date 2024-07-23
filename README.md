@@ -105,7 +105,9 @@ public static void main(String[] args) {
 
   var resultsUnitedStates = locationSearchService.search(
       "Santa Clara USA"); // will find Santa Clara cities in USA e.g. California, Utah etc.
-
+  
+  var resultsCalifornia = locationSearchService.search("Santa Clara CA"); // will find Santa Clara in California
+  
 }
 
 
