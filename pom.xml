@@ -18,6 +18,7 @@
     <assertj-core.version>3.26.3</assertj-core.version>
     <jackson-core.version>2.17.2</jackson-core.version>
     <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
   </properties>
 
   <dependencies>
@@ -54,8 +55,47 @@
       <artifactId>maven-surefire-plugin</artifactId>
       <version>${maven-surefire-plugin.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>${jacoco-maven-plugin.version}</version>
+    </dependency>
 
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <configuration>
+                  <formats>
+                    <format>XML</format>
+                  </formats>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
