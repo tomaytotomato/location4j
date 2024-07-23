@@ -2,17 +2,17 @@ package com.tomaytotomato;
 
 import com.tomaytotomato.loader.CountriesDataLoader;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.mapper.LocationMapper;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
+import com.tomaytotomato.mapper.LocationMapper;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
 import com.tomaytotomato.model.State;
-import com.tomaytotomato.usecase.SearchLocation;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
-import com.tomaytotomato.text.tokeniser.PrefixAwareTextTokeniser;
 import com.tomaytotomato.text.normaliser.TextNormaliser;
+import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
 import com.tomaytotomato.text.tokeniser.TextTokeniser;
+import com.tomaytotomato.usecase.SearchLocation;
 
 import java.io.IOException;
 import java.util.*;
@@ -42,7 +42,7 @@ public class SearchLocationService implements SearchLocation {
     private final LocationMapper locationMapper;
 
     public SearchLocationService() throws IOException {
-        textTokeniser = new PrefixAwareTextTokeniser();
+        textTokeniser = new DefaultTextTokeniser();
         textNormaliser = new DefaultTextNormaliser();
         locationMapper = new DefaultLocationMapper();
         var dataLoader = new DefaultCountriesDataLoaderImpl();

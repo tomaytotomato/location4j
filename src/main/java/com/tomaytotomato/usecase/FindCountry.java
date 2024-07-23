@@ -19,6 +19,6 @@ public interface FindCountry {
 
     Optional<Country> findCountryByISO3Code(String iso3Code);
 
-    List<Country> findAllCountriesWithStateName(String stateName);
+    List<Country> findAllCountriesByStateName(String stateName);
 
 }

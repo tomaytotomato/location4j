@@ -25,7 +25,7 @@ class FindCountriesByStateTest {
     @Test
     void findAllCountriesWithStateName_WhenNullOrBlank_ThenThrowException() {
         //When Then
-        assertThatThrownBy(() -> locationService.findAllCountriesWithStateName(""))
+        assertThatThrownBy(() -> locationService.findAllCountriesByStateName(""))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("State name cannot be null or empty");
     }
@@ -34,7 +34,7 @@ class FindCountriesByStateTest {
     @Test
     void findAllCountriesWithStateName_WhenStateNameNotFound_ThenReturnEmptyList() {
         //When
-        var result = locationService.findAllCountriesWithStateName("Pinnatassee");
+        var result = locationService.findAllCountriesByStateName("Pinnatassee");
 
         //Then
         assertThat(result).isEmpty();
@@ -52,7 +52,7 @@ class FindCountriesByStateTest {
 
     void findAllCountriesWithStateName_WhenValidStateNameAndExists_ThenReturnCountries(String stateName, Integer expectedCountryCount, String expectedCountryNames) {
         // When
-        var result = locationService.findAllCountriesWithStateName(stateName);
+        var result = locationService.findAllCountriesByStateName(stateName);
 
         // Then
         assertThat(result)

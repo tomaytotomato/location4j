@@ -158,7 +158,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
     }
 
     @Override
-    public List<Country> findAllCountriesWithStateName(String stateName) {
+    public List<Country> findAllCountriesByStateName(String stateName) {
         if (Objects.isNull(stateName) || stateName.isEmpty()) {
             throw new IllegalArgumentException("State name cannot be null or empty");
         }
