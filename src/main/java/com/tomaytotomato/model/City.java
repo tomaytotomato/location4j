@@ -2,117 +2,117 @@ package com.tomaytotomato.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.math.BigDecimal;
 
 public class City {
-    private Integer id;
-    @JsonIgnore
-    private Integer countryId;
-    @JsonIgnore
-    private String countryName;
-    @JsonIgnore
-    private String countryIso2Code;
-    @JsonIgnore
-    private String countryIso3Code;
-    @JsonIgnore
-    private Integer stateId;
-    @JsonIgnore
-    private String stateName;
-    @JsonIgnore
-    private String stateCode;
-    private String name;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
 
-    public City() {
-    }
+  private Integer id;
+  @JsonIgnore
+  private Integer countryId;
+  @JsonIgnore
+  private String countryName;
+  @JsonIgnore
+  private String countryIso2Code;
+  @JsonIgnore
+  private String countryIso3Code;
+  @JsonIgnore
+  private Integer stateId;
+  @JsonIgnore
+  private String stateName;
+  @JsonIgnore
+  private String stateCode;
+  private String name;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
 
-    public Integer getId() {
-        return id;
-    }
+  public City() {
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public Integer getCountryId() {
-        return countryId;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setCountryId(Integer countryId) {
-        this.countryId = countryId;
-    }
+  public Integer getCountryId() {
+    return countryId;
+  }
 
-    public String getCountryName() {
-        return countryName;
-    }
+  public void setCountryId(Integer countryId) {
+    this.countryId = countryId;
+  }
 
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
+  public String getCountryName() {
+    return countryName;
+  }
 
-    public String getCountryIso2Code() {
-        return countryIso2Code;
-    }
+  public void setCountryName(String countryName) {
+    this.countryName = countryName;
+  }
 
-    public void setCountryIso2Code(String countryIso2Code) {
-        this.countryIso2Code = countryIso2Code;
-    }
+  public String getCountryIso2Code() {
+    return countryIso2Code;
+  }
 
-    public String getCountryIso3Code() {
-        return countryIso3Code;
-    }
+  public void setCountryIso2Code(String countryIso2Code) {
+    this.countryIso2Code = countryIso2Code;
+  }
 
-    public void setCountryIso3Code(String countryIso3Code) {
-        this.countryIso3Code = countryIso3Code;
-    }
+  public String getCountryIso3Code() {
+    return countryIso3Code;
+  }
 
-    public Integer getStateId() {
-        return stateId;
-    }
+  public void setCountryIso3Code(String countryIso3Code) {
+    this.countryIso3Code = countryIso3Code;
+  }
 
-    public void setStateId(Integer stateId) {
-        this.stateId = stateId;
-    }
+  public Integer getStateId() {
+    return stateId;
+  }
 
-    public String getStateCode() {
-        return stateCode;
-    }
+  public void setStateId(Integer stateId) {
+    this.stateId = stateId;
+  }
 
-    public void setStateCode(String stateCode) {
-        this.stateCode = stateCode;
-    }
+  public String getStateCode() {
+    return stateCode;
+  }
 
-    public String getStateName() {
-        return stateName;
-    }
+  public void setStateCode(String stateCode) {
+    this.stateCode = stateCode;
+  }
 
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
+  public String getStateName() {
+    return stateName;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setStateName(String stateName) {
+    this.stateName = stateName;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public BigDecimal getLatitude() {
-        return latitude;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setLatitude(BigDecimal latitude) {
-        this.latitude = latitude;
-    }
+  public BigDecimal getLatitude() {
+    return latitude;
+  }
 
-    public BigDecimal getLongitude() {
-        return longitude;
-    }
+  public void setLatitude(BigDecimal latitude) {
+    this.latitude = latitude;
+  }
 
-    public void setLongitude(BigDecimal longitude) {
-        this.longitude = longitude;
-    }
+  public BigDecimal getLongitude() {
+    return longitude;
+  }
+
+  public void setLongitude(BigDecimal longitude) {
+    this.longitude = longitude;
+  }
 }

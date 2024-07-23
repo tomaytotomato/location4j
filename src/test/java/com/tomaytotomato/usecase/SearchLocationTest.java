@@ -1,135 +1,137 @@
 package com.tomaytotomato.usecase;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 import com.tomaytotomato.SearchLocationService;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
+import java.io.IOException;
+import java.util.Arrays;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SearchLocationTest {
 
-    private final SearchLocation searchLocationService;
+  private final SearchLocation searchLocationService;
 
-    public SearchLocationTest() throws IOException {
-        var textNormaliser = new DefaultTextNormaliser();
-        var textTokeniser = new DefaultTextTokeniser();
-        var locationMapper = new DefaultLocationMapper();
-        var dataLoader = new DefaultCountriesDataLoaderImpl();
+  public SearchLocationTest() throws IOException {
+    var textNormaliser = new DefaultTextNormaliser();
+    var textTokeniser = new DefaultTextTokeniser();
+    var locationMapper = new DefaultLocationMapper();
+    var dataLoader = new DefaultCountriesDataLoaderImpl();
 
-        searchLocationService = new SearchLocationService(textTokeniser, textNormaliser, locationMapper, dataLoader);
-    }
+    searchLocationService = new SearchLocationService(textTokeniser, textNormaliser, locationMapper,
+        dataLoader);
+  }
 
-    @Description("SearchLocation, when null or empty text, then throw exception")
-    @Test
-    void search_WhenNullOrBlank_ThenThrowException() {
+  @Description("SearchLocation, when null or empty text, then throw exception")
+  @Test
+  void search_WhenNullOrBlank_ThenThrowException() {
 
-        // When Then
-        assertThatThrownBy(() -> {
-            searchLocationService.search(null);
-        }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("SearchLocation Text cannot be null or empty");
-    }
+    // When Then
+    assertThatThrownBy(() -> {
+      searchLocationService.search(null);
+    }).isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("SearchLocation Text cannot be null or empty");
+  }
 
-    @Description("SearchLocation, when text is too short, then return empty list")
-    @Test
-    void search_WhenTextIsTooShort_ThenReturnEmptyList() {
-        // When
-        var result = searchLocationService.search("A");
+  @Description("SearchLocation, when text is too short, then return empty list")
+  @Test
+  void search_WhenTextIsTooShort_ThenReturnEmptyList() {
+    // When
+    var result = searchLocationService.search("A");
 
-        // Then
-        assertThat(result).isEmpty();
-    }
+    // Then
+    assertThat(result).isEmpty();
+  }
 
-    @Description("SearchLocation, when text contains country only, then return country match")
-    @ParameterizedTest
-    @CsvSource({
-            "United Kingdom",
-            "Dominican Republic",
-            "Russia",
-            "United States",
-            "United Arab Emirates"
-    })
-    void search_WhenTextContainsCountryOnly_ThenReturnCountryMatch(String countryName) {
+  @Description("SearchLocation, when text contains country only, then return country match")
+  @ParameterizedTest
+  @CsvSource({
+      "United Kingdom",
+      "Dominican Republic",
+      "Russia",
+      "United States",
+      "United Arab Emirates"
+  })
+  void search_WhenTextContainsCountryOnly_ThenReturnCountryMatch(String countryName) {
 
-        // When
-        var result = searchLocationService.search(countryName);
+    // When
+    var result = searchLocationService.search(countryName);
 
-        // Then
-        assertThat(result).isNotEmpty().hasSize(1).extracting("countryName").containsOnly(countryName);
-    }
+    // Then
+    assertThat(result).isNotEmpty().hasSize(1).extracting("countryName").containsOnly(countryName);
+  }
 
-    @Description("SearchLocation, when text contains country ISO2, then return country match")
-    @ParameterizedTest
-    @CsvSource({
-            "GB, United Kingdom|Eritrea|Kyrgyzstan|Liberia|Pakistan|Tajikistan",
-            "DO, Dominican Republic|Benin|Malawi|Moldova",
-            "RU, Russia|Malawi",
-            "TR, Turkey|Albania|India|Italy|Romania",
-            "UA, Ukraine"
-    })
-    void search_WhenTextContainsOnlyTwoLetters_ThenReturnMatchesBasedonISO2CodeOrStateCode(String input, String expectedCountryMatches) {
+  @Description("SearchLocation, when text contains country ISO2, then return country match")
+  @ParameterizedTest
+  @CsvSource({
+      "GB, United Kingdom|Eritrea|Kyrgyzstan|Liberia|Pakistan|Tajikistan",
+      "DO, Dominican Republic|Benin|Malawi|Moldova",
+      "RU, Russia|Malawi",
+      "TR, Turkey|Albania|India|Italy|Romania",
+      "UA, Ukraine"
+  })
+  void search_WhenTextContainsOnlyTwoLetters_ThenReturnMatchesBasedonISO2CodeOrStateCode(
+      String input, String expectedCountryMatches) {
 
-        // When
-        var result = searchLocationService.search(input);
-        var expectedCountries = expectedCountryMatches.split("\\|");
+    // When
+    var result = searchLocationService.search(input);
+    var expectedCountries = expectedCountryMatches.split("\\|");
 
+    // Then
+    assertThat(result).isNotEmpty().hasSize(expectedCountries.length)
+        .extracting("countryName")
+        .containsAll(Arrays.asList(expectedCountries));
+  }
 
-        // Then
-        assertThat(result).isNotEmpty().hasSize(expectedCountries.length)
-                .extracting("countryName")
-                .containsAll(Arrays.asList(expectedCountries));
-    }
+  @Description("SearchLocation, when text contains country ISO3, then return country match")
+  @ParameterizedTest
+  @CsvSource({
+      "GBR, United Kingdom",
+      "USA, United States",
+      "CHN, China",
+      "TUR, Turkey",
+      "UKR, Ukraine"
+  })
+  void search_WhenTextContainsCountryISO3CodeOnly_ThenReturnCountryMatch(String iso3Code,
+      String expectedCountryName) {
 
-    @Description("SearchLocation, when text contains country ISO3, then return country match")
-    @ParameterizedTest
-    @CsvSource({
-            "GBR, United Kingdom",
-            "USA, United States",
-            "CHN, China",
-            "TUR, Turkey",
-            "UKR, Ukraine"
-    })
-    void search_WhenTextContainsCountryISO3CodeOnly_ThenReturnCountryMatch(String iso3Code, String expectedCountryName) {
+    // When
+    var result = searchLocationService.search(iso3Code);
 
-        // When
-        var result = searchLocationService.search(iso3Code);
+    // Then
+    assertThat(result).isNotEmpty().hasSize(1)
+        .extracting("countryName", "countryIso3Code")
+        .containsOnly(tuple(expectedCountryName, iso3Code));
+  }
 
-        // Then
-        assertThat(result).isNotEmpty().hasSize(1)
-                .extracting("countryName", "countryIso3Code")
-                .containsOnly(tuple(expectedCountryName, iso3Code));
-    }
+  @Description("SearchLocation, when text contains state and country name, then return single match")
+  @ParameterizedTest
+  @CsvSource({
+      "Santa Clara CA, United States",
+      "Glasgow Scotland, United Kingdom",
+      "Tel Aviv Israel, Israel",
+      "Germany Saxony, Germany",
+      "France, France",
+      "England, United Kingdom"
+  })
+  void search_WhenTextContainsStateAndCountryName_ThenReturnSingleMatch(String text,
+      String countryName) {
+    // When
+    var result = searchLocationService.search(text);
 
-    @Description("SearchLocation, when text contains state and country name, then return single match")
-    @ParameterizedTest
-    @CsvSource({
-            "Santa Clara CA, United States",
-            "Glasgow Scotland, United Kingdom",
-            "Tel Aviv Israel, Israel",
-            "Germany Saxony, Germany",
-            "France, France",
-            "England, United Kingdom"
-    })
-    void search_WhenTextContainsStateAndCountryName_ThenReturnSingleMatch(String text, String countryName) {
-        // When
-        var result = searchLocationService.search(text);
-
-        // Then
-        assertThat(result).isNotEmpty().hasSize(1)
-                .extracting("countryName")
-                .containsOnly(countryName);
-    }
+    // Then
+    assertThat(result).isNotEmpty().hasSize(1)
+        .extracting("countryName")
+        .containsOnly(countryName);
+  }
 }

@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface TextTokeniser {
 
-    List<String> tokenise(String text);
+  List<String> tokenise(String text);
 
 }

@@ -7,10 +7,10 @@ import com.tomaytotomato.model.State;
 
 public interface LocationMapper {
 
-    Location toLocation(Country country);
+  Location toLocation(Country country);
 
-    Location toLocation(City location);
+  Location toLocation(City location);
 
-    Location toLocation(State state);
+  Location toLocation(State state);
 
 }
