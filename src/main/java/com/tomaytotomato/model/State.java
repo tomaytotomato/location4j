@@ -1,6 +1,7 @@
 package com.tomaytotomato.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
@@ -29,7 +30,7 @@ public class State {
 
   State() {}
 
-  @JsonCreator
+  @JsonCreator(mode = Mode.DISABLED)
   public State(Integer id, Integer countryId, String countryName, String countryIso2Code,
       String countryIso3Code, String name, String type, String stateCode, List<City> cities,
       BigDecimal latitude, BigDecimal longitude) {

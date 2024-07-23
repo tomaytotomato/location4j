@@ -1,6 +1,7 @@
 package com.tomaytotomato.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class Location {
   public Location() {
   }
 
-  @JsonCreator
+  @JsonCreator(mode = Mode.DISABLED)
   public Location(String countryName, Integer countryId, String countryIso2Code,
       String countryIso3Code, String state, Integer stateId, String stateCode, String city,
       Integer cityId, BigDecimal latitude, BigDecimal longitude) {
