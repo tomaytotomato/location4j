@@ -8,7 +8,7 @@ import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
 import com.tomaytotomato.model.State;
-import com.tomaytotomato.usecase.Search;
+import com.tomaytotomato.usecase.SearchLocation;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.text.tokeniser.PrefixAwareTextTokeniser;
 import com.tomaytotomato.text.normaliser.TextNormaliser;
@@ -18,33 +18,30 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * LocationSearchService provides search functionalities to find locations (countries, states, cities) based on text input.
- */
-public class LocationSearchService implements Search {
+public class SearchLocationService implements SearchLocation {
 
-    /**
-     * Data structures used for querying countries, states and cities
-     */
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
+
     private final List<Country> countries;
+    /**
+     * 1 to 1 mappings
+     */
     private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
-    private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
     private final Map<String, Country> countryNativeNameToCountry = new HashMap<>();
     private final Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
     private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
+    /**
+     * 1 to many mappings
+     */
     private final Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
     private final Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
     private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
 
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
-    /**
-     * Dependencies
-     */
     private final TextTokeniser textTokeniser;
     private final TextNormaliser textNormaliser;
     private final LocationMapper locationMapper;
 
-    public LocationSearchService() throws IOException {
+    public SearchLocationService() throws IOException {
         textTokeniser = new PrefixAwareTextTokeniser();
         textNormaliser = new DefaultTextNormaliser();
         locationMapper = new DefaultLocationMapper();
@@ -53,7 +50,7 @@ public class LocationSearchService implements Search {
         buildDataStructures();
     }
 
-    public LocationSearchService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
+    public SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
                                  LocationMapper locationMapper, CountriesDataLoader dataLoader) {
         this.textTokeniser = textTokeniser;
         this.textNormaliser = textNormaliser;
@@ -89,7 +86,6 @@ public class LocationSearchService implements Search {
      * @param country The country to be mapped.
      */
     private void mapCountry(Country country) {
-        countryIdToCountryMap.put(country.getId(), country);
         countryNameToCountryMap.put(keyMaker(country.getName()), country);
         if (!Objects.isNull(country.getNativeName()) && !country.getNativeName().isEmpty()) {
             countryNativeNameToCountry.put(keyMaker(country.getNativeName()), country);
@@ -162,7 +158,7 @@ public class LocationSearchService implements Search {
     @Override
     public List<Location> search(String text) {
         if (Objects.isNull(text) || text.isEmpty()) {
-            throw new IllegalArgumentException("Search Text cannot be null or empty");
+            throw new IllegalArgumentException("SearchLocation Text cannot be null or empty");
         } else if (text.length() < 2) {
             return List.of();
         }

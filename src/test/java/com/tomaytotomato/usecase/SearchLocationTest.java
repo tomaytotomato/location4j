@@ -1,6 +1,6 @@
 package com.tomaytotomato.usecase;
 
-import com.tomaytotomato.LocationSearchService;
+import com.tomaytotomato.SearchLocationService;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
@@ -19,41 +19,41 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SearchTest {
+class SearchLocationTest {
 
-    private final Search searchService;
+    private final SearchLocation searchLocationService;
 
-    public SearchTest() throws IOException {
+    public SearchLocationTest() throws IOException {
         var textNormaliser = new DefaultTextNormaliser();
         var textTokeniser = new DefaultTextTokeniser();
         var locationMapper = new DefaultLocationMapper();
         var dataLoader = new DefaultCountriesDataLoaderImpl();
 
-        searchService = new LocationSearchService(textTokeniser, textNormaliser, locationMapper, dataLoader);
+        searchLocationService = new SearchLocationService(textTokeniser, textNormaliser, locationMapper, dataLoader);
     }
 
-    @Description("Search, when null or empty text, then throw exception")
+    @Description("SearchLocation, when null or empty text, then throw exception")
     @Test
     void search_WhenNullOrBlank_ThenThrowException() {
 
         // When Then
         assertThatThrownBy(() -> {
-            searchService.search(null);
+            searchLocationService.search(null);
         }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Search Text cannot be null or empty");
+                .hasMessageContaining("SearchLocation Text cannot be null or empty");
     }
 
-    @Description("Search, when text is too short, then return empty list")
+    @Description("SearchLocation, when text is too short, then return empty list")
     @Test
     void search_WhenTextIsTooShort_ThenReturnEmptyList() {
         // When
-        var result = searchService.search("A");
+        var result = searchLocationService.search("A");
 
         // Then
         assertThat(result).isEmpty();
     }
 
-    @Description("Search, when text contains country only, then return country match")
+    @Description("SearchLocation, when text contains country only, then return country match")
     @ParameterizedTest
     @CsvSource({
             "United Kingdom",
@@ -65,13 +65,13 @@ class SearchTest {
     void search_WhenTextContainsCountryOnly_ThenReturnCountryMatch(String countryName) {
 
         // When
-        var result = searchService.search(countryName);
+        var result = searchLocationService.search(countryName);
 
         // Then
         assertThat(result).isNotEmpty().hasSize(1).extracting("countryName").containsOnly(countryName);
     }
 
-    @Description("Search, when text contains country ISO2, then return country match")
+    @Description("SearchLocation, when text contains country ISO2, then return country match")
     @ParameterizedTest
     @CsvSource({
             "GB, United Kingdom|Eritrea|Kyrgyzstan|Liberia|Pakistan|Tajikistan",
@@ -83,7 +83,7 @@ class SearchTest {
     void search_WhenTextContainsOnlyTwoLetters_ThenReturnMatchesBasedonISO2CodeOrStateCode(String input, String expectedCountryMatches) {
 
         // When
-        var result = searchService.search(input);
+        var result = searchLocationService.search(input);
         var expectedCountries = expectedCountryMatches.split("\\|");
 
 
@@ -93,7 +93,7 @@ class SearchTest {
                 .containsAll(Arrays.asList(expectedCountries));
     }
 
-    @Description("Search, when text contains country ISO3, then return country match")
+    @Description("SearchLocation, when text contains country ISO3, then return country match")
     @ParameterizedTest
     @CsvSource({
             "GBR, United Kingdom",
@@ -105,7 +105,7 @@ class SearchTest {
     void search_WhenTextContainsCountryISO3CodeOnly_ThenReturnCountryMatch(String iso3Code, String expectedCountryName) {
 
         // When
-        var result = searchService.search(iso3Code);
+        var result = searchLocationService.search(iso3Code);
 
         // Then
         assertThat(result).isNotEmpty().hasSize(1)
@@ -113,7 +113,7 @@ class SearchTest {
                 .containsOnly(tuple(expectedCountryName, iso3Code));
     }
 
-    @Description("Search, when text contains state and country name, then return single match")
+    @Description("SearchLocation, when text contains state and country name, then return single match")
     @ParameterizedTest
     @CsvSource({
             "Santa Clara CA, United States",
@@ -125,7 +125,7 @@ class SearchTest {
     })
     void search_WhenTextContainsStateAndCountryName_ThenReturnSingleMatch(String text, String countryName) {
         // When
-        var result = searchService.search(text);
+        var result = searchLocationService.search(text);
 
         // Then
         assertThat(result).isNotEmpty().hasSize(1)

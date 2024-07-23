@@ -1,8 +1,6 @@
-package com.tomaytotomato.util;
+package com.tomaytotomato.text.tokeniser;
 
 
-import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
-import com.tomaytotomato.text.tokeniser.TextTokeniser;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
 

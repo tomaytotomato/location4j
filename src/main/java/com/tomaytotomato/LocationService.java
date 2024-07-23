@@ -1,28 +1,24 @@
 package com.tomaytotomato;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tomaytotomato.loader.CountriesDataLoader;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.State;
+import com.tomaytotomato.text.normaliser.TextNormaliser;
 import com.tomaytotomato.usecase.FindCity;
 import com.tomaytotomato.usecase.FindCountry;
 import com.tomaytotomato.usecase.FindState;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class LocationService implements FindCountry, FindState, FindCity {
 
-    private static final String FILENAME = "location4j-countries.json";
-    private List<Country> countries;
-
     private final Logger logger = Logger.getLogger(this.getClass().getPackage().getName() + this.getClass().getName());
 
-    private Boolean lowerCaseKeys = false;
-
+    private List<Country> countries;
     /**
      * One-to-one mappings (1:1)
      */
@@ -40,20 +36,22 @@ public class LocationService implements FindCountry, FindState, FindCity {
     private final Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
     private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
 
-    public LocationService() {
-        init();
+    private final TextNormaliser textNormaliser;
+
+    public LocationService(TextNormaliser textNormaliser) throws IOException {
+        this.textNormaliser = textNormaliser;
+        var dataLoader = new DefaultCountriesDataLoaderImpl();
+        countries = dataLoader.getCountries();
+        buildDataStructures();
     }
 
-    private void init() {
+    public LocationService(TextNormaliser textNormaliser, CountriesDataLoader dataLoader) throws IOException {
+        this.textNormaliser = textNormaliser;
+        countries = dataLoader.getCountries();
+        buildDataStructures();
+    }
 
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILENAME)) {
-            if (inputStream == null) {
-                throw new IllegalArgumentException("File not found: " + FILENAME);
-            }
-            parseJsonFile(inputStream);
-        } catch (IOException e) {
-            logger.severe("Failed to load countries file: " + e.getMessage());
-        }
+    private void buildDataStructures() {
 
         countries.forEach(country -> {
             countryIdToCountryMap.put(country.getId(), country);
@@ -84,17 +82,6 @@ public class LocationService implements FindCountry, FindState, FindCity {
         });
     }
 
-    private void parseJsonFile(InputStream inputStream) {
-        var objectMapper = new ObjectMapper();
-        try {
-            countries = objectMapper.readValue(inputStream, new TypeReference<>() {
-            });
-            logger.info("Successfully parsed countries file");
-        } catch (IOException e) {
-            logger.severe("Failed to read countries file: " + e.getMessage());
-        }
-    }
-
     @Override
     public Optional<Country> findCountryById(Integer id) {
         if (Objects.isNull(id)) {
@@ -112,6 +99,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         } else if (countryName.length() < 4) {
             throw new IllegalArgumentException("Country Name is too short, the shortest country name is 4 characters (Oman)");
         }
+        countryName = textNormaliser.normalise(countryName);
         return Optional.ofNullable(countryNameToCountryMap.get(countryName));
     }
 
@@ -120,6 +108,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         if (Objects.isNull(nativeName) || nativeName.isEmpty()) {
             throw new IllegalArgumentException("Country Native Name cannot be null or empty");
         }
+        nativeName = textNormaliser.normalise(nativeName);
         return Optional.ofNullable(countryNativeNameToCountry.get(nativeName));
     }
 
@@ -130,6 +119,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         } else if (iso2Code.length() != 2) {
             throw new IllegalArgumentException("Country ISO2 must be two characters long e.g. GB, US, FR, DE");
         }
+        iso2Code = textNormaliser.normalise(iso2Code);
         return Optional.ofNullable(iso2CodeToCountryMap.get(iso2Code));
     }
 
@@ -140,6 +130,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         } else if (iso3Code.length() != 3) {
             throw new IllegalArgumentException("Country ISO3 must be three characters long e.g. USA, GBR, FRA, GER");
         }
+        iso3Code = textNormaliser.normalise(iso3Code);
         return Optional.ofNullable(iso3CodeToCountryMap.get(iso3Code));
     }
 
@@ -147,14 +138,17 @@ public class LocationService implements FindCountry, FindState, FindCity {
         return countries;
     }
 
+    /**
+     * Normalizes a key for consistent lookup.
+     *
+     * @param key The key to be normalized.
+     * @return The normalized key.
+     */
     private String keyMaker(String key) {
         if (Objects.isNull(key) || key.isEmpty()) {
             throw new IllegalArgumentException("Key cannot be null or empty");
         }
-        if (lowerCaseKeys) {
-            return key.toLowerCase();
-        }
-        return key;
+        return textNormaliser.normalise(key);
     }
 
     @Override
@@ -162,6 +156,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         if (Objects.isNull(stateName) || stateName.isEmpty()) {
             throw new IllegalArgumentException("State name cannot be null or empty");
         }
+        stateName = textNormaliser.normalise(stateName);
         if (stateNameToStatesMap.containsKey(stateName)) {
             return stateNameToStatesMap.get(stateName).stream().map(state -> findCountryById(state.getCountryId()))
                     .filter(Optional::isPresent)
@@ -187,6 +182,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         } else if (stateName.length() < 3) {
             throw new IllegalArgumentException("State Name is too short, the shortest State with name is 3 characters (Goa, India)");
         }
+        stateName = textNormaliser.normalise(stateName);
         if (stateNameToStatesMap.containsKey(stateName)) {
             return stateNameToStatesMap.get(stateName);
         } else {
@@ -199,6 +195,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         if (Objects.isNull(stateCode) || stateCode.isEmpty()) {
             throw new IllegalArgumentException("State Code cannot be null or empty");
         }
+        stateCode = textNormaliser.normalise(stateCode);
         if (stateCodeToStatesMap.containsKey(stateCode)) {
             return stateCodeToStatesMap.get(stateCode);
         } else {
@@ -224,6 +221,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         if (Objects.isNull(cityName) || cityName.isEmpty()) {
             throw new IllegalArgumentException("City Name cannot be null or empty");
         }
+        cityName = textNormaliser.normalise(cityName);
         if (cityNameToCitiesMap.containsKey(cityName)) {
             return cityNameToCitiesMap.get(cityName);
         } else {

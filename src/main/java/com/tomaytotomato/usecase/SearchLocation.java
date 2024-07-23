@@ -4,7 +4,7 @@ import com.tomaytotomato.model.Location;
 
 import java.util.List;
 
-public interface Search {
+public interface SearchLocation {
 
     /**
      * Searches for locations based off a text input

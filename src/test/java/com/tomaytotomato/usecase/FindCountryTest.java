@@ -2,13 +2,16 @@ package com.tomaytotomato.usecase;
 
 
 import com.tomaytotomato.LocationService;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.Country;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,10 +20,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FindCountryTest {
 
-    private FindCountry locationService;
+    private final FindCountry locationService;
 
-    public FindCountryTest() {
-        locationService = new LocationService();
+    public FindCountryTest() throws IOException {
+        var textNormaliser = new DefaultTextNormaliser();
+        var dataLoader = new DefaultCountriesDataLoaderImpl();
+        locationService = new LocationService(textNormaliser, dataLoader);
     }
 
     @DisplayName("Find Country By ID, when valid and exists, then return Country")
