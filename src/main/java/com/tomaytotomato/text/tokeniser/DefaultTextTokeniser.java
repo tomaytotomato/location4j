@@ -1,11 +1,11 @@
-package com.tomaytotomato.util;
+package com.tomaytotomato.text.tokeniser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SimpleTokeniser implements TextTokeniser {
+public class DefaultTextTokeniser implements TextTokeniser {
 
     @Override
     public List<String> tokenise(String text) {

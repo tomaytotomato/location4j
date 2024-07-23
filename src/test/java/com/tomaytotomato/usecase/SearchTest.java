@@ -1,16 +1,17 @@
 package com.tomaytotomato.usecase;
 
 import com.tomaytotomato.LocationSearchService;
-import com.tomaytotomato.util.DefaultTextNormaliser;
-import com.tomaytotomato.util.SimpleTokeniser;
-import com.tomaytotomato.util.TextNormaliser;
-import com.tomaytotomato.util.TextTokeniser;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.mapper.DefaultLocationMapper;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
+import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,14 +21,15 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SearchTest {
 
-    private final TextNormaliser textNormaliser;
-    private final TextTokeniser textTokeniser;
     private final Search searchService;
 
-    public SearchTest() {
-        textNormaliser = new DefaultTextNormaliser();
-        textTokeniser = new SimpleTokeniser();
-        searchService = new LocationSearchService(textTokeniser, textNormaliser);
+    public SearchTest() throws IOException {
+        var textNormaliser = new DefaultTextNormaliser();
+        var textTokeniser = new DefaultTextTokeniser();
+        var locationMapper = new DefaultLocationMapper();
+        var dataLoader = new DefaultCountriesDataLoaderImpl();
+
+        searchService = new LocationSearchService(textTokeniser, textNormaliser, locationMapper, dataLoader);
     }
 
     @Description("Search, when null or empty text, then throw exception")
@@ -117,7 +119,9 @@ class SearchTest {
             "Santa Clara CA, United States",
             "Glasgow Scotland, United Kingdom",
             "Tel Aviv Israel, Israel",
-            "Germany Saxony, Germany"
+            "Germany Saxony, Germany",
+            "France, France",
+            "England, United Kingdom"
     })
     void search_WhenTextContainsStateAndCountryName_ThenReturnSingleMatch(String text, String countryName) {
         // When

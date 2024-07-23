@@ -1,14 +1,10 @@
-package com.tomaytotomato.util;
+package com.tomaytotomato.text.tokeniser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DefaultTextTokeniser implements TextTokeniser {
+public class PrefixAwareTextTokeniser implements TextTokeniser {
 
     private static final Set<String> PREFIXES = new LinkedHashSet<>(Arrays.asList(
             "san", "los", "la", "el", "las", "st.", "st", "saint", "new", "district", "banileu",

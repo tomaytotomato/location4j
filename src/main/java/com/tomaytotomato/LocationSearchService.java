@@ -1,19 +1,20 @@
 package com.tomaytotomato;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tomaytotomato.loader.CountriesDataLoader;
+import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.LocationMapper;
-import com.tomaytotomato.mapper.LocationMapperImpl;
+import com.tomaytotomato.mapper.DefaultLocationMapper;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
 import com.tomaytotomato.model.State;
 import com.tomaytotomato.usecase.Search;
-import com.tomaytotomato.util.TextNormaliser;
-import com.tomaytotomato.util.TextTokeniser;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
+import com.tomaytotomato.text.tokeniser.PrefixAwareTextTokeniser;
+import com.tomaytotomato.text.normaliser.TextNormaliser;
+import com.tomaytotomato.text.tokeniser.TextTokeniser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -22,66 +23,51 @@ import java.util.logging.Logger;
  */
 public class LocationSearchService implements Search {
 
-    private final TextTokeniser textTokeniser;
-    private final TextNormaliser textNormaliser;
-
+    /**
+     * Data structures used for querying countries, states and cities
+     */
+    private final List<Country> countries;
     private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
     private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
     private final Map<String, Country> countryNativeNameToCountry = new HashMap<>();
     private final Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
     private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
-    private final Map<Integer, State> stateIdToStateMap = new HashMap<>();
-    private final Map<Integer, City> cityIdToCityMap = new HashMap<>();
     private final Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
     private final Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
     private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
 
-    private static final String FILENAME = "location4j-countries.json";
-    private List<Country> countries;
-
     private final Logger logger = Logger.getLogger(this.getClass().getName());
-    private final LocationMapper locationMapper = new LocationMapperImpl();
+    /**
+     * Dependencies
+     */
+    private final TextTokeniser textTokeniser;
+    private final TextNormaliser textNormaliser;
+    private final LocationMapper locationMapper;
 
-    public LocationSearchService(TextTokeniser textTokeniser, TextNormaliser textNormaliser) {
-        this.textTokeniser = textTokeniser;
-        this.textNormaliser = textNormaliser;
-        init();
+    public LocationSearchService() throws IOException {
+        textTokeniser = new PrefixAwareTextTokeniser();
+        textNormaliser = new DefaultTextNormaliser();
+        locationMapper = new DefaultLocationMapper();
+        var dataLoader = new DefaultCountriesDataLoaderImpl();
+        countries = dataLoader.getCountries();
+        buildDataStructures();
     }
 
-    /**
-     * Initializes the service by loading and parsing the JSON file containing location data.
-     */
-    private void init() {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILENAME)) {
-            if (inputStream == null) {
-                throw new IllegalArgumentException("File not found: " + FILENAME);
-            }
-            parseJsonFile(inputStream);
-        } catch (IOException e) {
-            logger.severe("Failed to load countries file: " + e.getMessage());
-        }
+    public LocationSearchService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
+                                 LocationMapper locationMapper, CountriesDataLoader dataLoader) {
+        this.textTokeniser = textTokeniser;
+        this.textNormaliser = textNormaliser;
+        this.locationMapper = locationMapper;
+        countries = dataLoader.getCountries();
+        buildDataStructures();
+    }
 
+    public void buildDataStructures() {
         countries.forEach(country -> {
             mapCountry(country);
             country.getStates().forEach(state -> mapState(state, country));
         });
         specialMappings();
-    }
-
-    /**
-     * Parses the JSON file to load countries data.
-     *
-     * @param inputStream InputStream of the JSON file.
-     */
-    private void parseJsonFile(InputStream inputStream) {
-        var objectMapper = new ObjectMapper();
-        try {
-            countries = objectMapper.readValue(inputStream, new TypeReference<List<Country>>() {
-            });
-            logger.info("Successfully parsed countries file");
-        } catch (IOException e) {
-            logger.severe("Failed to read countries file: " + e.getMessage());
-        }
     }
 
     /**
@@ -124,7 +110,6 @@ public class LocationSearchService implements Search {
         state.setCountryIso2Code(country.getIso2());
         state.setCountryIso3Code(country.getIso3());
 
-        stateIdToStateMap.put(state.getId(), state);
         stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>()).add(state);
         stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>()).add(state);
 
@@ -146,8 +131,6 @@ public class LocationSearchService implements Search {
         city.setStateId(state.getId());
         city.setStateName(state.getName());
         city.setStateCode(state.getStateCode());
-
-        cityIdToCityMap.put(city.getId(), city);
         cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()), k -> new ArrayList<>()).add(city);
     }
 

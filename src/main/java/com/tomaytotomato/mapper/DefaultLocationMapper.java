@@ -5,7 +5,7 @@ import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
 import com.tomaytotomato.model.State;
 
-public class LocationMapperImpl implements LocationMapper {
+public class DefaultLocationMapper implements LocationMapper {
 
     @Override
     public Location toLocation(Country country) {

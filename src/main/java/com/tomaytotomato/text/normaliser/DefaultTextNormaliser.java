@@ -1,4 +1,4 @@
-package com.tomaytotomato.util;
+package com.tomaytotomato.text.normaliser;
 
 import java.util.Objects;
 

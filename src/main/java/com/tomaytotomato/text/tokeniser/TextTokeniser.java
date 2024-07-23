@@ -1,4 +1,4 @@
-package com.tomaytotomato.util;
+package com.tomaytotomato.text.tokeniser;
 
 import java.util.List;
 
