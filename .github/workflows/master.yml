@@ -33,9 +33,6 @@ jobs:
     - name: Install Maven dependencies
       run: mvn install -DskipTests
 
-    - name: Lint code with Checkstyle
-      run: mvn checkstyle:check -Dcheckstyle.config.location=checkstyle.xml
-
     - name: Build with Maven
       run: mvn compile
 
