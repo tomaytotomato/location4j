@@ -85,8 +85,7 @@ public static void main(String[] args) {
 
   var afghanistan = locationService.findCountryById(1);
 
-  var countriesWithCityCalledSanFrancisco = locationService.findAllCitiesByCityName(
-      "San Francisco");
+  var cities = locationService.findAllCities("San Francisco"); //returns all cities around the world called San Francisco
 }
 
 ```
