@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import com.tomaytotomato.SearchLocationService;
+import com.tomaytotomato.aliases.DefaultLocationAliases;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
-import java.io.IOException;
 import java.util.Arrays;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
@@ -22,14 +22,15 @@ class SearchLocationTest {
 
   private final SearchLocation searchLocationService;
 
-  public SearchLocationTest() throws IOException {
+  public SearchLocationTest() {
     var textNormaliser = new DefaultTextNormaliser();
     var textTokeniser = new DefaultTextTokeniser();
     var locationMapper = new DefaultLocationMapper();
+    var locationAliases = new DefaultLocationAliases();
     var dataLoader = new DefaultCountriesDataLoaderImpl();
 
     searchLocationService = new SearchLocationService(textTokeniser, textNormaliser, locationMapper,
-        dataLoader);
+        dataLoader, locationAliases);
   }
 
   @Description("SearchLocation, when null or empty text, then throw exception")

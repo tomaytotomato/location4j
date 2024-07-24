@@ -20,7 +20,7 @@ class FindCountriesByStateTest {
 
   private final FindCountry locationService;
 
-  public FindCountriesByStateTest() throws IOException {
+  public FindCountriesByStateTest() {
     var textNormaliser = new DefaultTextNormaliser();
     var dataLoader = new DefaultCountriesDataLoaderImpl();
     locationService = new LocationService(textNormaliser, dataLoader);

@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.tomaytotomato.LocationService;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
-import java.io.IOException;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ class FindCityTest {
 
   private final FindCity locationService;
 
-  public FindCityTest() throws IOException {
+  public FindCityTest() {
     var textNormaliser = new DefaultTextNormaliser();
     var dataLoader = new DefaultCountriesDataLoaderImpl();
     locationService = new LocationService(textNormaliser, dataLoader);

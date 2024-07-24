@@ -1,5 +1,7 @@
 package com.tomaytotomato;
 
+import com.tomaytotomato.aliases.DefaultLocationAliases;
+import com.tomaytotomato.aliases.LocationAliases;
 import com.tomaytotomato.loader.CountriesDataLoader;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
@@ -45,21 +47,24 @@ public class SearchLocationService implements SearchLocation {
   private final TextTokeniser textTokeniser;
   private final TextNormaliser textNormaliser;
   private final LocationMapper locationMapper;
+  private final LocationAliases locationAliases;
 
   public SearchLocationService() {
     textTokeniser = new DefaultTextTokeniser();
     textNormaliser = new DefaultTextNormaliser();
     locationMapper = new DefaultLocationMapper();
+    locationAliases = new DefaultLocationAliases();
     var dataLoader = new DefaultCountriesDataLoaderImpl();
     countries = dataLoader.getCountries();
     buildDataStructures();
   }
 
   public SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
-      LocationMapper locationMapper, CountriesDataLoader dataLoader) {
+      LocationMapper locationMapper, CountriesDataLoader dataLoader, LocationAliases locationAliases) {
     this.textTokeniser = textTokeniser;
     this.textNormaliser = textNormaliser;
     this.locationMapper = locationMapper;
+    this.locationAliases = locationAliases;
     countries = dataLoader.getCountries();
     buildDataStructures();
   }
@@ -69,26 +74,40 @@ public class SearchLocationService implements SearchLocation {
       buildCountryLookups(country);
       country.getStates().forEach(state -> buildStateLookups(state, country));
     });
-    specialMappings();
+    addAliases();
   }
 
   /**
-   * Adds special mappings for countries.
+   * Adds custom aliases for lookups for country, state and city..
    */
-  private void specialMappings() {
-    Country ukCountry = countryNameToCountryMap.get(keyMaker("United Kingdom"));
-    if (ukCountry != null) {
-      mapCountryAliases(ukCountry, "Scotland", "England", "Northern Ireland", "Wales");
-      iso2CodeToCountryMap.put("uk", ukCountry);
-      iso2CodeToCountryMap.put("en", ukCountry);
-      iso3CodeToCountryMap.put("eng", ukCountry);
-      iso3CodeToCountryMap.put("sco", ukCountry);
-      iso3CodeToCountryMap.put("wal", ukCountry);
-      iso3CodeToCountryMap.put("cym", ukCountry);
-    } else {
-      logger.warning(
-          "United Kingdom not found in the country map, unable to add special mappings for Scotland, England, Northern Ireland, and Wales.");
-    }
+  private void addAliases() {
+
+    logger.info("Adding aliases for location lookups");
+
+    locationAliases.getCountryNameAliases().forEach((alias, originalKey) -> {
+      var country = countryNameToCountryMap.get(keyMaker(originalKey));
+      countryNameToCountryMap.put(keyMaker(alias), country);
+    });
+
+    locationAliases.getCountryIso2Aliases().forEach((alias,originalKey) -> {
+      var country = iso2CodeToCountryMap.get(keyMaker(originalKey));
+      countryNameToCountryMap.put(keyMaker(alias), country);
+    });
+
+    locationAliases.getCountryIso3Aliases().forEach((alias,originalKey) -> {
+      var country = iso3CodeToCountryMap.get(keyMaker(originalKey));
+      countryNameToCountryMap.put(keyMaker(alias), country);
+    });
+
+    locationAliases.getStateNameAliases().forEach((alias,originalKey) -> {
+      var states = stateNameToStatesMap.get(keyMaker(originalKey));
+      stateNameToStatesMap.put(alias, states);
+    });
+
+    locationAliases.getCityNameAliases().forEach((alias,originalKey) -> {
+      var cities = cityNameToCitiesMap.get(keyMaker(originalKey));
+      cityNameToCitiesMap.put(alias, cities);
+    });
   }
 
   /**
@@ -156,18 +175,6 @@ public class SearchLocationService implements SearchLocation {
       throw new IllegalArgumentException("Key cannot be null or empty");
     }
     return textNormaliser.normalise(key);
-  }
-
-  /**
-   * Adds aliases for a given country.
-   *
-   * @param country The country to which aliases will be mapped.
-   * @param aliases Aliases for the country.
-   */
-  private void mapCountryAliases(Country country, String... aliases) {
-    for (String alias : aliases) {
-      countryNameToCountryMap.put(keyMaker(alias), country);
-    }
   }
 
   @Override

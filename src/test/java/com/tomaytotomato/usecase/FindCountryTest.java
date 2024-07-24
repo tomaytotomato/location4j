@@ -8,7 +8,6 @@ import com.tomaytotomato.LocationService;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
-import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ class FindCountryTest {
 
   private final FindCountry locationService;
 
-  public FindCountryTest() throws IOException {
+  public FindCountryTest() {
     var textNormaliser = new DefaultTextNormaliser();
     var dataLoader = new DefaultCountriesDataLoaderImpl();
     locationService = new LocationService(textNormaliser, dataLoader);
