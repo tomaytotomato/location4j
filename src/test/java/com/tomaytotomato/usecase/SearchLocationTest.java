@@ -120,9 +120,16 @@ class SearchLocationTest {
       "Santa Clara CA, United States",
       "Glasgow Scotland, United Kingdom",
       "Tel Aviv Israel, Israel",
+      "Tel Aviv ISR, Israel",
       "Germany Saxony, Germany",
       "France, France",
-      "England, United Kingdom"
+      "England, United Kingdom",
+      "Gloucester ENG, United Kingdom",
+      "Eng Sheffield, United Kingdom",
+      "United Kingdom . Sheffield, United Kingdom",
+      "Tacoma United States, United States",
+      "Tacoma, United States",
+      "USA Tacoma, United States",
   })
   void search_WhenTextContainsStateAndCountryName_ThenReturnSingleMatch(String text,
       String countryName) {

@@ -3,7 +3,6 @@ package com.tomaytotomato.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Location {
 
@@ -14,6 +13,7 @@ public class Location {
   private String state;
   private Integer stateId;
   private String stateCode;
+  private String stateName;
   private String city;
   private Integer cityId;
   private BigDecimal latitude;
@@ -24,7 +24,7 @@ public class Location {
 
   @JsonCreator(mode = Mode.DISABLED)
   public Location(String countryName, Integer countryId, String countryIso2Code,
-      String countryIso3Code, String state, Integer stateId, String stateCode, String city,
+      String countryIso3Code, String state, Integer stateId, String stateCode, String stateName, String city,
       Integer cityId, BigDecimal latitude, BigDecimal longitude) {
     this.countryName = countryName;
     this.countryId = countryId;
@@ -33,14 +33,11 @@ public class Location {
     this.state = state;
     this.stateId = stateId;
     this.stateCode = stateCode;
+    this.stateName = stateName;
     this.city = city;
     this.cityId = cityId;
     this.latitude = latitude;
     this.longitude = longitude;
-  }
-
-  public static Builder builder() {
-    return new Builder();
   }
 
   public String getCountryName() {
@@ -99,6 +96,14 @@ public class Location {
     this.stateCode = stateCode;
   }
 
+  public String getStateName() {
+    return stateName;
+  }
+
+  public void setStateName(String stateName) {
+    this.stateName = stateName;
+  }
+
   public String getCity() {
     return city;
   }
@@ -131,50 +136,8 @@ public class Location {
     this.longitude = longitude;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Location location = (Location) o;
-    return Objects.equals(getCountryName(), location.getCountryName())
-        && Objects.equals(getCountryId(), location.getCountryId())
-        && Objects.equals(getCountryIso2Code(), location.getCountryIso2Code())
-        && Objects.equals(getCountryIso3Code(), location.getCountryIso3Code())
-        && Objects.equals(getState(), location.getState()) && Objects.equals(
-        getStateId(), location.getStateId()) && Objects.equals(getStateCode(),
-        location.getStateCode()) && Objects.equals(getCity(), location.getCity())
-        && Objects.equals(getCityId(), location.getCityId()) && Objects.equals(
-        getLatitude(), location.getLatitude()) && Objects.equals(getLongitude(),
-        location.getLongitude());
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getCountryName(), getCountryId(), getCountryIso2Code(),
-        getCountryIso3Code(),
-        getState(), getStateId(), getStateCode(), getCity(), getCityId(), getLatitude(),
-        getLongitude());
-  }
-
-  @Override
-  public String toString() {
-    return "Location{" +
-        "countryName='" + countryName + '\'' +
-        ", countryId=" + countryId +
-        ", countryIso2Code='" + countryIso2Code + '\'' +
-        ", countryIso3Code='" + countryIso3Code + '\'' +
-        ", state='" + state + '\'' +
-        ", stateId=" + stateId +
-        ", stateCode='" + stateCode + '\'' +
-        ", city='" + city + '\'' +
-        ", cityId=" + cityId +
-        ", latitude=" + latitude +
-        ", longitude=" + longitude +
-        '}';
+  public static Builder builder() {
+    return new Builder();
   }
 
   public static class Builder {
@@ -186,6 +149,7 @@ public class Location {
     private String state;
     private Integer stateId;
     private String stateCode;
+    private String stateName;
     private String city;
     private Integer cityId;
     private BigDecimal latitude;
@@ -228,6 +192,11 @@ public class Location {
       return this;
     }
 
+    public Builder stateName(String stateName) {
+      this.stateName = stateName;
+      return this;
+    }
+
     public Builder city(String city) {
       this.city = city;
       return this;
@@ -250,7 +219,7 @@ public class Location {
 
     public Location build() {
       return new Location(countryName, countryId, countryIso2Code, countryIso3Code, state, stateId,
-          stateCode, city, cityId, latitude, longitude);
+          stateCode, stateName, city, cityId, latitude, longitude);
     }
 
   }
