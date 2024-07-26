@@ -5,10 +5,12 @@ on:
   push:
     paths:
       - 'src/**'
+      - 'pom.xml'
       - '.github/**'
   pull_request:
     paths:
       - 'src/**'
+      - 'pom.xml'
       - '.github/**'
 
 jobs:
