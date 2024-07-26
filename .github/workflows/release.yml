@@ -6,8 +6,13 @@ on:
       - 'v*.*.*'
 
 jobs:
-  build:
+
+  call-build-and-test:
     name: "Build and Test"
+    uses: ./.github/workflows/build.yml
+
+  release:
+    name: "Release"
     runs-on: ubuntu-latest
 
     steps:
@@ -22,14 +27,6 @@ jobs:
 
     - name: Setup Maven Settings
       uses: s4u/maven-settings-action@v3.0.0
-
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
 
     - name: Install Maven dependencies
       run: mvn install
