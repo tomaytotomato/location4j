@@ -142,4 +142,26 @@ class SearchLocationTest {
         .extracting("countryName")
         .containsOnly(countryName);
   }
+
+
+  @Test
+  void search_WhenTextContainsCountryStateandCityName_ThenReturnSingleMatch() {
+
+    // When Then
+    assertThat(searchLocationService.search("San Francisco, CA, USA")).isNotEmpty().hasSize(1)
+        .extracting("countryName", "countryIso2Code", "countryIso3Code", "stateName", "city")
+        .containsExactly(tuple("United States", "US", "USA", "California", "San Francisco"));
+
+    assertThat(searchLocationService.search("KY, Glasgow USA")).isNotEmpty().hasSize(1)
+        .extracting("countryName", "countryIso2Code", "countryIso3Code", "stateName", "city")
+        .containsExactly(tuple("United States", "US", "USA", "Kentucky", "Glasgow"));
+
+    assertThat(searchLocationService.search("Glasgow Kentucky USA")).isNotEmpty().hasSize(1)
+        .extracting("countryName", "countryIso2Code", "countryIso3Code", "stateName", "city")
+        .containsExactly(tuple("United States", "US", "USA", "Kentucky", "Glasgow"));
+
+    assertThat(searchLocationService.search("Glasgow Scotland")).isNotEmpty().hasSize(1)
+        .extracting("countryName", "countryIso2Code", "countryIso3Code", "stateName", "city")
+        .containsExactly(tuple("United Kingdom", "GB", "GBR", "Scotland", "Glasgow"));
+  }
 }

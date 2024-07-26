@@ -74,13 +74,13 @@ class DefaultTextNormaliserTest {
     assertThat(result).isEqualTo("hello world");
   }
 
-  @Description("Normalise, when text contains punctuation, then return lowercased text with punctuation intact")
+  @Description("Normalise, when text contains punctuation, then return lowercased text without punctuation")
   @Test
   void normalise_WhenTextContainsPunctuation_ThenReturnLowercasedTextWithPunctuationIntact() {
     // When
-    var result = textNormaliser.normalise("Hello, World!");
+    var result = textNormaliser.normalise("San Francisco, CA, USA");
 
     // Then
-    assertThat(result).isEqualTo("hello, world!");
+    assertThat(result).isEqualTo("san francisco ca usa");
   }
 }

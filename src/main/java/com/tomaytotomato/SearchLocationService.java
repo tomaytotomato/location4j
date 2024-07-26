@@ -419,7 +419,31 @@ public class SearchLocationService implements SearchLocation {
         return List.of(locationMapper.toLocation(topState));
       }
     } else {
-      return List.of(locationMapper.toLocation(topCountry));
+      var locationBuilder = Location.builder();
+
+      locationBuilder.countryName(topCountry.getName());
+      locationBuilder.countryId(topCountry.getId());
+      locationBuilder.countryIso2Code(topCountry.getIso2());
+      locationBuilder.countryIso3Code(topCountry.getIso3());
+      locationBuilder.latitude(topCountry.getLatitude());
+      locationBuilder.longitude(topCountry.getLongitude());
+
+      if (!Objects.isNull(topState)) {
+        locationBuilder.stateName(topState.getName());
+        locationBuilder.stateCode(topState.getStateCode());
+        locationBuilder.stateId(topState.getId());
+        locationBuilder.latitude(topState.getLatitude());
+        locationBuilder.longitude(topState.getLongitude());
+      }
+
+      if (!Objects.isNull(topCity)) {
+        locationBuilder.city(topCity.getName());
+        locationBuilder.cityId(topCity.getId());
+        locationBuilder.latitude(topCity.getLatitude());
+        locationBuilder.longitude(topCity.getLongitude());
+      }
+
+      return List.of(locationBuilder.build());
     }
   }
 
