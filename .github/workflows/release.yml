@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  release:
-    types:
-      - created
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -32,10 +32,22 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Install Maven dependencies
-      run: mvn install -DskipTests
+      run: mvn install
 
-    - name: Maven Test
-      run: mvn test
-
-    - name: Maven Deploy
+    - name: Publish to GitHub Packages
       run: mvn deploy
+      env:
+        GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Release notes for ${{ github.ref }}.
+        draft: false
+        prerelease: false

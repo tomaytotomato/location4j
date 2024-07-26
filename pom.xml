@@ -23,9 +23,9 @@
 
   <distributionManagement>
     <repository>
-      <id>mvn-repo</id>
+      <id>github</id>
       <name>${env.GITHUB_USERNAME}</name>
-      <url>https://maven.pkg.github.com/[GitHub Username]/[GitHub Repository]</url>
+      <url>https://maven.pkg.github.com/${env.GITHUB_USERNAME}/${env.GITHUB_REPOSITORY}</url>
     </repository>
   </distributionManagement>
 
