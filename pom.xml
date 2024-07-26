@@ -115,14 +115,24 @@
             </goals>
           </execution>
           <execution>
-            <id>jacoco-site</id>
+            <id>jacoco-report</id>
             <phase>verify</phase>
             <goals>
               <goal>report</goal>
             </goals>
           </execution>
+          <execution>
+            <id>jacoco-xml-report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
+
 
     </plugins>
 
