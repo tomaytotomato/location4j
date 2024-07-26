@@ -1,7 +1,6 @@
 # location4j 🌎4️⃣♨️
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tomaytotomato/location4j/master.yml)
-![GitHub branch status](https://img.shields.io/github/checks-status/tomaytotomato/location4j/master)
+![GitHub branch check runs](https://img.shields.io/github/check-runs/tomaytotomato/location4j/master)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=tomaytotomato_location4j&metric=bugs)](https://sonarcloud.io/summary/new_code?id=tomaytotomato_location4j)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tomaytotomato_location4j&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tomaytotomato_location4j)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
