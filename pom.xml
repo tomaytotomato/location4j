@@ -21,6 +21,23 @@
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
   </properties>
 
+  <distributionManagement>
+    <repository>
+      <id>mvn-repo</id>
+      <name>${env.GITHUB_USERNAME}</name>
+      <url>https://maven.pkg.github.com/[GitHub Username]/[GitHub Repository]</url>
+    </repository>
+  </distributionManagement>
+
+
+  <licenses>
+    <license>
+      <name>GNU Affero General Public License v3.0</name>
+      <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
