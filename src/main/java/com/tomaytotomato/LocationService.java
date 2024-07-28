@@ -5,6 +5,7 @@ import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.State;
+import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.text.normaliser.TextNormaliser;
 import com.tomaytotomato.usecase.FindCity;
 import com.tomaytotomato.usecase.FindCountry;
@@ -17,11 +18,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+/**
+ * This class provides simple lookups for Country, State and City information.
+ */
 public class LocationService implements FindCountry, FindState, FindCity {
 
   private final Logger logger = Logger.getLogger(this.getClass().getPackage().getName() + this.getClass().getName());
 
-  private List<Country> countries;
+  private final List<Country> countries;
   /**
    * One-to-one mappings (1:1)
    */
@@ -40,6 +44,16 @@ public class LocationService implements FindCountry, FindState, FindCity {
   private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
 
   private final TextNormaliser textNormaliser;
+
+  /**
+   * Default constructor, creates a LocationService class with default dependencies
+   */
+  public LocationService() {
+    this.textNormaliser = new DefaultTextNormaliser();
+    var dataLoader = new DefaultCountriesDataLoaderImpl();
+    countries = dataLoader.getCountries();
+    buildDataStructures();
+  }
 
   public LocationService(TextNormaliser textNormaliser) {
     this.textNormaliser = textNormaliser;
