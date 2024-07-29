@@ -6,7 +6,7 @@
 
   <groupId>com.tomaytotomato</groupId>
   <artifactId>location4j</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version> <!-- this version is overridden by Github Action check release.yml !-->
   <description>A location service for Java, identify a city, state or country by multiple terms.
   </description>
 

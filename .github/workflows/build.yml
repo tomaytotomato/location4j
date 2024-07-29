@@ -1,7 +1,6 @@
 name: Build
 
 on:
-  workflow_call: # called by other github actions
   push:
     paths:
       - 'src/**'
