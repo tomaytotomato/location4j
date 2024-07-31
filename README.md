@@ -6,7 +6,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
 
-location4j is a library that provides location data and location searching within a simple API.
+location4j is a library for Java that provides data lookups for countries, states and cities along with a parsing and search service.
 
 There are no calls to 3rd party Geolocation services e.g. (Google Maps) or LLMs like ChatGPT. 
 
@@ -14,11 +14,50 @@ location4j can parse and retrieve countries, states and cities from simple text 
 
 e.g. 
 
+```java
+List<Location> results = searchLocationService.search("san francisco");
+
+//print off each location in the world with a city called San Francisco - 16 locations
+results.forEach(location -> {
+    System.out.println("Country: " + location.getCountryName());
+    System.out.println("State: " + location.getStateName());
+    System.out.println("State Code: " + location.getStateCode());
+});
+
+
+List<Location> resultsNarrowed = searchLocationService.search("san francisco, us");
+
+//print off each location in the world with a city called San Francisco in the United States
+results.forEach(location -> {
+    System.out.println("Country: " + location.getCountryName());
+    System.out.println("State: " + location.getStateName());
+    System.out.println("State Code: " + location.getStateCode());
+});
 ```
-"Santa Clara CA US" ===> {country:US}. {state:CA}, {city:Santa Clara} ===> 1 location found ===> Santa Clara, California, United States
-"Santa Clara, California, United States" ===> {country:United States}. {state:California}, {city:Santa Clara} ===> 1 location found ===> Santa Clara, California, United States
-"Gloucester" ===> {city:Gloucester} ===> 3 locations found ===> Gloucester, United Kingdom // Gloucester, Australia // Gloucester, United States
-```
+
+
+## What can location4j do?
+
+location4j consumes a dataset of countries, states and cities (major population centres).
+
+| Feature                      | Supported | Object  |
+|------------------------------|-----------|---------|
+| Find All Countries           | ✅         | Country |
+| Find Country by Id           | ✅         | Country |
+| Find Country by ISO2 code    | ✅         | Country |
+| Find Country by ISO3 code    | ✅         | Country |
+| Find Country by name         | ✅         | Country |
+| Find Country by Native name  | ✅         | Country |
+| Find Countries by State name | ✅         | Country |
+| Find States by State name    | ✅         | State   |
+| Find State by State Id       | ✅         | State   |
+| Find States by State code    | ✅         | State   |
+| Find City by City Id         | ✅         | City    |
+| Find Cities by City name     | ✅         | City    |
+| Search (free text)           | ✅         | Location |
+
+location4j cannot find a location based on a small town, street or zipcode/postcode.
+
 
 ## Motivation 🏗️
 
@@ -44,40 +83,22 @@ e.g.
 
 ```
 
-## Features 🔍
 
-location4j has two classes that provide its functionality.
+## Getting Started 🚀
 
-**LocationService**
+Get the latest version of the location4j library by adding it to your Maven or Gradle project.
 
-Provides simple lookups of Country, State and City information
+```xml
 
-| Feature                      | Implemented | Object  |
-|------------------------------|-------------|---------|
-| Find All Countries           | ✅           | Country |
-| Find Country by Id           | ✅           | Country |
-| Find Country by ISO2 code    | ✅           | Country |
-| Find Country by ISO3 code    | ✅           | Country |
-| Find Country by Native name  | ✅           | Country |
-| Find Countries by State name | ✅           | Country |
-| Find States by State name    | ✅           | State   |
-| Find State by State Id       | ✅           | State   |
-| Find States by State code    | ✅           | State   |
-| Find City by City Id         | ✅           | City    |
-| Find Cities by City name     | ✅           | City    |
-| Find Cities by State         | ❌           | City    |
-| Find Cities by Country       | ❌           | City    |
+<dependency>
+  <groupId>com.tomaytotomato</groupId>
+  <artifactId>location4j</artifactId>
+  <version>1.0.0</version>
+</dependency>
 
-**LocationSearchService**
 
-Provides a location search based on unstructured input
+```
 
-| Feature                      | Implemented | Object   |
-|------------------------------|-------------|----------|
-| Search (free text)           | ✅           | Location |
-| Search (Longitude, Latitude) | ❌           | Location |
-
-## Example Usage 🔭
 
 LocationService
 
