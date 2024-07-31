@@ -6,12 +6,12 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
 
-location4j is a comprehensive Java library designed for efficient and accurate geographical data
-lookups, encompassing countries, states, and cities. 🌆
+location4j is a comprehensive Java library designed for efficient and accurate geographical data lookups, encompassing countries, states, and cities. 🌆
+
 Unlike other libraries, it operates without relying on third-party APIs, making it both
 cost-effective and fast. 🏎️
-Its built-in dataset provides robust functionality for applications requiring detailed geographical
-information. 💾
+
+Its built-in dataset provides robust functionality for applications requiring detailed geographical information. 💾
 
 ## Quick Example 🏗
 
@@ -138,7 +138,7 @@ public class LocationServiceExample {
 
 ```
 
-LocationSearchService
+SearchLocationService 
 
 ```java
 
