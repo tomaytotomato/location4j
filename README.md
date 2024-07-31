@@ -6,87 +6,96 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
 
-location4j is a library for Java that provides data lookups for countries, states and cities along with a parsing and search service.
+location4j is a comprehensive Java library designed for efficient and accurate geographical data
+lookups, encompassing countries, states, and cities. 🌆
+Unlike other libraries, it operates without relying on third-party APIs, making it both
+cost-effective and fast. 🏎️
+Its built-in dataset provides robust functionality for applications requiring detailed geographical
+information. 💾
 
-There are no calls to 3rd party Geolocation services e.g. (Google Maps) or LLMs like ChatGPT. 
-
-location4j can parse and retrieve countries, states and cities from simple text formatted or unformatted.
-
-e.g. 
+## Quick Example 🏗
 
 ```java
-List<Location> results = searchLocationService.search("san francisco");
+import com.tomaytotomato.SearchLocationService;
 
-//print off each location in the world with a city called San Francisco - 16 locations
-results.forEach(location -> {
-    System.out.println("Country: " + location.getCountryName());
-    System.out.println("State: " + location.getStateName());
-    System.out.println("State Code: " + location.getStateCode());
-});
+public class Main {
 
+  public static void main(String[] args) {
+    SearchLocationService service = new SearchLocationService();
 
-List<Location> resultsNarrowed = searchLocationService.search("san francisco, us");
+    // Find all locations named San Francisco
+    List<Location> results = service.search("san francisco");
+    printResults(results);
 
-//print off each location in the world with a city called San Francisco in the United States
-results.forEach(location -> {
-    System.out.println("Country: " + location.getCountryName());
-    System.out.println("State: " + location.getStateName());
-    System.out.println("State Code: " + location.getStateCode());
-});
+    // Narrow search to the US
+    results = service.search("san francisco, us");
+    printResults(results);
+
+    // Narrow search further to California
+    results = service.search("san francisco, us california");
+    printResults(results);
+  }
+
+  private static void printResults(List<Location> results) {
+    System.out.println("Locations found: " + results.size());
+    results.forEach(location -> {
+      System.out.println("Country: " + location.getCountryName());
+      System.out.println("State: " + location.getStateName());
+      System.out.println("City: " + location.getCityName());
+    });
+  }
+}
+
 ```
-
 
 ## What can location4j do?
 
-location4j consumes a dataset of countries, states and cities (major population centres).
+Here is an overview of the core functionality that location4j offers
 
-| Feature                      | Supported | Object  |
-|------------------------------|-----------|---------|
-| Find All Countries           | ✅         | Country |
-| Find Country by Id           | ✅         | Country |
-| Find Country by ISO2 code    | ✅         | Country |
-| Find Country by ISO3 code    | ✅         | Country |
-| Find Country by name         | ✅         | Country |
-| Find Country by Native name  | ✅         | Country |
-| Find Countries by State name | ✅         | Country |
-| Find States by State name    | ✅         | State   |
-| Find State by State Id       | ✅         | State   |
-| Find States by State code    | ✅         | State   |
-| Find City by City Id         | ✅         | City    |
-| Find Cities by City name     | ✅         | City    |
+| Feature                      | Supported | Object   |
+|------------------------------|-----------|----------|
 | Search (free text)           | ✅         | Location |
+| Find All Countries           | ✅         | Country  |
+| Find Country by Id           | ✅         | Country  |
+| Find Country by ISO2 code    | ✅         | Country  |
+| Find Country by ISO3 code    | ✅         | Country  |
+| Find Country by name         | ✅         | Country  |
+| Find Country by Native name  | ✅         | Country  |
+| Find Countries by State name | ✅         | Country  |
+| Find States by State name    | ✅         | State    |
+| Find State by State Id       | ✅         | State    |
+| Find States by State code    | ✅         | State    |
+| Find City by City Id         | ✅         | City     |
+| Find Cities by City name     | ✅         | City     |
 
-location4j cannot find a location based on a small town, street or zipcode/postcode.
-
-
-## Motivation 🏗️
-
-Location data is very useful to have and provide when creating datasets for analysis, or APIs for
-web/mobile.
-
-After working with several expensive location services like Google's Geolocation API etc there was a
-need for a simple solution that can provide useful data related to countries, their states and also
-cities.
-
-Writing code to parse a piece of free text was also lacking so location4j provides a search location
-functionality.
-
-Also the need to not require an external network call made by HTTP was a bonus too.
+🟢 location4j can parse free text strings with or without punctuation or capitalisation
 
 e.g.
+> San Francisco, CA, USA
+> ca united states san francisco
+> US, San Francisco, california
 
-```
-"Glasgow, UK" ---> 1 result [Glasgow, United Kingdom]
-"Santa Clara" ---> 16 results [Santa Clara, Argentina - Santa Clara, United States etc.]
-"Santa Clara CA USA" ---> 1 result [Santa Clara, California, United States]
-"Saxony" ---> 1 result [Saxony, Germany]
-
-```
-
+🔴 location4j cannot find a location based on a small town, street, latitude/longitude or
+zipcode/postcode
 
 ## Getting Started 🚀
 
 Get the latest version of the location4j library by adding it to your Maven or Gradle project.
+
+Add the Github Maven Repository to your projects pom.xml
+
+```xml
+
+<repositories>
+  <repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/tomaytotomato/location4j</url>
+  </repository>
+</repositories>
+
+```
+
+Then add the latest version of location4j
 
 ```xml
 
@@ -99,23 +108,32 @@ Get the latest version of the location4j library by adding it to your Maven or G
 
 ```
 
-
 LocationService
 
 ```java
 
 import com.tomaytotomato.LocationService;
 
-public static void main(String[] args) {
-  var locationService = new LocationService();
-  var countries = locationService.findAllCountries();
+public class LocationServiceExample {
 
-  var europeanCountries = countries.stream().filter(country -> country.getRegion().equals("Europe"))
-      .toList();
+  public static void main(String[] args) {
+    LocationService locationService = new LocationService();
 
-  var afghanistan = locationService.findCountryById(1);
+    // Get all countries
+    List<Country> countries = locationService.findAllCountries();
 
-  var cities = locationService.findAllCities("San Francisco"); //returns all cities around the world called San Francisco
+    // Filter European countries
+    List<Country> europeanCountries = countries.stream()
+        .filter(country -> "Europe".equals(country.getRegion()))
+        .toList();
+
+    // Find Afghanistan by ID
+    Country afghanistan = locationService.findCountryById(1);
+
+    // Find all cities named San Francisco
+    List<City> cities = locationService.findAllCities("San Francisco");
+
+  }
 }
 
 ```
@@ -124,30 +142,52 @@ LocationSearchService
 
 ```java
 
-
 import com.tomaytotomato.SearchLocationService;
 
-public static void main(String[] args) {
+public class LocationSearchServiceExample {
+  public static void main(String[] args) {
+    SearchLocationService locationSearchService = new SearchLocationService();
 
-  var locationSearchService = new SearchLocationService();
+    // Search for Santa Clara
+    List<Location> results = locationSearchService.search("Santa Clara");
 
-  var results = locationSearchService.search(
-      "Santa Clara"); // will find Santa Clara cities around the world
+    // Search for Santa Clara in the USA
+    List<Location> resultsUnitedStates = locationSearchService.search("Santa Clara USA");
 
-  var resultsUnitedStates = locationSearchService.search(
-      "Santa Clara USA"); // will find Santa Clara cities in USA e.g. California, Utah etc.
-  
-  var resultsCalifornia = locationSearchService.search("Santa Clara CA"); // will find Santa Clara in California
-  
+    // Search for Santa Clara in California
+    List<Location> resultsCalifornia = locationSearchService.search("Santa Clara US CA");
+  }
 }
-
 
 ```
 
+## Motivation 🌱
+
+Parsing location data efficiently is crucial for many applications, yet it can be complex and time-consuming. Third-party services like Google Location API can be costly, and using large language models can introduce significant latency. location4j offers a practical solution with its own dataset, enabling fast and cost-effective geographical lookups. It ensures your application can handle location data accurately without the overhead of external dependencies.
+Location data is very useful to have and provide when creating datasets for analysis, or APIs for
+web/mobile.
+
+However trying to parse this data in a text format can be very time consuming and frustrating.
+
+One solution is to use a third party location service like Google's Location API, but this can
+become very expensive
+when handling lots of data.
+
+Another option would be to use a Large Language Model like ChatGPT or Llama, however the latency in
+processing data
+can be significant.
+
+Most of the times locations need to be detailed to a city.
+
+Therefore I found a dataset for this information and created this library to provide this
+functionality.
+
+I may add other functionality in the future if needed.
+
 ## Credits 🙏
 
-Country data sourced from [dr5shn/countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database) [![License: ODbL](https://img.shields.io/badge/License-ODbL-brightgreen.svg)](https://opendatacommons.org/licenses/odbl/)
-
+Country data sourced
+from [dr5shn/countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database) [![License: ODbL](https://img.shields.io/badge/License-ODbL-brightgreen.svg)](https://opendatacommons.org/licenses/odbl/)
 
 ## License 📜
 
