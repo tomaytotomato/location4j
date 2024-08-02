@@ -47,6 +47,9 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: List keys
+        run: gpg -K
+
       - name: Build with Maven
         run: mvn --batch-mode clean verify
 
