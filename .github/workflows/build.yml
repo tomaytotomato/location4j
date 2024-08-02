@@ -48,10 +48,9 @@ jobs:
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Build with Maven
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn clean verify
-
-      - name: List target directory
-        run: ls -R target/site/jacoco
 
       - name: Run SonarCloud Scan
         env:
