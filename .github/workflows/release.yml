@@ -23,7 +23,7 @@ jobs:
       - name: Setup Maven Settings
         uses: s4u/maven-settings-action@v3.0.0
         with:
-          servers: '[{"id": "central", "username": "${{MAVEN_USERNAME}}", "password": "${{MAVEN_PASSWORD}}"}]'
+          servers: '[{"id": "central", "username": "${{secrets.MAVEN_USERNAME}}", "password": "${{secrets.MAVEN_PASSWORD}}"}]'
 
       - name: Extract version from tag
         id: extract_version
