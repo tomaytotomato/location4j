@@ -22,6 +22,8 @@ jobs:
 
       - name: Setup Maven Settings
         uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: '[{"id": "central", "username": "${{MAVEN_USERNAME}}", "password": "${{MAVEN_PASSWORD}}"}]'
 
       - name: Extract version from tag
         id: extract_version
@@ -38,15 +40,3 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#      - name: Create GitHub Release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ github.ref }}
-#          release_name: Release ${{ github.ref }}
-#          body: |
-#            Release notes for ${{ github.ref }}.
-#          draft: false
-#          prerelease: false
