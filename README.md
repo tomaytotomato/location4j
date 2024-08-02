@@ -68,11 +68,11 @@ Here is an overview of the core functionality that location4j offers
 | Find City by City Id         | ✅         | City     |
 | Find Cities by City name     | ✅         | City     |
 
-🟢 location4j can parse free text strings with or without punctuation or capitalisation
-
-e.g.
+🟢 location4j can parse free text strings with or without punctuation or capitalisation e.g.
 > San Francisco, CA, USA
+> 
 > ca united states san francisco
+> 
 > US, San Francisco, california
 
 🔴 location4j cannot find a location based on a small town, street, latitude/longitude or
@@ -163,26 +163,15 @@ public class LocationSearchServiceExample {
 
 ## Motivation 🌱
 
-Parsing location data efficiently is crucial for many applications, yet it can be complex and time-consuming. Third-party services like Google Location API can be costly, and using large language models can introduce significant latency. location4j offers a practical solution with its own dataset, enabling fast and cost-effective geographical lookups. It ensures your application can handle location data accurately without the overhead of external dependencies.
-Location data is very useful to have and provide when creating datasets for analysis, or APIs for
-web/mobile.
+Parsing location data efficiently is crucial for many applications, yet it can be complex and time-consuming. 
 
-However trying to parse this data in a text format can be very time consuming and frustrating.
+Third-party services like Google Location API can be costly, and using large language models can introduce significant latency. 
 
-One solution is to use a third party location service like Google's Location API, but this can
-become very expensive
-when handling lots of data.
+location4j offers a practical solution with its own dataset, enabling fast and cost-effective geographical lookups to a city/town level (which is sufficient in most cases).
 
-Another option would be to use a Large Language Model like ChatGPT or Llama, however the latency in
-processing data
-can be significant.
+This allows applications to be built without another external dependency and the overheads that come with it.
 
-Most of the times locations need to be detailed to a city.
-
-Therefore I found a dataset for this information and created this library to provide this
-functionality.
-
-I may add other functionality in the future if needed.
+I may add other functionality in the future if needed e.g. geolocation to nearest place, geofencing etc.
 
 ## Credits 🙏
 
