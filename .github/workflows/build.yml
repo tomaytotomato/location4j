@@ -46,7 +46,7 @@ jobs:
       - name: Build with Maven
         run: mvn verify
         env:
-          MAVEN_GPG_PASSPHRASE: $${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Run SonarCloud Scan
         env:
