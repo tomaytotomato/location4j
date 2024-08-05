@@ -43,11 +43,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: List keys
-        run: gpg -K
-
       - name: Build with Maven
-        run: mvn --batch-mode clean verify
+        run: mvn verify
 
       - name: Run SonarCloud Scan
         env:
