@@ -77,24 +77,9 @@ Here is an overview of the core functionality that location4j offers
 🔴 location4j cannot find a location based on a small town, street, latitude/longitude or
 zipcode/postcode
 
-## Getting Started 🚀
+## Setup 🚀
 
-Get the latest version of the location4j library by adding it to your Maven or Gradle project.
-
-Add the Github Maven Repository to your projects pom.xml
-
-```xml
-
-<repositories>
-  <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/tomaytotomato/location4j</url>
-  </repository>
-</repositories>
-
-```
-
-Then add the latest version of location4j
+Get the latest version of the location4j library by adding it to your Maven pom.xml
 
 ```xml
 
@@ -103,11 +88,16 @@ Then add the latest version of location4j
   <artifactId>location4j</artifactId>
   <version>1.0.0</version>
 </dependency>
-
-
 ```
 
-LocationService
+**Gradle**
+```gradle
+compile "com.tomaytotomato:location4j:1.0.0"
+```
+
+## Examples
+
+**Lookup countries**
 
 ```java
 
@@ -137,7 +127,7 @@ public class LocationServiceExample {
 
 ```
 
-SearchLocationService 
+**Search locations**
 
 ```java
 
