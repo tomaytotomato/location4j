@@ -8,7 +8,7 @@
     <artifactId>location4j-parent</artifactId>
     <version>1.0.0</version>
   </parent>
-
+  <description>${parent.description}</description>
   <artifactId>location4j</artifactId>
   <version>1.0.0</version>
 
