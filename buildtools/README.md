@@ -1,6 +1,7 @@
-# location4j Tools
+# location4j Build Tools
 
-The location4j Tools module is a utility for developing the dataset. 
+The location4j build tools module is a utility maven module for developing the dataset.
+
 This module is responsible for converting open-source JSON data into a binary format that the location4j library can efficiently utilize.
 
 Note: it is not included in the released version of the library!
