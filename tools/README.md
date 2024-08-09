@@ -1,9 +1,9 @@
-# location4j - Tool
+# location4j Tools
 
-This is the tool module, it is not included in the library.
+The location4j Tools module is a utility for developing the dataset. 
+This module is responsible for converting open-source JSON data into a binary format that the location4j library can efficiently utilize.
 
-It is used to prepare the data used by location4j by converting it from a JSON format to binary etc.
-
+Note: it is not included in the released version of the library!
 
 ## How to build a new location4j data binary
 
