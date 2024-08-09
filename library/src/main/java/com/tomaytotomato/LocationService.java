@@ -11,11 +11,13 @@ import com.tomaytotomato.usecase.FindCity;
 import com.tomaytotomato.usecase.FindCountry;
 import com.tomaytotomato.usecase.FindState;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This class provides simple lookups for Country, State and City information.
@@ -174,9 +176,9 @@ public class LocationService implements FindCountry, FindState, FindCity {
       return stateNameToStatesMap.get(stateName).stream().map(state -> findCountryById(state.getCountryId()))
           .filter(Optional::isPresent)
           .map(Optional::get)
-          .toList();
+          .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     } else {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
   }
 
@@ -197,9 +199,9 @@ public class LocationService implements FindCountry, FindState, FindCity {
     }
     stateName = textNormaliser.normalise(stateName);
     if (stateNameToStatesMap.containsKey(stateName)) {
-      return stateNameToStatesMap.get(stateName);
+      return Collections.unmodifiableList(stateNameToStatesMap.get(stateName));
     } else {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
   }
 
@@ -210,9 +212,9 @@ public class LocationService implements FindCountry, FindState, FindCity {
     }
     stateCode = textNormaliser.normalise(stateCode);
     if (stateCodeToStatesMap.containsKey(stateCode)) {
-      return stateCodeToStatesMap.get(stateCode);
+      return Collections.unmodifiableList(stateCodeToStatesMap.get(stateCode));
     } else {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
   }
 
@@ -226,7 +228,8 @@ public class LocationService implements FindCountry, FindState, FindCity {
 
   @Override
   public List<City> findAllCities() {
-    return cityNameToCitiesMap.values().stream().flatMap(List::stream).toList();
+    return cityNameToCitiesMap.values().stream().flatMap(List::stream).collect(
+        Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
   }
 
   @Override
@@ -236,9 +239,9 @@ public class LocationService implements FindCountry, FindState, FindCity {
     }
     cityName = textNormaliser.normalise(cityName);
     if (cityNameToCitiesMap.containsKey(cityName)) {
-      return cityNameToCitiesMap.get(cityName);
+      return Collections.unmodifiableList(cityNameToCitiesMap.get(cityName));
     } else {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
   }
 }

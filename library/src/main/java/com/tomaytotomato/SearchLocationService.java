@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 
 /**
  * Provides search functionality to find a Country, State or City based on text input
- *
  */
 public class SearchLocationService implements SearchLocation {
 
