@@ -110,28 +110,30 @@ class FindCountryTest {
   }
 
 
-  @DisplayName("Find Country By Native Name, when country name is null or blank, then throw exception")
+  @DisplayName("Find Country By Localised Name, when country name is null or blank, then throw exception")
   @Test
   void findCountryByNativeName_WhenNameIsNull_ThenThrowException() {
-    assertThatThrownBy(() -> locationService.findCountryByNativeName(null))
+    assertThatThrownBy(() -> locationService.findCountryByLocalisedName(null))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Country Native Name cannot be null or empty");
+        .hasMessage("Country Localised Name cannot be null or empty");
   }
 
 
-  @DisplayName("Find Country By Native Name, when native name exists then return country")
+  @DisplayName("Find Country By Localised Name, when name exists then return country")
   @ParameterizedTest
   @CsvSource({
       "United Kingdom, United Kingdom",
       "Cote D'Ivoire, Ivory Coast",
       "Deutschland, Germany",
       "Nederland, Netherlands",
-
+      "Belgique, Belgium",
+      "Belgio, Belgium",
+      "벨기에, Belgium"
   })
-  void findCountryByNativeName_WhenNativeNameExists_ThenReturnCountry(String nativeName, String expectedCountryName) {
+  void findCountryByNativeName_WhenNativeNameExists_ThenReturnCountry(String localisedName, String expectedCountryName) {
 
     // When
-    var result = locationService.findCountryByNativeName(nativeName);
+    var result = locationService.findCountryByLocalisedName(localisedName);
 
     // Then
     assertThat(result).isNotEmpty().get().extracting("name").isEqualTo(expectedCountryName);

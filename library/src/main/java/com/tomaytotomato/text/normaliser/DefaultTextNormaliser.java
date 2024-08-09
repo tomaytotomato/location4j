@@ -2,6 +2,9 @@ package com.tomaytotomato.text.normaliser;
 
 import java.util.Objects;
 
+/**
+ * Default text normaliser, lowercases text, removes unnecessary punctuation characters and spaces
+ */
 public class DefaultTextNormaliser implements TextNormaliser {
 
   @Override

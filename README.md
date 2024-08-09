@@ -47,25 +47,22 @@ public class Main {
 
 ```
 
-## What can location4j do?
+| Feature                        | Supported | Object   | Example                                                                 |
+|--------------------------------|-----------|----------|-------------------------------------------------------------------------|
+| Search (free text)             | ✅         | Location | `search("Canada, Alberta")` -> `[Location("Alberta", "Canada")]`       |
+| Find All Countries             | ✅         | Country  | `findAllCountries()` -> `[Country("Belgium"), Country("Canada"), ...]` |
+| Find Country by Id             | ✅         | Country  | `findCountryById(1)` -> `Optional[Country("Afghanistan")]`             |
+| Find Country by ISO2 code      | ✅         | Country  | `findCountryByISO2Code("CA")` -> `Optional[Country("Canada")]`         |
+| Find Country by ISO3 code      | ✅         | Country  | `findCountryByISO3Code("CAN")` -> `Optional[Country("Canada")]`        |
+| Find Country by Name           | ✅         | Country  | `findCountryByName("Canada")` -> `Optional[Country("Canada")]`         |
+| Find Country by Localised name | ✅         | Country  | `findCountryByLocalisedName("Belgique")` -> `Optional[Country("Belgium")]` |
+| Find Countries by State name   | ✅         | Country  | `findAllCountriesByStateName("Texas")` -> `[Country("USA")]`           |
+| Find States by State name      | ✅         | State    | `findAllStatesByStateName("Texas")` -> `[State("Texas", "USA")]`       |
+| Find State by State Id         | ✅         | State    | `findStateById(5)` -> `Optional[State("California", "USA")]`           |
+| Find States by State code      | ✅         | State    | `findAllStatesByStateCode("CA")` -> `[State("California", "USA")]`     |
+| Find City by City Id           | ✅         | City     | `findCityById(10)` -> `Optional[City("Los Angeles", "California")]`    |
+| Find Cities by City name       | ✅         | City     | `findAllCitiesByCityName("San Francisco")` -> `[City("San Francisco", "California")]` |
 
-Here is an overview of the core functionality that location4j offers
-
-| Feature                      | Supported | Object   |
-|------------------------------|-----------|----------|
-| Search (free text)           | ✅         | Location |
-| Find All Countries           | ✅         | Country  |
-| Find Country by Id           | ✅         | Country  |
-| Find Country by ISO2 code    | ✅         | Country  |
-| Find Country by ISO3 code    | ✅         | Country  |
-| Find Country by name         | ✅         | Country  |
-| Find Country by Native name  | ✅         | Country  |
-| Find Countries by State name | ✅         | Country  |
-| Find States by State name    | ✅         | State    |
-| Find State by State Id       | ✅         | State    |
-| Find States by State code    | ✅         | State    |
-| Find City by City Id         | ✅         | City     |
-| Find Cities by City name     | ✅         | City     |
 
 🟢 location4j can parse free text strings with or without punctuation or capitalisation e.g.
 > San Francisco, CA, USA

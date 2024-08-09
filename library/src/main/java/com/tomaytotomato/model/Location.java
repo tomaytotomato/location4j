@@ -2,6 +2,13 @@ package com.tomaytotomato.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a location result class, used for returning information on a location search.
+ * <p>
+ * This class provides methods to access details of a location, including its geographic
+ * coordinates, country, state, and city information.
+ * </p>
+ */
 public class Location {
 
   private String countryName;
@@ -17,9 +24,28 @@ public class Location {
   private BigDecimal latitude;
   private BigDecimal longitude;
 
+  /**
+   * Default constructor for Location.
+   */
   public Location() {
   }
 
+  /**
+   * Constructs a new Location with the specified attributes.
+   *
+   * @param countryName the name of the country
+   * @param countryId the unique identifier of the country
+   * @param countryIso2Code the ISO 3166-1 alpha-2 code of the country
+   * @param countryIso3Code the ISO 3166-1 alpha-3 code of the country
+   * @param state the name of the state
+   * @param stateId the unique identifier of the state
+   * @param stateCode the code of the state
+   * @param stateName the full name of the state
+   * @param city the name of the city
+   * @param cityId the unique identifier of the city
+   * @param latitude the latitude of the location
+   * @param longitude the longitude of the location
+   */
   public Location(String countryName, Integer countryId, String countryIso2Code,
       String countryIso3Code, String state, Integer stateId, String stateCode, String stateName, String city,
       Integer cityId, BigDecimal latitude, BigDecimal longitude) {
@@ -218,6 +244,5 @@ public class Location {
       return new Location(countryName, countryId, countryIso2Code, countryIso3Code, state, stateId,
           stateCode, stateName, city, cityId, latitude, longitude);
     }
-
   }
 }
