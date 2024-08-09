@@ -17,6 +17,32 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>tomaytotomato</id>
+      <name>Bruce Taylor</name>
+      <email>dev@tomaytotomato.com</email>
+    </developer>
+  </developers>
+
+  <url>https://github.com/tomaytotomato/location4j</url>
+
+  <scm>
+    <connection>scm:git:https://github.com/tomaytotomato/location4j.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:tomaytotomato/location4j.git
+    </developerConnection>
+    <url>https://github.com/tomaytotomato/location4j</url>
+  </scm>
+
   <build>
     <plugins>
       <plugin>
