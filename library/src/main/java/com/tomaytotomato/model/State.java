@@ -5,6 +5,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a state data class.
+ * <p>
+ * This class provides methods to access state details, including its geographic coordinates,
+ * country association, and the list of cities within the state.
+ * </p>
+ */
 public class State implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -21,8 +28,26 @@ public class State implements Serializable {
   private BigDecimal latitude;
   private BigDecimal longitude;
 
+  /**
+   * Default constructor for State.
+   */
   State() {}
 
+  /**
+   * Constructs a new State with the specified attributes.
+   *
+   * @param id the unique identifier of the state
+   * @param countryId the unique identifier of the country associated with the state
+   * @param countryName the name of the country associated with the state
+   * @param countryIso2Code the ISO 3166-1 alpha-2 code of the country
+   * @param countryIso3Code the ISO 3166-1 alpha-3 code of the country
+   * @param name the name of the state
+   * @param type the type or classification of the state (e.g., province, region)
+   * @param stateCode the code of the state
+   * @param cities the list of cities within the state
+   * @param latitude the latitude of the state's geographic center
+   * @param longitude the longitude of the state's geographic center
+   */
   public State(Integer id, Integer countryId, String countryName, String countryIso2Code,
       String countryIso3Code, String name, String type, String stateCode, List<City> cities,
       BigDecimal latitude, BigDecimal longitude) {
@@ -39,94 +64,210 @@ public class State implements Serializable {
     this.longitude = longitude;
   }
 
+  /**
+   * Gets the unique identifier of the state.
+   *
+   * @return the state's unique ID
+   */
   public Integer getId() {
     return id;
   }
 
+  /**
+   * Sets the unique identifier of the state.
+   *
+   * @param id the unique ID to set for the state
+   */
   public void setId(Integer id) {
     this.id = id;
   }
 
+  /**
+   * Gets the unique identifier of the country associated with the state.
+   *
+   * @return the country's unique ID
+   */
   public Integer getCountryId() {
     return countryId;
   }
 
+  /**
+   * Sets the unique identifier of the country associated with the state.
+   *
+   * @param countryId the unique ID to set for the country
+   */
   public void setCountryId(Integer countryId) {
     this.countryId = countryId;
   }
 
+  /**
+   * Gets the name of the country associated with the state.
+   *
+   * @return the country's name
+   */
   public String getCountryName() {
     return countryName;
   }
 
+  /**
+   * Sets the name of the country associated with the state.
+   *
+   * @param countryName the name to set for the country
+   */
   public void setCountryName(String countryName) {
     this.countryName = countryName;
   }
 
+  /**
+   * Gets the ISO 3166-1 alpha-2 code of the country associated with the state.
+   *
+   * @return the country's ISO2 code
+   */
   public String getCountryIso2Code() {
     return countryIso2Code;
   }
 
+  /**
+   * Sets the ISO 3166-1 alpha-2 code of the country associated with the state.
+   *
+   * @param countryIso2Code the ISO2 code to set for the country
+   */
   public void setCountryIso2Code(String countryIso2Code) {
     this.countryIso2Code = countryIso2Code;
   }
 
+  /**
+   * Gets the ISO 3166-1 alpha-3 code of the country associated with the state.
+   *
+   * @return the country's ISO3 code
+   */
   public String getCountryIso3Code() {
     return countryIso3Code;
   }
 
+  /**
+   * Sets the ISO 3166-1 alpha-3 code of the country associated with the state.
+   *
+   * @param countryIso3Code the ISO3 code to set for the country
+   */
   public void setCountryIso3Code(String countryIso3Code) {
     this.countryIso3Code = countryIso3Code;
   }
 
+  /**
+   * Gets the name of the state.
+   *
+   * @return the name of the state
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Sets the name of the state.
+   *
+   * @param name the name to set for the state
+   */
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * Gets the type or classification of the state (e.g., province, region).
+   *
+   * @return the type of the state
+   */
   public String getType() {
     return type;
   }
 
+  /**
+   * Sets the type or classification of the state.
+   *
+   * @param type the type to set for the state
+   */
   public void setType(String type) {
     this.type = type;
   }
 
+  /**
+   * Gets the code of the state.
+   *
+   * @return the state's code
+   */
   public String getStateCode() {
     return stateCode;
   }
 
+  /**
+   * Sets the code of the state.
+   *
+   * @param stateCode the code to set for the state
+   */
   public void setStateCode(String stateCode) {
     this.stateCode = stateCode;
   }
 
+  /**
+   * Gets the list of cities within the state.
+   *
+   * @return a list of cities in the state
+   */
   public List<City> getCities() {
     return cities;
   }
 
+  /**
+   * Sets the list of cities within the state.
+   *
+   * @param cities the list of cities to set for the state
+   */
   public void setCities(List<City> cities) {
     this.cities = cities;
   }
 
+  /**
+   * Gets the latitude of the state's geographic center.
+   *
+   * @return the state's latitude
+   */
   public BigDecimal getLatitude() {
     return latitude;
   }
 
+  /**
+   * Sets the latitude of the state's geographic center.
+   *
+   * @param latitude the latitude to set for the state
+   */
   public void setLatitude(BigDecimal latitude) {
     this.latitude = latitude;
   }
 
+  /**
+   * Gets the longitude of the state's geographic center.
+   *
+   * @return the state's longitude
+   */
   public BigDecimal getLongitude() {
     return longitude;
   }
 
+  /**
+   * Sets the longitude of the state's geographic center.
+   *
+   * @param longitude the longitude to set for the state
+   */
   public void setLongitude(BigDecimal longitude) {
     this.longitude = longitude;
   }
 
+  /**
+   * Checks whether two state objects are equal based on their attributes.
+   *
+   * @param o the object to compare with
+   * @return true if the objects are equal, false otherwise
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -147,6 +288,11 @@ public class State implements Serializable {
         && Objects.equals(getLongitude(), state.getLongitude());
   }
 
+  /**
+   * Computes the hash code for the state object based on its attributes.
+   *
+   * @return the hash code of the state
+   */
   @Override
   public int hashCode() {
     return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),

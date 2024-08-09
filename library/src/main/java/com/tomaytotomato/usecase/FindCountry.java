@@ -37,7 +37,6 @@ public interface FindCountry {
    *   <li>"Belgique" (French)</li>
    *   <li>"Belgium" (English)</li>
    * </ul>
-   * </p>
    *
    * @param localisedName the localized or native name of the country
    * @return an Optional containing the Country if found, otherwise an empty Optional

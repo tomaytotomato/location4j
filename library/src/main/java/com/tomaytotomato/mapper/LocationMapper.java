@@ -5,6 +5,9 @@ import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
 import com.tomaytotomato.model.State;
 
+/**
+ * Converts {@link Country}, {@link State} and {@link City} objects into {@link Location} objects
+ */
 public interface LocationMapper {
 
   Location toLocation(Country country);
