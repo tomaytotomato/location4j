@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The default loader for retrieving Countries from the DEFAULT_FILE located in the location4j.jar
+ *
+ */
 public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
 
-  private static final String DEFAULT_FILE = "location4j.bin";
+  private static final String DEFAULT_FILE = "/location4j.bin";
   private final List<Country> countries = new ArrayList<>();
 
   /**
@@ -19,7 +23,7 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
    */
   public DefaultCountriesDataLoaderImpl() {
     var logger = Logger.getLogger(this.getClass().getName());
-    try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE)) {
+    try (InputStream inputStream = getClass().getResourceAsStream(DEFAULT_FILE)) {
       logger.info("Attempting to load countries from " + DEFAULT_FILE);
       if (inputStream == null) {
         throw new IllegalArgumentException("File not found: " + DEFAULT_FILE);
@@ -34,7 +38,6 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
   private void loadLocationsFromBinary(InputStream inputStream, Logger logger)
       throws IOException, ClassNotFoundException {
     try (var objectInputStream = new ObjectInputStream(inputStream)) {
-      // Read the list of countries from the binary file
       List<Country> loadedCountries = (List<Country>) objectInputStream.readObject();
       this.countries.addAll(loadedCountries);
       logger.info("Successfully loaded countries binary file");
