@@ -6,9 +6,14 @@
 
   <groupId>com.tomaytotomato</groupId>
   <artifactId>location4j</artifactId>
-  <version>1.0.0</version> <!-- this version is overridden by Github Action check release.yml !-->
+  <version>1.0.0</version>
+  <packaging>pom</packaging> <!-- this version is overridden by Github Action check release.yml !-->
   <description>A location service for Java, identify a city, state or country by multiple terms.
   </description>
+  <modules>
+    <module>tools</module>
+    <module>library</module>
+  </modules>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -16,7 +21,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit-jupiter.version>5.10.3</junit-jupiter.version>
     <assertj-core.version>3.26.3</assertj-core.version>
-    <jackson-core.version>2.17.2</jackson-core.version>
     <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <sonar.organization>tomaytotomato</sonar.organization>
@@ -66,21 +70,6 @@
   </scm>
 
   <dependencies>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>${jackson-core.version}</version>
-    </dependency>
     <!-- Test Dependencies  -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
