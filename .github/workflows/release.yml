@@ -32,15 +32,15 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Build with Maven
-        run: mvn clean verify -pl library -am
+        run: mvn clean verify
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Package with Maven
-        run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} -pl library -am && mvn package -DskipTests -pl library -am
+        run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} && mvn package -DskipTests
 
       - name: Deploy Github and Maven Central
-        run: mvn deploy -pl library -am -Prelease
+        run: mvn deploy
         env:
           GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
