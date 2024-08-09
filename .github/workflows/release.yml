@@ -40,7 +40,7 @@ jobs:
         run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} && mvn package -DskipTests
 
       - name: Deploy Github and Maven Central
-        run: mvn deploy
+        run: mvn deploy -Prelease
         env:
           GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
