@@ -121,12 +121,12 @@ public class LocationService implements FindCountry, FindState, FindCity {
   }
 
   @Override
-  public Optional<Country> findCountryByNativeName(String nativeName) {
-    if (Objects.isNull(nativeName) || nativeName.isEmpty()) {
+  public Optional<Country> findCountryByLocalisedName(String localisedName) {
+    if (Objects.isNull(localisedName) || localisedName.isEmpty()) {
       throw new IllegalArgumentException("Country Native Name cannot be null or empty");
     }
-    nativeName = textNormaliser.normalise(nativeName);
-    return Optional.ofNullable(countryNativeNameToCountry.get(nativeName));
+    localisedName = textNormaliser.normalise(localisedName);
+    return Optional.ofNullable(countryNativeNameToCountry.get(localisedName));
   }
 
   @Override
