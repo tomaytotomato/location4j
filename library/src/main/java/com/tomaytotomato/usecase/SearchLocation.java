@@ -27,7 +27,6 @@ public interface SearchLocation {
    *   <li>"san Francisco United States"</li>
    * </ul>
    * The method normalizes and tokenizes the input to find matching locations.
-   * </p>
    *
    * @param text the free-text input used to search for locations
    * @return a List of Location objects that match the input text

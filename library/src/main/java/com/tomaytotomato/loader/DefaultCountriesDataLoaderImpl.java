@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 /**
  * The default loader for retrieving Countries from the DEFAULT_FILE located in the location4j.jar
- *
  */
 public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
 
