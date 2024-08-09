@@ -32,210 +32,94 @@ public class City implements Serializable {
    */
   City() {}
 
-  /**
-   * Gets the unique identifier of the city.
-   *
-   * @return the city's unique ID
-   */
   public Integer getId() {
     return id;
   }
 
-  /**
-   * Sets the unique identifier of the city.
-   *
-   * @param id the unique ID to set for the city
-   */
   public void setId(Integer id) {
     this.id = id;
   }
 
-  /**
-   * Gets the unique identifier of the country associated with the city.
-   *
-   * @return the country's unique ID
-   */
   public Integer getCountryId() {
     return countryId;
   }
 
-  /**
-   * Sets the unique identifier of the country associated with the city.
-   *
-   * @param countryId the unique ID to set for the country
-   */
   public void setCountryId(Integer countryId) {
     this.countryId = countryId;
   }
 
-  /**
-   * Gets the name of the country associated with the city.
-   *
-   * @return the country's name
-   */
   public String getCountryName() {
     return countryName;
   }
 
-  /**
-   * Sets the name of the country associated with the city.
-   *
-   * @param countryName the name to set for the country
-   */
   public void setCountryName(String countryName) {
     this.countryName = countryName;
   }
 
-  /**
-   * Gets the ISO 3166-1 alpha-2 code of the country associated with the city.
-   *
-   * @return the country's ISO2 code
-   */
   public String getCountryIso2Code() {
     return countryIso2Code;
   }
 
-  /**
-   * Sets the ISO 3166-1 alpha-2 code of the country associated with the city.
-   *
-   * @param countryIso2Code the ISO2 code to set for the country
-   */
   public void setCountryIso2Code(String countryIso2Code) {
     this.countryIso2Code = countryIso2Code;
   }
 
-  /**
-   * Gets the ISO 3166-1 alpha-3 code of the country associated with the city.
-   *
-   * @return the country's ISO3 code
-   */
   public String getCountryIso3Code() {
     return countryIso3Code;
   }
 
-  /**
-   * Sets the ISO 3166-1 alpha-3 code of the country associated with the city.
-   *
-   * @param countryIso3Code the ISO3 code to set for the country
-   */
   public void setCountryIso3Code(String countryIso3Code) {
     this.countryIso3Code = countryIso3Code;
   }
 
-  /**
-   * Gets the unique identifier of the state associated with the city.
-   *
-   * @return the state's unique ID
-   */
   public Integer getStateId() {
     return stateId;
   }
 
-  /**
-   * Sets the unique identifier of the state associated with the city.
-   *
-   * @param stateId the unique ID to set for the state
-   */
   public void setStateId(Integer stateId) {
     this.stateId = stateId;
   }
 
-  /**
-   * Gets the code of the state associated with the city.
-   *
-   * @return the state's code
-   */
   public String getStateCode() {
     return stateCode;
   }
 
-  /**
-   * Sets the code of the state associated with the city.
-   *
-   * @param stateCode the code to set for the state
-   */
   public void setStateCode(String stateCode) {
     this.stateCode = stateCode;
   }
 
-  /**
-   * Gets the name of the state associated with the city.
-   *
-   * @return the state's name
-   */
   public String getStateName() {
     return stateName;
   }
 
-  /**
-   * Sets the name of the state associated with the city.
-   *
-   * @param stateName the name to set for the state
-   */
   public void setStateName(String stateName) {
     this.stateName = stateName;
   }
 
-  /**
-   * Gets the name of the city.
-   *
-   * @return the name of the city
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * Sets the name of the city.
-   *
-   * @param name the name to set for the city
-   */
   public void setName(String name) {
     this.name = name;
   }
 
-  /**
-   * Gets the latitude of the city.
-   *
-   * @return the city's latitude
-   */
   public BigDecimal getLatitude() {
     return latitude;
   }
 
-  /**
-   * Sets the latitude of the city.
-   *
-   * @param latitude the latitude to set for the city
-   */
   public void setLatitude(BigDecimal latitude) {
     this.latitude = latitude;
   }
 
-  /**
-   * Gets the longitude of the city.
-   *
-   * @return the city's longitude
-   */
   public BigDecimal getLongitude() {
     return longitude;
   }
 
-  /**
-   * Sets the longitude of the city.
-   *
-   * @param longitude the longitude to set for the city
-   */
   public void setLongitude(BigDecimal longitude) {
     this.longitude = longitude;
   }
 
-  /**
-   * Checks whether two city objects are equal based on their attributes.
-   *
-   * @param o the object to compare with
-   * @return true if the objects are equal, false otherwise
-   */
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -256,11 +140,6 @@ public class City implements Serializable {
         getLongitude(), city.getLongitude());
   }
 
-  /**
-   * Computes the hash code for the city object based on its attributes.
-   *
-   * @return the hash code of the city
-   */
   @Override
   public int hashCode() {
     return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
