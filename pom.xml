@@ -37,15 +37,6 @@
     <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>${env.GITHUB_USERNAME}</name>
-      <!--suppress UnresolvedMavenProperty -->
-      <url>https://maven.pkg.github.com/${env.GITHUB_USERNAME}/${env.GITHUB_REPOSITORY}</url>
-    </repository>
-  </distributionManagement>
-
   <licenses>
     <license>
       <name>MIT License</name>
