@@ -10,6 +10,7 @@ import com.tomaytotomato.text.normaliser.TextNormaliser;
 import com.tomaytotomato.usecase.FindCity;
 import com.tomaytotomato.usecase.FindCountry;
 import com.tomaytotomato.usecase.FindState;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -150,7 +151,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
   }
 
   public List<Country> findAllCountries() {
-    return countries;
+    return Collections.unmodifiableList(countries);
   }
 
   /**
