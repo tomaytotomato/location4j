@@ -183,4 +183,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>library</module>
+      </modules>
+    </profile>
+  </profiles>
+
 </project>
