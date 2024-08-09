@@ -2,11 +2,16 @@ name: Build
 
 on:
   push:
+    branches:
+      - master
     paths:
       - 'library/src/**'
       - 'pom.xml'
       - '.github/**'
+
   pull_request:
+    branches:
+      - master
     paths:
       - 'library/src/**'
       - 'pom.xml'

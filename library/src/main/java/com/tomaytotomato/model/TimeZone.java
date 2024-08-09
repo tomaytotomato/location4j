@@ -3,6 +3,13 @@ package com.tomaytotomato.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents a timezone data class.
+ * <p>
+ * This class provides methods to access timezone details, including the zone name,
+ * abbreviation, and GMT offset information.
+ * </p>
+ */
 public class TimeZone implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -13,9 +20,21 @@ public class TimeZone implements Serializable {
   private Integer gmtOffset;
   private String gmtOffsetName;
 
+  /**
+   * Default constructor for TimeZone.
+   */
   TimeZone() {
   }
 
+  /**
+   * Constructs a new TimeZone with the specified attributes.
+   *
+   * @param zoneName the name of the timezone
+   * @param abbreviation the abbreviation of the timezone
+   * @param tzName the full name of the timezone
+   * @param gmtOffset the GMT offset in seconds
+   * @param gmtOffsetName the human-readable name for the GMT offset
+   */
   public TimeZone(String zoneName, String abbreviation, String tzName, Integer gmtOffset,
       String gmtOffsetName) {
     this.zoneName = zoneName;

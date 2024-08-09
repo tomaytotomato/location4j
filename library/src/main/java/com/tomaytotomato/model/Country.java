@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Represents a country with various attributes such as name, codes, and geographic information.
+ * <p>
+ * This class provides methods to access country details, including currency, region, and states.
+ * </p>
+ */
 public class Country implements Serializable {
 
   private static final long serialVersionUID = 1L;

@@ -3,7 +3,7 @@ package com.tomaytotomato.aliases;
 import java.util.Map;
 
 /**
- * Allows adding custom aliases for Country, State and City
+ * Allows adding custom aliases for countries, states and cities
  */
 public interface LocationAliases {
 
