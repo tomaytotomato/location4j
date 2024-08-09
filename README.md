@@ -169,5 +169,5 @@ from [dr5shn/countries-states-cities-database](https://github.com/dr5hn/countrie
 
 ## License 📜
 
-[GNU Affero General Public License v3 (AGPL3)](https://choosealicense.com/licenses/agpl-3.0/)
+[MIT License](https://choosealicense.com/licenses/mit/)
 
