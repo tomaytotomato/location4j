@@ -23,7 +23,7 @@ Get the latest version of the location4j library by adding it to your Maven pom.
 <dependency>
   <groupId>com.tomaytotomato</groupId>
   <artifactId>location4j</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
