@@ -16,14 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * This class provides simple lookups for Country, State and City information.
  */
 public class LocationService implements FindCountry, FindState, FindCity {
-
-  private final Logger logger = Logger.getLogger(this.getClass().getPackage().getName() + this.getClass().getName());
 
   private final List<Country> countries;
   /**
