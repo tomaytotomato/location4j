@@ -34,6 +34,7 @@
     <sonar.language>java</sonar.language>
     <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
     <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
   </properties>
 
   <distributionManagement>
@@ -92,6 +93,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
