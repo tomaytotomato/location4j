@@ -31,7 +31,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
    */
   private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
   private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
-  private final Map<String, Country> countryNativeNameToCountry = new HashMap<>();
+  private final Map<String, Country> localisedNameToCountryMap = new HashMap<>();
   private final Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
   private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
   private final Map<Integer, State> stateIdToStateMap = new HashMap<>();
@@ -73,11 +73,10 @@ public class LocationService implements FindCountry, FindState, FindCity {
     countries.forEach(country -> {
       countryIdToCountryMap.put(country.getId(), country);
       countryNameToCountryMap.put(keyMaker(country.getName()), country);
-      if (Objects.isNull(country.getNativeName()) || country.getNativeName().isEmpty()) {
-        logger.warning("Country has null native name, skipping mapping: " + country.getName());
-      } else {
-        countryNativeNameToCountry.put(keyMaker(country.getNativeName()), country);
-      }
+
+      localisedNameToCountryMap.put(keyMaker(country.getNativeName()), country);
+      country.getTranslations().values().stream().map(this::keyMaker)
+          .forEach(translatedName -> localisedNameToCountryMap.put(translatedName, country));
       iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
       iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
 
@@ -123,10 +122,10 @@ public class LocationService implements FindCountry, FindState, FindCity {
   @Override
   public Optional<Country> findCountryByLocalisedName(String localisedName) {
     if (Objects.isNull(localisedName) || localisedName.isEmpty()) {
-      throw new IllegalArgumentException("Country Native Name cannot be null or empty");
+      throw new IllegalArgumentException("Country Localised Name cannot be null or empty");
     }
     localisedName = textNormaliser.normalise(localisedName);
-    return Optional.ofNullable(countryNativeNameToCountry.get(localisedName));
+    return Optional.ofNullable(localisedNameToCountryMap.get(localisedName));
   }
 
   @Override
