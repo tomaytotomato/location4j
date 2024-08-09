@@ -44,102 +44,46 @@ public class TimeZone implements Serializable {
     this.gmtOffsetName = gmtOffsetName;
   }
 
-  /**
-   * Gets the name of the timezone.
-   *
-   * @return the name of the timezone
-   */
   public String getZoneName() {
     return zoneName;
   }
 
-  /**
-   * Sets the name of the timezone.
-   *
-   * @param zoneName the name to set for the timezone
-   */
   public void setZoneName(String zoneName) {
     this.zoneName = zoneName;
   }
 
-  /**
-   * Gets the abbreviation of the timezone.
-   *
-   * @return the abbreviation of the timezone
-   */
   public String getAbbreviation() {
     return abbreviation;
   }
 
-  /**
-   * Sets the abbreviation of the timezone.
-   *
-   * @param abbreviation the abbreviation to set for the timezone
-   */
   public void setAbbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
   }
 
-  /**
-   * Gets the full name of the timezone.
-   *
-   * @return the full name of the timezone
-   */
   public String getTzName() {
     return tzName;
   }
 
-  /**
-   * Sets the full name of the timezone.
-   *
-   * @param tzName the full name to set for the timezone
-   */
   public void setTzName(String tzName) {
     this.tzName = tzName;
   }
 
-  /**
-   * Gets the GMT offset in seconds.
-   *
-   * @return the GMT offset in seconds
-   */
   public Integer getGmtOffset() {
     return gmtOffset;
   }
 
-  /**
-   * Sets the GMT offset in seconds.
-   *
-   * @param gmtOffset the GMT offset to set in seconds
-   */
   public void setGmtOffset(Integer gmtOffset) {
     this.gmtOffset = gmtOffset;
   }
 
-  /**
-   * Gets the human-readable name for the GMT offset.
-   *
-   * @return the name for the GMT offset
-   */
   public String getGmtOffsetName() {
     return gmtOffsetName;
   }
 
-  /**
-   * Sets the human-readable name for the GMT offset.
-   *
-   * @param gmtOffsetName the name to set for the GMT offset
-   */
   public void setGmtOffsetName(String gmtOffsetName) {
     this.gmtOffsetName = gmtOffsetName;
   }
 
-  /**
-   * Checks whether two timezone objects are equal based on their attributes.
-   *
-   * @param o the object to compare with
-   * @return true if the objects are equal, false otherwise
-   */
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -155,11 +99,6 @@ public class TimeZone implements Serializable {
         && Objects.equals(getGmtOffsetName(), timeZone.getGmtOffsetName());
   }
 
-  /**
-   * Computes the hash code for the timezone object based on its attributes.
-   *
-   * @return the hash code of the timezone
-   */
   @Override
   public int hashCode() {
     return Objects.hash(getZoneName(), getAbbreviation(), getTzName(), getGmtOffset(),
