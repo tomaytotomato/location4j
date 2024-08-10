@@ -69,6 +69,9 @@ public class Main {
 
 ```
 
+## Features 🔬
+
+
 | Feature                         | Supported | Object   | Example                                                                         |
 |---------------------------------|-----------|----------|---------------------------------------------------------------------------------|
 | Search (free text)              | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
@@ -100,9 +103,11 @@ types.
 🔴 location4j cannot find a location based on a small town, street, or
 zipcode/postcode.
 
-## Examples
+## More Examples 🧪
 
 **Lookup countries**
+
+For simple lookups the `LocationService` can act like a repository, allow the retrieval of countries, states and city information.
 
 ```java
 
@@ -133,6 +138,8 @@ public class LocationServiceExample {
 ```
 
 **Search locations**
+
+Search any text for a location, the `SearchLocationService` can handle formatted or unformatted text. It will try and find matches against a variety of keywords it has in its dataset.
 
 ```java
 
