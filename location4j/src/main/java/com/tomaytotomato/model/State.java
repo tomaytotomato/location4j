@@ -31,22 +31,23 @@ public class State implements Serializable {
   /**
    * Default constructor for State.
    */
-  State() {}
+  State() {
+  }
 
   /**
    * Constructs a new State with the specified attributes.
    *
-   * @param id the unique identifier of the state
-   * @param countryId the unique identifier of the country associated with the state
-   * @param countryName the name of the country associated with the state
+   * @param id              the unique identifier of the state
+   * @param countryId       the unique identifier of the country associated with the state
+   * @param countryName     the name of the country associated with the state
    * @param countryIso2Code the ISO 3166-1 alpha-2 code of the country
    * @param countryIso3Code the ISO 3166-1 alpha-3 code of the country
-   * @param name the name of the state
-   * @param type the type or classification of the state (e.g., province, region)
-   * @param stateCode the code of the state
-   * @param cities the list of cities within the state
-   * @param latitude the latitude of the state's geographic center
-   * @param longitude the longitude of the state's geographic center
+   * @param name            the name of the state
+   * @param type            the type or classification of the state (e.g., province, region)
+   * @param stateCode       the code of the state
+   * @param cities          the list of cities within the state
+   * @param latitude        the latitude of the state's geographic center
+   * @param longitude       the longitude of the state's geographic center
    */
   public State(Integer id, Integer countryId, String countryName, String countryIso2Code,
       String countryIso3Code, String name, String type, String stateCode, List<City> cities,

@@ -8,6 +8,7 @@ assignees: ''
 ---
 
 **Is the feature related to location lookups**
+
 - Yes / no (if no why would this be a good feature)
 - Would this feature break the location4J API?
 

@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Summary** 
+**Summary**
 
 A two or three sentence description how to make location4j better (easier, faster, robust etc.)
 

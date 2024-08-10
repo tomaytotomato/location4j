@@ -34,7 +34,8 @@ class FindCountryTest {
       "42, Central African Republic, Africa",
       "125, Liechtenstein, Europe",
   })
-  void findCountryById_WhenValidId_ThenReturnCountry(Integer id, String countryName, String region) {
+  void findCountryById_WhenValidId_ThenReturnCountry(Integer id, String countryName,
+      String region) {
     // When
     var result = locationService.findCountryById(id);
 
@@ -42,7 +43,7 @@ class FindCountryTest {
     assertThat(result)
         .isNotEmpty()
         .get()
-        .extracting("name", "region" )
+        .extracting("name", "region")
         .contains(countryName, region);
   }
 
@@ -130,7 +131,8 @@ class FindCountryTest {
       "Belgio, Belgium",
       "벨기에, Belgium"
   })
-  void findCountryByNativeName_WhenNativeNameExists_ThenReturnCountry(String localisedName, String expectedCountryName) {
+  void findCountryByNativeName_WhenNativeNameExists_ThenReturnCountry(String localisedName,
+      String expectedCountryName) {
 
     // When
     var result = locationService.findCountryByLocalisedName(localisedName);

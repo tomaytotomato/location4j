@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>com.tomaytotomato</groupId>
   <artifactId>location4j-parent</artifactId>
-  <version>1.0.0</version>
-  <packaging>pom</packaging>
-  <!-- this version is overridden by Github Action check release.yml !-->
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <dependencies>
+    <!-- Test Dependencies  -->
+    <dependency>
+      <artifactId>junit-jupiter</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <scope>test</scope>
+      <version>${junit-jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>assertj-core</artifactId>
+      <groupId>org.assertj</groupId>
+      <scope>test</scope>
+      <version>${assertj-core.version}</version>
+    </dependency>
+  </dependencies>
   <description>A location service for Java, identify a city, state or country by multiple terms.
   </description>
   <modules>
@@ -38,6 +59,14 @@
     <spotless.version>2.43.0</spotless.version>
   </properties>
 
+  <developers>
+    <developer>
+      <email>dev@tomaytotomato.com</email>
+      <id>tomaytotomato</id>
+      <name>Bruce Taylor</name>
+    </developer>
+  </developers>
+  <!-- this version is overridden by Github Action check release.yml !-->
   <distributionManagement>
     <repository>
       <id>github</id>
@@ -46,24 +75,45 @@
       <url>https://maven.pkg.github.com/${env.GITHUB_USERNAME}/${env.GITHUB_REPOSITORY}</url>
     </repository>
   </distributionManagement>
+  <groupId>com.tomaytotomato</groupId>
 
   <licenses>
     <license>
+      <distribution>repo</distribution>
       <name>MIT License</name>
       <url>https://opensource.org/licenses/MIT</url>
-      <distribution>repo</distribution>
     </license>
   </licenses>
 
-  <developers>
-    <developer>
-      <id>tomaytotomato</id>
-      <name>Bruce Taylor</name>
-      <email>dev@tomaytotomato.com</email>
-    </developer>
-  </developers>
+  <modelVersion>4.0.0</modelVersion>
 
-  <url>https://github.com/tomaytotomato/location4j</url>
+  <modules>
+    <module>buildtools</module>
+    <module>location4j</module>
+  </modules>
+
+  <packaging>pom</packaging>
+
+  <properties>
+    <assertj-core.version>3.26.3</assertj-core.version>
+    <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+    <junit-jupiter.version>5.10.3</junit-jupiter.version>
+    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+    <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+    <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.language>java</sonar.language>
+    <sonar.organization>tomaytotomato</sonar.organization>
+  </properties>
 
   <scm>
     <connection>scm:git:https://github.com/tomaytotomato/location4j.git</connection>
@@ -72,21 +122,7 @@
     <url>https://github.com/tomaytotomato/location4j</url>
   </scm>
 
-  <dependencies>
-    <!-- Test Dependencies  -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junit-jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj-core.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <url>https://github.com/tomaytotomato/location4j</url>
 
   <build>
     <pluginManagement>
@@ -137,4 +173,6 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <version>1.0.0</version>
 </project>
