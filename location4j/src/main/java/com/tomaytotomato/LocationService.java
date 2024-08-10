@@ -289,7 +289,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
         double[] distance = {Double.MAX_VALUE};
         City[] city = {null};
         cities.forEach(
-                (it) -> {
+                it ->
                     it.forEach(
                             (c -> {
                                 var d =
@@ -302,8 +302,8 @@ public class LocationService implements FindCountry, FindState, FindCity {
                                     city[0] = c;
                                     distance[0] = d;
                                 }
-                            }));
-                });
+                            }))
+                );
         return city[0];
     }
 }
