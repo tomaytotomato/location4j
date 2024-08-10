@@ -31,7 +31,7 @@ Get the latest version of the location4j library by adding it to your Maven pom.
 **Gradle**
 
 ```gradle
-compile "com.tomaytotomato:location4j:1.0.3"
+implementation group: 'com.tomaytotomato', name: 'location4j', version: '1.0.3'
 ```
 
 ## Quick Example 🏗
