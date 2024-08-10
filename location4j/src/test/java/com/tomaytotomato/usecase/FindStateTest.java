@@ -86,7 +86,8 @@ class FindStateTest {
     // When Then
     assertThatThrownBy(() -> locationService.findAllStatesByStateName("AT"))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("State Name is too short, the shortest State with name is 3 characters (Goa, India)");
+        .hasMessage(
+            "State Name is too short, the shortest State with name is 3 characters (Goa, India)");
   }
 
   @DisplayName("Find States By Name, when state name is found then return list of states")
@@ -98,7 +99,8 @@ class FindStateTest {
       "Saxony,  1",
       "Campania,  1"
   })
-  void findStatesByStateName_WhenStateNameExists_ThenReturnAllStates(String stateName, Integer expectedCount) {
+  void findStatesByStateName_WhenStateNameExists_ThenReturnAllStates(String stateName,
+      Integer expectedCount) {
 
     // When
     var results = locationService.findAllStatesByStateName(stateName);
@@ -135,7 +137,8 @@ class FindStateTest {
       "SP,  3",
       "SCO,  1"
   })
-  void findStatesByStateCode_WhenStateCodeExists_ThenReturnAllStates(String stateCode, Integer expectedCount) {
+  void findStatesByStateCode_WhenStateCodeExists_ThenReturnAllStates(String stateCode,
+      Integer expectedCount) {
 
     // When
     var results = locationService.findAllStatesByStateCode(stateCode);

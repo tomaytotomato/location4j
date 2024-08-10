@@ -101,7 +101,8 @@ class FindCityTest {
       "Manchester,  16",
       "San Francisco, 30"
   })
-  void findAllCitiesByCityName_WhenStateNameExists_ThenReturnStates(String cityName, Integer expectedCount) {
+  void findAllCitiesByCityName_WhenStateNameExists_ThenReturnStates(String cityName,
+      Integer expectedCount) {
 
     // When
     var results = locationService.findAllCitiesByCityName(cityName);

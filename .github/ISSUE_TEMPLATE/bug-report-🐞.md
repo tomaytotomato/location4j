@@ -7,18 +7,19 @@ assignees: ''
 
 ---
 
-**Bug Summary** 
+**Bug Summary**
 
 A two or three sentence description of the bug
 
 **Reproduction Steps**
+
 - Sample Code
 - What functionality did the bug occur in? (function / method name)?
 - Expected output
 - Was an exception thrown?
 
-
 **Additional Information**
+
 - Java Version
 - OS
 - location4j Version

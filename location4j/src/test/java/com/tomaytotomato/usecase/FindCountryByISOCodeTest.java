@@ -61,7 +61,8 @@ class FindCountryByISOCodeTest {
       "KR, South Korea, Asia, Won",
       "KY, Cayman Islands, Americas, Cayman Islands dollar"
   })
-  void findCountryByISO2Code_WhenValidCodeAndExists_ThenReturnCountry(String iso2Code, String expectedName, String expectedRegion, String expectedCurrencyName) {
+  void findCountryByISO2Code_WhenValidCodeAndExists_ThenReturnCountry(String iso2Code,
+      String expectedName, String expectedRegion, String expectedCurrencyName) {
     // When
     var result = locationService.findCountryByISO2Code(iso2Code);
 
@@ -110,7 +111,8 @@ class FindCountryByISOCodeTest {
       "JPN, Japan, Asia, Japanese yen",
       "AUS, Australia, Oceania, Australian dollar"
   })
-  void findCountryByISO3Code_WhenValidCodeAndExists_ThenReturnCountry(String iso3Code, String expectedName, String expectedRegion, String expectedCurrencyName) {
+  void findCountryByISO3Code_WhenValidCodeAndExists_ThenReturnCountry(String iso3Code,
+      String expectedName, String expectedRegion, String expectedCurrencyName) {
     // When
     var result = locationService.findCountryByISO3Code(iso3Code);
 

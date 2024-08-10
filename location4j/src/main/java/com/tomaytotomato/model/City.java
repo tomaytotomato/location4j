@@ -7,8 +7,8 @@ import java.util.Objects;
 /**
  * Represents a city with various attributes such as name, state, and country.
  * <p>
- * This class provides methods to access city details including geographic coordinates,
- * country and state associations, and other identifiers.
+ * This class provides methods to access city details including geographic coordinates, country and
+ * state associations, and other identifiers.
  * </p>
  */
 public class City implements Serializable {
@@ -30,7 +30,8 @@ public class City implements Serializable {
   /**
    * Default constructor for City.
    */
-  City() {}
+  City() {
+  }
 
   public Integer getId() {
     return id;

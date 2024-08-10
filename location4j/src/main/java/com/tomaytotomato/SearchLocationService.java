@@ -63,13 +63,41 @@ public class SearchLocationService implements SearchLocation {
   }
 
   public SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
-      LocationMapper locationMapper, CountriesDataLoader dataLoader, LocationAliases locationAliases) {
+      LocationMapper locationMapper, CountriesDataLoader dataLoader,
+      LocationAliases locationAliases) {
     this.textTokeniser = textTokeniser;
     this.textNormaliser = textNormaliser;
     this.locationMapper = locationMapper;
     this.locationAliases = locationAliases;
     countries = dataLoader.getCountries();
     buildDataStructures();
+  }
+
+  private static Location buildLocationResult(Country topCountry, State topState, City topCity) {
+    var locationBuilder = Location.builder();
+
+    locationBuilder.countryName(topCountry.getName());
+    locationBuilder.countryId(topCountry.getId());
+    locationBuilder.countryIso2Code(topCountry.getIso2());
+    locationBuilder.countryIso3Code(topCountry.getIso3());
+    locationBuilder.latitude(topCountry.getLatitude());
+    locationBuilder.longitude(topCountry.getLongitude());
+
+    if (!Objects.isNull(topState)) {
+      locationBuilder.stateName(topState.getName());
+      locationBuilder.stateCode(topState.getStateCode());
+      locationBuilder.stateId(topState.getId());
+      locationBuilder.latitude(topState.getLatitude());
+      locationBuilder.longitude(topState.getLongitude());
+    }
+
+    if (!Objects.isNull(topCity)) {
+      locationBuilder.city(topCity.getName());
+      locationBuilder.cityId(topCity.getId());
+      locationBuilder.latitude(topCity.getLatitude());
+      locationBuilder.longitude(topCity.getLongitude());
+    }
+    return locationBuilder.build();
   }
 
   public void buildDataStructures() {
@@ -92,22 +120,22 @@ public class SearchLocationService implements SearchLocation {
       countryNameToCountryMap.put(keyMaker(alias), country);
     });
 
-    locationAliases.getCountryIso2Aliases().forEach((alias,originalKey) -> {
+    locationAliases.getCountryIso2Aliases().forEach((alias, originalKey) -> {
       var country = iso2CodeToCountryMap.get(keyMaker(originalKey));
       countryNameToCountryMap.put(keyMaker(alias), country);
     });
 
-    locationAliases.getCountryIso3Aliases().forEach((alias,originalKey) -> {
+    locationAliases.getCountryIso3Aliases().forEach((alias, originalKey) -> {
       var country = iso3CodeToCountryMap.get(keyMaker(originalKey));
       countryNameToCountryMap.put(keyMaker(alias), country);
     });
 
-    locationAliases.getStateNameAliases().forEach((alias,originalKey) -> {
+    locationAliases.getStateNameAliases().forEach((alias, originalKey) -> {
       var states = stateNameToStatesMap.get(keyMaker(originalKey));
       stateNameToStatesMap.put(alias, states);
     });
 
-    locationAliases.getCityNameAliases().forEach((alias,originalKey) -> {
+    locationAliases.getCityNameAliases().forEach((alias, originalKey) -> {
       var cities = cityNameToCitiesMap.get(keyMaker(originalKey));
       cityNameToCitiesMap.put(alias, cities);
     });
@@ -424,33 +452,6 @@ public class SearchLocationService implements SearchLocation {
     } else {
       return List.of(buildLocationResult(topCountry, topState, topCity));
     }
-  }
-
-  private static Location buildLocationResult(Country topCountry, State topState, City topCity) {
-    var locationBuilder = Location.builder();
-
-    locationBuilder.countryName(topCountry.getName());
-    locationBuilder.countryId(topCountry.getId());
-    locationBuilder.countryIso2Code(topCountry.getIso2());
-    locationBuilder.countryIso3Code(topCountry.getIso3());
-    locationBuilder.latitude(topCountry.getLatitude());
-    locationBuilder.longitude(topCountry.getLongitude());
-
-    if (!Objects.isNull(topState)) {
-      locationBuilder.stateName(topState.getName());
-      locationBuilder.stateCode(topState.getStateCode());
-      locationBuilder.stateId(topState.getId());
-      locationBuilder.latitude(topState.getLatitude());
-      locationBuilder.longitude(topState.getLongitude());
-    }
-
-    if (!Objects.isNull(topCity)) {
-      locationBuilder.city(topCity.getName());
-      locationBuilder.cityId(topCity.getId());
-      locationBuilder.latitude(topCity.getLatitude());
-      locationBuilder.longitude(topCity.getLongitude());
-    }
-    return locationBuilder.build();
   }
 
   /**
