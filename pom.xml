@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>location4j-parent</artifactId>
 
   <build>
@@ -11,6 +11,44 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
           <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <!-- optional: limit format enforcement to just the files changed by this feature branch -->
+            <ratchetFrom>origin/master</ratchetFrom>
+            <formats>
+              <!-- you can define as many formats as you want, each is independent -->
+              <format>
+                <!-- define the files to apply to -->
+                <includes>
+                  <include>.gitattributes</include>
+                  <include>.gitignore</include>
+                </includes>
+                <!-- define the steps to apply to those files -->
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+                <indent>
+                  <tabs>true</tabs>
+                  <spacesPerTab>4</spacesPerTab>
+                </indent>
+              </format>
+            </formats>
+            <!-- define a language-specific format -->
+            <java>
+              <!-- no need to specify files, inferred automatically, but you can if you want -->
+
+              <!-- apply a specific flavor of google-java-format and reflow long strings -->
+              <googleJavaFormat>
+                <version>1.23.0</version>
+                <style>AOSP</style>
+                <reflowLongStrings>true</reflowLongStrings>
+                <formatJavadoc>false</formatJavadoc>
+              </googleJavaFormat>
+            </java>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -32,33 +70,6 @@
   </dependencies>
   <description>A location service for Java, identify a city, state or country by multiple terms.
   </description>
-  <modules>
-    <module>buildtools</module>
-    <module>location4j</module>
-  </modules>
-
-  <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <junit-jupiter.version>5.10.3</junit-jupiter.version>
-    <assertj-core.version>3.26.3</assertj-core.version>
-    <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <sonar.organization>tomaytotomato</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml
-    </sonar.coverage.jacoco.xmlReportPaths>
-    <sonar.language>java</sonar.language>
-    <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
-    <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
-    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
-    <spotless.version>2.43.0</spotless.version>
-  </properties>
-
   <developers>
     <developer>
       <email>dev@tomaytotomato.com</email>
@@ -113,6 +124,7 @@
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.language>java</sonar.language>
     <sonar.organization>tomaytotomato</sonar.organization>
+    <spotless.version>2.43.0</spotless.version>
   </properties>
 
   <scm>
@@ -123,56 +135,6 @@
   </scm>
 
   <url>https://github.com/tomaytotomato/location4j</url>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>${maven-deploy-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>${spotless.version}</version>
-          <configuration>
-            <!-- optional: limit format enforcement to just the files changed by this feature branch -->
-            <ratchetFrom>origin/master</ratchetFrom>
-            <formats>
-              <!-- you can define as many formats as you want, each is independent -->
-              <format>
-                <!-- define the files to apply to -->
-                <includes>
-                  <include>.gitattributes</include>
-                  <include>.gitignore</include>
-                </includes>
-                <!-- define the steps to apply to those files -->
-                <trimTrailingWhitespace/>
-                <endWithNewline/>
-                <indent>
-                  <tabs>true</tabs>
-                  <spacesPerTab>4</spacesPerTab>
-                </indent>
-              </format>
-            </formats>
-            <!-- define a language-specific format -->
-            <java>
-              <!-- no need to specify files, inferred automatically, but you can if you want -->
-
-              <!-- apply a specific flavor of google-java-format and reflow long strings -->
-              <googleJavaFormat>
-                <version>1.23.0</version>
-                <style>AOSP</style>
-                <reflowLongStrings>true</reflowLongStrings>
-                <formatJavadoc>false</formatJavadoc>
-              </googleJavaFormat>
-            </java>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 
   <version>1.0.0</version>
 </project>
