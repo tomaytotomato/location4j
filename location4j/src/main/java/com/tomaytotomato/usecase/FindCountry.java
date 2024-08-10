@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface FindCountry {
 
   /**
-   * Find a country by its unique identifier (ID), which represents a specific country.
-   * e.g. Afghanistan - 1, Belgium - 22
+   * Find a country by its unique identifier (ID), which represents a specific country. e.g.
+   * Afghanistan - 1, Belgium - 22
    *
    * @param id the unique identifier of the country
    * @return an Optional containing the Country if found, otherwise an empty Optional
@@ -29,9 +29,8 @@ public interface FindCountry {
   /**
    * Finds a country by its localized or native name.
    * <p>
-   * This method searches for a country using its localized name, which may vary
-   * depending on the language or region. For example, the country of Belgium
-   * may be referred to as:
+   * This method searches for a country using its localized name, which may vary depending on the
+   * language or region. For example, the country of Belgium may be referred to as:
    * <ul>
    *   <li>"Belgien" (German)</li>
    *   <li>"Belgique" (French)</li>

@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.tomaytotomato</groupId>
-    <artifactId>location4j-parent</artifactId>
-    <version>1.0.0</version>
-  </parent>
-
   <artifactId>buildtools</artifactId>
-
-  <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson-core.version>2.17.2</jackson-core.version>
-    <sonar.skip>true</sonar.skip>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>${jackson-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tomaytotomato</groupId>
-      <artifactId>location4j</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>${maven-deploy-plugin.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${maven-deploy-plugin.version}</version>
       </plugin>
     </plugins>
   </build>
+
+  <dependencies>
+    <dependency>
+      <artifactId>jackson-core</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <version>${jackson-core.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>jackson-databind</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <version>${jackson-core.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>jackson-annotations</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <version>${jackson-core.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>location4j</artifactId>
+      <groupId>com.tomaytotomato</groupId>
+      <scope>compile</scope>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>location4j-parent</artifactId>
+    <groupId>com.tomaytotomato</groupId>
+    <version>1.0.0</version>
+  </parent>
+  <properties>
+    <jackson-core.version>2.17.2</jackson-core.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar.skip>true</sonar.skip>
+  </properties>
 </project>
