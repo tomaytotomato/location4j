@@ -24,14 +24,14 @@ Get the latest version of the location4j library by adding it to your Maven pom.
 <dependency>
     <groupId>com.tomaytotomato</groupId>
     <artifactId>location4j</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
 **Gradle**
 
 ```gradle
-compile "com.tomaytotomato:location4j:1.0.2"
+compile "com.tomaytotomato:location4j:1.0.3"
 ```
 
 ## Quick Example 🏗
