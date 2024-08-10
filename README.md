@@ -22,9 +22,9 @@ Get the latest version of the location4j library by adding it to your Maven pom.
 ```xml
 
 <dependency>
-  <groupId>com.tomaytotomato</groupId>
-  <artifactId>location4j</artifactId>
-  <version>1.0.2</version>
+    <groupId>com.tomaytotomato</groupId>
+    <artifactId>location4j</artifactId>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -41,49 +41,50 @@ import com.tomaytotomato.SearchLocationService;
 
 public class Main {
 
-  public static void main(String[] args) {
-    SearchLocationService service = new SearchLocationService();
+    public static void main(String[] args) {
+        SearchLocationService service = new SearchLocationService();
 
-    // Find all locations named San Francisco
-    List<Location> results = service.search("san francisco");
-    printResults(results);
+        // Find all locations named San Francisco
+        List<Location> results = service.search("san francisco");
+        printResults(results);
 
-    // Narrow search to the US
-    results = service.search("san francisco, us");
-    printResults(results);
+        // Narrow search to the US
+        results = service.search("san francisco, us");
+        printResults(results);
 
-    // Narrow search further to California
-    results = service.search("san francisco, us california");
-    printResults(results);
-  }
+        // Narrow search further to California
+        results = service.search("san francisco, us california");
+        printResults(results);
+    }
 
-  private static void printResults(List<Location> results) {
-    System.out.println("Locations found: " + results.size());
-    results.forEach(location -> {
-      System.out.println("Country: " + location.getCountryName());
-      System.out.println("State: " + location.getStateName());
-      System.out.println("City: " + location.getCityName());
-    });
-  }
+    private static void printResults(List<Location> results) {
+        System.out.println("Locations found: " + results.size());
+        results.forEach(location -> {
+            System.out.println("Country: " + location.getCountryName());
+            System.out.println("State: " + location.getStateName());
+            System.out.println("City: " + location.getCityName());
+        });
+    }
 }
 
 ```
 
-| Feature                        | Supported | Object   | Example                                                                         |
-|--------------------------------|-----------|----------|---------------------------------------------------------------------------------|
-| Search (free text)             | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
-| Find All Countries             | ✅         | Country  | `findAllCountries()` -> `["Belgium", "Canada", ...]`                            |
-| Find Country by Id             | ✅         | Country  | `findCountryById(1)` -> `["Afghanistan"]`                                       |
-| Find Country by ISO2 code      | ✅         | Country  | `findCountryByISO2Code("CA")` -> `["Canada"]`                                   |
-| Find Country by ISO3 code      | ✅         | Country  | `findCountryByISO3Code("CAN")` -> `["Canada"]`                                  |
-| Find Country by Name           | ✅         | Country  | `findCountryByName("Canada")` -> `["Canada"]`                                   |
-| Find Country by Localised name | ✅         | Country  | `findCountryByLocalisedName("Belgique")` -> `["Belgium"]`                       |
-| Find Countries by State name   | ✅         | Country  | `findAllCountriesByStateName("Texas")` -> `["USA"]`                             |
-| Find States by State name      | ✅         | State    | `findAllStatesByStateName("Texas")` -> `["Texas", "USA"]`                       |
-| Find State by State Id         | ✅         | State    | `findStateById(5)` -> `["California", "USA"]`                                   |
-| Find States by State code      | ✅         | State    | `findAllStatesByStateCode("CA")` -> `["California", "USA"]`                     |
-| Find City by City Id           | ✅         | City     | `findCityById(10)` -> `["Los Angeles", "California"]`                           |
-| Find Cities by City name       | ✅         | City     | `findAllCitiesByCityName("San Francisco")` -> `["San Francisco", "California"]` |
+| Feature                         | Supported | Object   | Example                                                                         |
+|---------------------------------|-----------|----------|---------------------------------------------------------------------------------|
+| Search (free text)              | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
+| Find All Countries              | ✅         | Country  | `findAllCountries()` -> `["Belgium", "Canada", ...]`                            |
+| Find Country by Id              | ✅         | Country  | `findCountryById(1)` -> `["Afghanistan"]`                                       |
+| Find Country by ISO2 code       | ✅         | Country  | `findCountryByISO2Code("CA")` -> `["Canada"]`                                   |
+| Find Country by ISO3 code       | ✅         | Country  | `findCountryByISO3Code("CAN")` -> `["Canada"]`                                  |
+| Find Country by Name            | ✅         | Country  | `findCountryByName("Canada")` -> `["Canada"]`                                   |
+| Find Country by Localised name  | ✅         | Country  | `findCountryByLocalisedName("Belgique")` -> `["Belgium"]`                       |
+| Find Countries by State name    | ✅         | Country  | `findAllCountriesByStateName("Texas")` -> `["USA"]`                             |
+| Find States by State name       | ✅         | State    | `findAllStatesByStateName("Texas")` -> `["Texas", "USA"]`                       |
+| Find State by State Id          | ✅         | State    | `findStateById(5)` -> `["California", "USA"]`                                   |
+| Find States by State code       | ✅         | State    | `findAllStatesByStateCode("CA")` -> `["California", "USA"]`                     |
+| Find City by City Id            | ✅         | City     | `findCityById(10)` -> `["Los Angeles", "California"]`                           |
+| Find City by latitude/longitude | ✅         | City     | `findClosestCityByLatLong(30.438, -84.280)` -> `["Tallahassee", "Florida"]`     |
+| Find Cities by City name        | ✅         | City     | `findAllCitiesByCityName("San Francisco")` -> `["San Francisco", "California"]` |
 
 🟢 location4j can parse free text strings with or without punctuation or capitalisation e.g.
 > San Francisco, CA, USA
@@ -92,8 +93,12 @@ public class Main {
 >
 > US, San Francisco, california
 
-🔴 location4j cannot find a location based on a small town, street, latitude/longitude or
-zipcode/postcode
+🟢 Latitude/Longitude searches can use `double`, `BigDecimal`, or `String` inputs for both values; the types must match (
+you can't mix a `String` latitude with a `BigDecimal` or `double` longitude) but the API will accept any of the three
+types.
+
+🔴 location4j cannot find a location based on a small town, street, or
+zipcode/postcode.
 
 ## Examples
 
@@ -105,24 +110,24 @@ import com.tomaytotomato.LocationService;
 
 public class LocationServiceExample {
 
-  public static void main(String[] args) {
-    LocationService locationService = new LocationService();
+    public static void main(String[] args) {
+        LocationService locationService = new LocationService();
 
-    // Get all countries
-    List<Country> countries = locationService.findAllCountries();
+        // Get all countries
+        List<Country> countries = locationService.findAllCountries();
 
-    // Filter European countries
-    List<Country> europeanCountries = countries.stream()
-        .filter(country -> "Europe".equals(country.getRegion()))
-        .toList();
+        // Filter European countries
+        List<Country> europeanCountries = countries.stream()
+                .filter(country -> "Europe".equals(country.getRegion()))
+                .toList();
 
-    // Find Afghanistan by ID
-    Country afghanistan = locationService.findCountryById(1);
+        // Find Afghanistan by ID
+        Country afghanistan = locationService.findCountryById(1);
 
-    // Find all cities named San Francisco
-    List<City> cities = locationService.findAllCities("San Francisco");
+        // Find all cities named San Francisco
+        List<City> cities = locationService.findAllCities("San Francisco");
 
-  }
+    }
 }
 
 ```
@@ -135,18 +140,18 @@ import com.tomaytotomato.SearchLocationService;
 
 public class LocationSearchServiceExample {
 
-  public static void main(String[] args) {
-    SearchLocationService locationSearchService = new SearchLocationService();
+    public static void main(String[] args) {
+        SearchLocationService locationSearchService = new SearchLocationService();
 
-    // Search for Santa Clara
-    List<Location> results = locationSearchService.search("Santa Clara");
+        // Search for Santa Clara
+        List<Location> results = locationSearchService.search("Santa Clara");
 
-    // Search for Santa Clara in the USA
-    List<Location> resultsUnitedStates = locationSearchService.search("Santa Clara USA");
+        // Search for Santa Clara in the USA
+        List<Location> resultsUnitedStates = locationSearchService.search("Santa Clara USA");
 
-    // Search for Santa Clara in California (it works with ISO2 or ISO3) codes
-    List<Location> resultsCalifornia = locationSearchService.search("Santa Clara US CA");
-  }
+        // Search for Santa Clara in California (it works with ISO2 or ISO3) codes
+        List<Location> resultsCalifornia = locationSearchService.search("Santa Clara US CA");
+    }
 }
 
 ```
