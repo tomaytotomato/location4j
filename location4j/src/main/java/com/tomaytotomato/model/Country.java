@@ -42,7 +42,8 @@ public class Country implements Serializable {
   private String emoji;
   private String emojiU;
 
-  Country() {}
+  Country() {
+  }
 
   public int getId() {
     return id;

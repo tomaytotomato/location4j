@@ -33,21 +33,22 @@ public class Location {
   /**
    * Constructs a new Location with the specified attributes.
    *
-   * @param countryName the name of the country
-   * @param countryId the unique identifier of the country
+   * @param countryName     the name of the country
+   * @param countryId       the unique identifier of the country
    * @param countryIso2Code the ISO 3166-1 alpha-2 code of the country
    * @param countryIso3Code the ISO 3166-1 alpha-3 code of the country
-   * @param state the name of the state
-   * @param stateId the unique identifier of the state
-   * @param stateCode the code of the state
-   * @param stateName the full name of the state
-   * @param city the name of the city
-   * @param cityId the unique identifier of the city
-   * @param latitude the latitude of the location
-   * @param longitude the longitude of the location
+   * @param state           the name of the state
+   * @param stateId         the unique identifier of the state
+   * @param stateCode       the code of the state
+   * @param stateName       the full name of the state
+   * @param city            the name of the city
+   * @param cityId          the unique identifier of the city
+   * @param latitude        the latitude of the location
+   * @param longitude       the longitude of the location
    */
   public Location(String countryName, Integer countryId, String countryIso2Code,
-      String countryIso3Code, String state, Integer stateId, String stateCode, String stateName, String city,
+      String countryIso3Code, String state, Integer stateId, String stateCode, String stateName,
+      String city,
       Integer cityId, BigDecimal latitude, BigDecimal longitude) {
     this.countryName = countryName;
     this.countryId = countryId;
@@ -61,6 +62,10 @@ public class Location {
     this.cityId = cityId;
     this.latitude = latitude;
     this.longitude = longitude;
+  }
+
+  public static Builder builder() {
+    return new Builder();
   }
 
   public String getCountryName() {
@@ -159,10 +164,6 @@ public class Location {
     this.longitude = longitude;
   }
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
   public static class Builder {
 
     private String countryName;
@@ -178,7 +179,8 @@ public class Location {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    Builder() { }
+    Builder() {
+    }
 
     public Builder countryName(String countryName) {
       this.countryName = countryName;

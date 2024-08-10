@@ -8,10 +8,10 @@ import java.util.Objects;
 /**
  * Default text tokeniser, splits text into pairs based on spacing.
  * <p>
- * This class implements the {@link TextTokeniser} interface to provide
- * functionality for breaking a string of text into smaller components, or "tokens."
- * The tokenisation is done by splitting the text into overlapping pairs of words,
- * and then adding individual words. This is useful for search and indexing purposes.
+ * This class implements the {@link TextTokeniser} interface to provide functionality for breaking a
+ * string of text into smaller components, or "tokens." The tokenisation is done by splitting the
+ * text into overlapping pairs of words, and then adding individual words. This is useful for search
+ * and indexing purposes.
  * </p>
  * <p>
  * For example, given the input "San Francisco USA", the tokeniser will produce:
@@ -28,9 +28,9 @@ public class DefaultTextTokeniser implements TextTokeniser {
   /**
    * Tokenises the input text into pairs of adjacent words, followed by individual words.
    * <p>
-   * This method first removes any non-alphanumeric characters except spaces, hyphens,
-   * apostrophes, and periods. Then, it splits the cleaned text by whitespace and forms
-   * overlapping pairs of words. Finally, it adds each word individually to the list of tokens.
+   * This method first removes any non-alphanumeric characters except spaces, hyphens, apostrophes,
+   * and periods. Then, it splits the cleaned text by whitespace and forms overlapping pairs of
+   * words. Finally, it adds each word individually to the list of tokens.
    * </p>
    * <p>
    * Example usage:

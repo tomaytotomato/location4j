@@ -11,12 +11,13 @@ import java.util.stream.Stream;
 /**
  * A text tokeniser that is aware of prefixes, grouping words with recognized prefixes into tokens.
  * <p>
- * This class implements the {@link TextTokeniser} interface and provides functionality
- * for breaking a string of text into meaningful tokens, taking into account common prefixes.
- * This is particularly useful for geographic names and other entities where prefixes such as
- * "San", "Los", or "New" form part of a proper name.
+ * This class implements the {@link TextTokeniser} interface and provides functionality for breaking
+ * a string of text into meaningful tokens, taking into account common prefixes. This is
+ * particularly useful for geographic names and other entities where prefixes such as "San", "Los",
+ * or "New" form part of a proper name.
  * </p>
- * <p><strong>Note:</strong> This class is experimental and may produce unexpected results in some cases.
+ * <p><strong>Note:</strong> This class is experimental and may produce unexpected results in some
+ * cases.
  * Users are encouraged to thoroughly test its behavior in their specific use cases. Future updates
  * might change how the tokenization logic works, and backward compatibility is not guaranteed.</p>
  * <p>
@@ -45,9 +46,9 @@ public class PrefixAwareTextTokeniser implements TextTokeniser {
   /**
    * Tokenises the input text into meaningful components, considering common prefixes.
    * <p>
-   * This method first removes any non-alphanumeric characters except spaces, hyphens,
-   * apostrophes, and periods. It then splits the text by whitespace and examines each part
-   * to determine if it should be grouped with preceding parts based on recognized prefixes.
+   * This method first removes any non-alphanumeric characters except spaces, hyphens, apostrophes,
+   * and periods. It then splits the text by whitespace and examines each part to determine if it
+   * should be grouped with preceding parts based on recognized prefixes.
    * </p>
    * <p><strong>Note:</strong> This method is experimental and may not always produce the expected
    * results. Users should test it thoroughly in their specific contexts.</p>
