@@ -36,7 +36,6 @@ public class SearchLocationService implements SearchLocation {
    */
   private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
   private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
-  private final Map<String, Country> countryNativeNameToCountry = new HashMap<>();
   private final Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
   private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
   private final Map<Integer, State> stateIdToStateMap = new HashMap<>();
@@ -74,28 +73,28 @@ public class SearchLocationService implements SearchLocation {
   }
 
   private static Location buildLocationResult(Country topCountry, State topState, City topCity) {
-    var locationBuilder = Location.builder();
+    var locationBuilder = Location.builder()
 
-    locationBuilder.countryName(topCountry.getName());
-    locationBuilder.countryId(topCountry.getId());
-    locationBuilder.countryIso2Code(topCountry.getIso2());
-    locationBuilder.countryIso3Code(topCountry.getIso3());
-    locationBuilder.latitude(topCountry.getLatitude());
-    locationBuilder.longitude(topCountry.getLongitude());
+        .countryName(topCountry.getName())
+        .countryId(topCountry.getId())
+        .countryIso2Code(topCountry.getIso2())
+        .countryIso3Code(topCountry.getIso3())
+        .latitude(topCountry.getLatitude())
+        .longitude(topCountry.getLongitude());
 
     if (!Objects.isNull(topState)) {
-      locationBuilder.stateName(topState.getName());
-      locationBuilder.stateCode(topState.getStateCode());
-      locationBuilder.stateId(topState.getId());
-      locationBuilder.latitude(topState.getLatitude());
-      locationBuilder.longitude(topState.getLongitude());
+      locationBuilder.stateName(topState.getName())
+          .stateCode(topState.getStateCode())
+          .stateId(topState.getId())
+          .latitude(topState.getLatitude())
+          .longitude(topState.getLongitude());
     }
 
     if (!Objects.isNull(topCity)) {
-      locationBuilder.city(topCity.getName());
-      locationBuilder.cityId(topCity.getId());
-      locationBuilder.latitude(topCity.getLatitude());
-      locationBuilder.longitude(topCity.getLongitude());
+      locationBuilder.city(topCity.getName())
+          .cityId(topCity.getId())
+          .latitude(topCity.getLatitude())
+          .longitude(topCity.getLongitude());
     }
     return locationBuilder.build();
   }
@@ -149,9 +148,6 @@ public class SearchLocationService implements SearchLocation {
   private void buildCountryLookups(Country country) {
     countryNameToCountryMap.put(keyMaker(country.getName()), country);
     countryIdToCountryMap.put(country.getId(), country);
-    if (!Objects.isNull(country.getNativeName()) && !country.getNativeName().isEmpty()) {
-      countryNativeNameToCountry.put(keyMaker(country.getNativeName()), country);
-    }
     iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
     iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
   }

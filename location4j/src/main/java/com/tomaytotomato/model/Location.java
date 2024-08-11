@@ -46,7 +46,7 @@ public class Location {
    * @param latitude        the latitude of the location
    * @param longitude       the longitude of the location
    */
-  public Location(String countryName, Integer countryId, String countryIso2Code,
+  private Location(String countryName, Integer countryId, String countryIso2Code,
       String countryIso3Code, String state, Integer stateId, String stateCode, String stateName,
       String city,
       Integer cityId, BigDecimal latitude, BigDecimal longitude) {
@@ -72,96 +72,48 @@ public class Location {
     return countryName;
   }
 
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
   public Integer getCountryId() {
     return countryId;
-  }
-
-  public void setCountryId(Integer countryId) {
-    this.countryId = countryId;
   }
 
   public String getCountryIso2Code() {
     return countryIso2Code;
   }
 
-  public void setCountryIso2Code(String countryIso2Code) {
-    this.countryIso2Code = countryIso2Code;
-  }
-
   public String getCountryIso3Code() {
     return countryIso3Code;
-  }
-
-  public void setCountryIso3Code(String countryIso3Code) {
-    this.countryIso3Code = countryIso3Code;
   }
 
   public String getState() {
     return state;
   }
 
-  public void setState(String state) {
-    this.state = state;
-  }
-
   public Integer getStateId() {
     return stateId;
-  }
-
-  public void setStateId(Integer stateId) {
-    this.stateId = stateId;
   }
 
   public String getStateCode() {
     return stateCode;
   }
 
-  public void setStateCode(String stateCode) {
-    this.stateCode = stateCode;
-  }
-
   public String getStateName() {
     return stateName;
-  }
-
-  public void setStateName(String stateName) {
-    this.stateName = stateName;
   }
 
   public String getCity() {
     return city;
   }
 
-  public void setCity(String city) {
-    this.city = city;
-  }
-
   public Integer getCityId() {
     return cityId;
-  }
-
-  public void setCityId(Integer cityId) {
-    this.cityId = cityId;
   }
 
   public BigDecimal getLatitude() {
     return latitude;
   }
 
-  public void setLatitude(BigDecimal latitude) {
-    this.latitude = latitude;
-  }
-
   public BigDecimal getLongitude() {
     return longitude;
-  }
-
-  public void setLongitude(BigDecimal longitude) {
-    this.longitude = longitude;
   }
 
   public static class Builder {
