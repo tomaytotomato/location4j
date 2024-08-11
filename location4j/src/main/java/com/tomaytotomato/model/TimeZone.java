@@ -1,5 +1,6 @@
 package com.tomaytotomato.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
@@ -13,6 +14,7 @@ import javax.annotation.processing.Generated;
  */
 public class TimeZone implements Serializable {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private String zoneName;

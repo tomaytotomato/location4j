@@ -1,5 +1,6 @@
 package com.tomaytotomato.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import javax.annotation.processing.Generated;
  */
 public class City implements Serializable {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private Integer id;
