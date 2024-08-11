@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.processing.Generated;
 
 /**
  * Represents a state data class.
@@ -49,7 +50,7 @@ public class State implements Serializable {
    * @param latitude        the latitude of the state's geographic center
    * @param longitude       the longitude of the state's geographic center
    */
-  public State(Integer id, Integer countryId, String countryName, String countryIso2Code,
+  private State(Integer id, Integer countryId, String countryName, String countryIso2Code,
       String countryIso3Code, String name, String type, String stateCode, List<City> cities,
       BigDecimal latitude, BigDecimal longitude) {
     this.id = id;
@@ -69,90 +70,145 @@ public class State implements Serializable {
     return id;
   }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
   public Integer getCountryId() {
     return countryId;
-  }
-
-  public void setCountryId(Integer countryId) {
-    this.countryId = countryId;
   }
 
   public String getCountryName() {
     return countryName;
   }
 
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
   public String getCountryIso2Code() {
     return countryIso2Code;
-  }
-
-  public void setCountryIso2Code(String countryIso2Code) {
-    this.countryIso2Code = countryIso2Code;
   }
 
   public String getCountryIso3Code() {
     return countryIso3Code;
   }
 
-  public void setCountryIso3Code(String countryIso3Code) {
-    this.countryIso3Code = countryIso3Code;
-  }
-
   public String getName() {
     return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getType() {
     return type;
   }
 
-  public void setType(String type) {
-    this.type = type;
-  }
-
   public String getStateCode() {
     return stateCode;
-  }
-
-  public void setStateCode(String stateCode) {
-    this.stateCode = stateCode;
   }
 
   public List<City> getCities() {
     return cities;
   }
 
-  public void setCities(List<City> cities) {
-    this.cities = cities;
-  }
-
   public BigDecimal getLatitude() {
     return latitude;
-  }
-
-  public void setLatitude(BigDecimal latitude) {
-    this.latitude = latitude;
   }
 
   public BigDecimal getLongitude() {
     return longitude;
   }
 
-  public void setLongitude(BigDecimal longitude) {
-    this.longitude = longitude;
+  public void setCountryId(Integer id) {
+    this.countryId = id;
   }
 
+  public void setCountryName(String countryName) {
+    this.countryName = countryName;
+  }
+
+  public void setCountryIso2Code(String countryIso2Code) {
+    this.countryIso2Code = countryIso2Code;
+  }
+
+  public void setCountryIso3Code(String countryIso3Code) {
+    this.countryIso3Code = countryIso3Code;
+  }
+
+  public static final class Builder {
+
+    private Integer id;
+    private Integer countryId;
+    private String countryName;
+    private String countryIso2Code;
+    private String countryIso3Code;
+    private String name;
+    private String type;
+    private String stateCode;
+    private List<City> cities;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+
+    private Builder() {
+    }
+
+    public static Builder aState() {
+      return new Builder();
+    }
+
+    public Builder id(Integer id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder countryId(Integer countryId) {
+      this.countryId = countryId;
+      return this;
+    }
+
+    public Builder countryName(String countryName) {
+      this.countryName = countryName;
+      return this;
+    }
+
+    public Builder countryIso2Code(String countryIso2Code) {
+      this.countryIso2Code = countryIso2Code;
+      return this;
+    }
+
+    public Builder countryIso3Code(String countryIso3Code) {
+      this.countryIso3Code = countryIso3Code;
+      return this;
+    }
+
+    public Builder name(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public Builder type(String type) {
+      this.type = type;
+      return this;
+    }
+
+    public Builder stateCode(String stateCode) {
+      this.stateCode = stateCode;
+      return this;
+    }
+
+    public Builder cities(List<City> cities) {
+      this.cities = cities;
+      return this;
+    }
+
+    public Builder latitude(BigDecimal latitude) {
+      this.latitude = latitude;
+      return this;
+    }
+
+    public Builder longitude(BigDecimal longitude) {
+      this.longitude = longitude;
+      return this;
+    }
+
+    public State build() {
+      return new State(id, countryId, countryName, countryIso2Code, countryIso3Code, name, type,
+          stateCode, cities, latitude, longitude);
+    }
+  }
+
+  @Generated("IntelliJ")
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -173,6 +229,7 @@ public class State implements Serializable {
         && Objects.equals(getLongitude(), state.getLongitude());
   }
 
+  @Generated("IntelliJ")
   @Override
   public int hashCode() {
     return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),

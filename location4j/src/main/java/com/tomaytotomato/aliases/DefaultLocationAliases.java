@@ -24,12 +24,13 @@ public class DefaultLocationAliases implements LocationAliases {
 
   @Override
   public Map<String, String> getCountryNameAliases() {
+    var unitedKingdom = "United Kingdom";
     return Map.of(
-        "Scotland", "United Kingdom",
-        "England", "United Kingdom",
-        "Northern Ireland", "United Kingdom",
-        "Wales", "United Kingdom",
-        "Cymru", "United Kingdom"
+        "Scotland", unitedKingdom,
+        "England", unitedKingdom,
+        "Northern Ireland", unitedKingdom,
+        "Wales", unitedKingdom,
+        "Cymru", unitedKingdom
     );
   }
 
