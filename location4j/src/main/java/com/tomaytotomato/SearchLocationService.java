@@ -102,7 +102,7 @@ public class SearchLocationService implements SearchLocation {
   public void buildDataStructures() {
     countries.forEach(country -> {
       buildCountryLookups(country);
-      country.getStates().forEach(state -> buildStateLookups(state, country));
+      country.getStates().forEach(this::buildStateLookups);
     });
     addAliases();
   }
@@ -156,9 +156,8 @@ public class SearchLocationService implements SearchLocation {
    * Maps state and its associated cities to various lookup maps.
    *
    * @param state   The state to be mapped.
-   * @param country The country the state belongs to.
    */
-  private void buildStateLookups(State state, Country country) {
+  private void buildStateLookups(State state) {
     stateIdToStateMap.put(state.getId(), state);
     stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>())
         .add(state);
