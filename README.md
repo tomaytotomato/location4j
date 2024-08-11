@@ -42,18 +42,18 @@ import com.tomaytotomato.SearchLocationService;
 public class Main {
 
     public static void main(String[] args) {
-        SearchLocationService service = SearchLocationService.builder().build();
+        SearchLocationService searchLocationService = SearchLocationService.builder().build();
 
         // Find all locations named San Francisco
-        List<Location> results = service.search("san francisco");
+        List<Location> results = searchLocationService.search("san francisco");
         printResults(results);
 
         // Narrow search to the US
-        results = service.search("san francisco, us");
+        results = searchLocationService.search("san francisco, us");
         printResults(results);
 
         // Narrow search further to California
-        results = service.search("san francisco, us california");
+        results = searchLocationService.search("san francisco, us california");
         printResults(results);
     }
 
@@ -145,7 +145,7 @@ Search any text for a location, the `SearchLocationService` can handle formatted
 
 import com.tomaytotomato.SearchLocationService;
 
-public class LocationSearchServiceExample {
+public class SearchLocationServiceExample {
 
     public static void main(String[] args) {
         SearchLocationService searchLocationService = SearchLocationService.builder()
