@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.tomaytotomato.LocationServiceBuilder;
+import com.tomaytotomato.LocationService;
 import java.math.BigDecimal;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +19,7 @@ class FindCityTest {
     private final FindCity locationService;
 
     public FindCityTest() {
-        locationService = LocationServiceBuilder.builder()
-            .build();
+        locationService = LocationService.builder().build();
     }
 
     @Description("Find City by Lat/long with BigDecimal")

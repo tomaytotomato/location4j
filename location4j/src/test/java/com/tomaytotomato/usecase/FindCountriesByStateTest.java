@@ -3,7 +3,7 @@ package com.tomaytotomato.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.LocationServiceBuilder;
+import com.tomaytotomato.LocationService;
 import com.tomaytotomato.model.Country;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ class FindCountriesByStateTest {
   private final FindCountry locationService;
 
   public FindCountriesByStateTest() {
-    locationService = LocationServiceBuilder.builder().build();
+    locationService = LocationService.builder().build();
   }
 
   @Description("Find All Countries By State Name, when null or blank then throw exception")

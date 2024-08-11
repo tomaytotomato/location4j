@@ -57,6 +57,10 @@ public class SearchLocationService implements SearchLocation {
     buildDataStructures();
   }
 
+  public static SearchLocationServiceBuilder builder() {
+    return new SearchLocationServiceBuilder();
+  }
+
   private static Location buildLocationResult(Country topCountry, State topState, City topCity) {
     var locationBuilder = Location.builder()
 

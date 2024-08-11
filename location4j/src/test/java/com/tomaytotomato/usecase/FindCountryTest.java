@@ -4,7 +4,7 @@ package com.tomaytotomato.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.LocationServiceBuilder;
+import com.tomaytotomato.LocationService;
 import com.tomaytotomato.model.Country;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ class FindCountryTest {
   private final FindCountry locationService;
 
   public FindCountryTest() {
-    locationService = LocationServiceBuilder.builder().build();
+    locationService = LocationService.builder().build();
   }
 
   @DisplayName("Find Country By ID, when valid and exists, then return Country")

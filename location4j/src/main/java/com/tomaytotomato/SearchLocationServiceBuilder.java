@@ -22,11 +22,7 @@ public final class SearchLocationServiceBuilder {
   private LocationAliases locationAliases = new DefaultLocationAliases();
   private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
 
-  public static SearchLocationServiceBuilder builder() {
-    return new SearchLocationServiceBuilder();
-  }
-
-  private SearchLocationServiceBuilder() {
+  SearchLocationServiceBuilder() {
   }
 
   public SearchLocationServiceBuilder withTextTokeniser(TextTokeniser textTokeniser) {

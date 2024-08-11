@@ -10,11 +10,7 @@ public final class LocationServiceBuilder {
   private TextNormaliser textNormaliser = new DefaultTextNormaliser();
   private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
 
-  public static LocationServiceBuilder builder() {
-    return new LocationServiceBuilder();
-  }
-
-  private LocationServiceBuilder() {
+  LocationServiceBuilder() {
   }
 
   public LocationServiceBuilder withCountriesDataLoader(CountriesDataLoader countriesDataLoader) {
