@@ -4,11 +4,9 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 import com.tomaytotomato.loader.CountriesDataLoader;
-import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.State;
-import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.text.normaliser.TextNormaliser;
 import com.tomaytotomato.usecase.FindCity;
 import com.tomaytotomato.usecase.FindCountry;
@@ -51,27 +49,14 @@ public class LocationService implements FindCountry, FindState, FindCity {
 
     private final TextNormaliser textNormaliser;
 
-    /**
-     * Default constructor, creates a LocationService class with default dependencies
-     */
-    public LocationService() {
-        this.textNormaliser = new DefaultTextNormaliser();
-        var dataLoader = new DefaultCountriesDataLoaderImpl();
+    protected LocationService(TextNormaliser textNormaliser, CountriesDataLoader dataLoader) {
+        this.textNormaliser = textNormaliser;
         countries = dataLoader.getCountries();
         buildDataStructures();
     }
 
-    public LocationService(TextNormaliser textNormaliser) {
-        this.textNormaliser = textNormaliser;
-        var dataLoader = new DefaultCountriesDataLoaderImpl();
-        countries = dataLoader.getCountries();
-        buildDataStructures();
-    }
-
-    public LocationService(TextNormaliser textNormaliser, CountriesDataLoader dataLoader) {
-        this.textNormaliser = textNormaliser;
-        countries = dataLoader.getCountries();
-        buildDataStructures();
+    public static LocationServiceBuilder builder() {
+        return new LocationServiceBuilder();
     }
 
     private void buildDataStructures() {
