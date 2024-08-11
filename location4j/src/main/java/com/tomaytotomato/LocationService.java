@@ -87,8 +87,8 @@ public class LocationService implements FindCountry, FindState, FindCity {
                             .forEach(
                                     translatedName ->
                                             localisedNameToCountryMap.put(translatedName, country));
-                    iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
-                    iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
+                    iso2CodeToCountryMap.put(keyMaker(country.getIso2Code()), country);
+                    iso3CodeToCountryMap.put(keyMaker(country.getIso3Code()), country);
 
                     country.getStates()
                             .forEach(
