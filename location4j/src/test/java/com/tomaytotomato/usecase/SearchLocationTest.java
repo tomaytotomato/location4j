@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-import com.tomaytotomato.SearchLocationService;
+import com.tomaytotomato.SearchLocationServiceBuilder;
 import com.tomaytotomato.aliases.DefaultLocationAliases;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
@@ -23,14 +23,13 @@ class SearchLocationTest {
   private final SearchLocation searchLocationService;
 
   public SearchLocationTest() {
-    var textNormaliser = new DefaultTextNormaliser();
-    var textTokeniser = new DefaultTextTokeniser();
-    var locationMapper = new DefaultLocationMapper();
-    var locationAliases = new DefaultLocationAliases();
-    var dataLoader = new DefaultCountriesDataLoaderImpl();
-
-    searchLocationService = new SearchLocationService(textTokeniser, textNormaliser, locationMapper,
-        dataLoader, locationAliases);
+    searchLocationService = SearchLocationServiceBuilder.builder()
+        .withLocationAliases(new DefaultLocationAliases())
+        .withLocationMapper(new DefaultLocationMapper())
+        .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
+        .withTextNormaliser(new DefaultTextNormaliser())
+        .withTextTokeniser(new DefaultTextTokeniser())
+        .build();
   }
 
   @Description("SearchLocation, when null or empty text, then throw exception")
@@ -38,9 +37,7 @@ class SearchLocationTest {
   void search_WhenNullOrBlank_ThenThrowException() {
 
     // When Then
-    assertThatThrownBy(() -> {
-      searchLocationService.search(null);
-    }).isInstanceOf(IllegalArgumentException.class)
+    assertThatThrownBy(() -> searchLocationService.search(null)).isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("SearchLocation Text cannot be null or empty");
   }
 
