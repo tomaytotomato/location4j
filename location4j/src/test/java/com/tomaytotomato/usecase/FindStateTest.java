@@ -4,7 +4,7 @@ package com.tomaytotomato.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.LocationServiceBuilder;
+import com.tomaytotomato.LocationService;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class FindStateTest {
   private final FindState locationService;
 
   public FindStateTest() {
-    locationService = LocationServiceBuilder.builder().build();
+    locationService = LocationService.builder().build();
   }
 
   @Description("Find State By ID, when null then throw exception")

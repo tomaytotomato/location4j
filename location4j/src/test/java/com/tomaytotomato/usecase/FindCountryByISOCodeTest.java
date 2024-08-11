@@ -4,7 +4,7 @@ package com.tomaytotomato.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.LocationServiceBuilder;
+import com.tomaytotomato.LocationService;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ class FindCountryByISOCodeTest {
   private final FindCountry locationService;
 
   public FindCountryByISOCodeTest() {
-    locationService = LocationServiceBuilder.builder()
+    locationService = LocationService.builder()
         .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
         .withTextNormaliser(new DefaultTextNormaliser())
         .build();

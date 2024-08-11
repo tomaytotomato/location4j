@@ -55,6 +55,10 @@ public class LocationService implements FindCountry, FindState, FindCity {
         buildDataStructures();
     }
 
+    public static LocationServiceBuilder builder() {
+        return new LocationServiceBuilder();
+    }
+
     private void buildDataStructures() {
 
         countries.forEach(

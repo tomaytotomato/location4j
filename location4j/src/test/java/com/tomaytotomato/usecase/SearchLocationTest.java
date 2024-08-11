@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-import com.tomaytotomato.SearchLocationServiceBuilder;
+import com.tomaytotomato.SearchLocationService;
 import com.tomaytotomato.aliases.DefaultLocationAliases;
 import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.mapper.DefaultLocationMapper;
@@ -23,7 +23,7 @@ class SearchLocationTest {
   private final SearchLocation searchLocationService;
 
   public SearchLocationTest() {
-    searchLocationService = SearchLocationServiceBuilder.builder()
+    searchLocationService = SearchLocationService.builder()
         .withLocationAliases(new DefaultLocationAliases())
         .withLocationMapper(new DefaultLocationMapper())
         .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
