@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'library/src/**'
+      - 'location4j/src/**'
       - 'pom.xml'
       - '.github/**'
 
@@ -13,7 +13,7 @@ on:
     branches:
       - master
     paths:
-      - 'library/src/**'
+      - 'location4j/src/**'
       - 'pom.xml'
       - '.github/**'
 

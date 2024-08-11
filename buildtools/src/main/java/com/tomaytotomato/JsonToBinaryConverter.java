@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class JsonToBinaryConverter {
 
   private static final String JSON_FILE = "/location4j-countries.json";
-  private static final String OUTPUT_FILE = "library/src/main/resources/location4j.bin";
+  private static final String OUTPUT_FILE = "location4j/src/main/resources/location4j.bin";
 
   private static final Logger logger = Logger.getLogger(JsonToBinaryConverter.class.getName());
 
@@ -47,7 +47,8 @@ public class JsonToBinaryConverter {
       });
 
       Path outputFile = Paths.get(OUTPUT_FILE).toAbsolutePath();
-      logger.info("Serializing data to binary file at: " + outputFile);
+      logger.log(Level.INFO,
+          () -> String.format("Serializing data to binary file at:  %s", outputFile));
 
       try (var fileOutputStream = new FileOutputStream(outputFile.toFile());
           var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
@@ -55,19 +56,22 @@ public class JsonToBinaryConverter {
         logger.info("Data successfully serialized to binary format.");
       }
     } catch (IOException e) {
-      logger.log(Level.SEVERE, "IO Exception occurred during serialization: " + e.getMessage(), e);
+      logger.log(Level.SEVERE,
+          String.format("IO Exception occurred during serialization: %s", e.getMessage()), e);
     } catch (IllegalArgumentException e) {
-      logger.log(Level.SEVERE, "Argument exception: " + e.getMessage(), e);
+      logger.log(Level.SEVERE, String.format("Argument exception: %s", e.getMessage()), e);
     }
   }
 
   private static String fixJSONPropertyNames(String jsonString) {
-    var modifiedJson = jsonString.replaceAll("\"native\"", "\"native_name\"");
-    modifiedJson = modifiedJson.replaceAll("\"zoneName\"", "\"zone_name\"");
-    modifiedJson = modifiedJson.replaceAll("\"gmtOffset\"", "\"gmt_offset\"");
-    modifiedJson = modifiedJson.replaceAll("\"gmtOffsetName\"", "\"gmt_offset_name\"");
-    modifiedJson = modifiedJson.replaceAll("\"tzName\"", "\"tz_name\"");
-    modifiedJson = modifiedJson.replaceAll("\"emojiU\"", "\"emoji_u\"");
+    // Use String::replace for simple string replacements
+    var modifiedJson = jsonString.replace("\"native\"", "\"native_name\"");
+    modifiedJson = modifiedJson.replace("\"zoneName\"", "\"zone_name\"");
+    modifiedJson = modifiedJson.replace("\"gmtOffset\"", "\"gmt_offset\"");
+    modifiedJson = modifiedJson.replace("\"gmtOffsetName\"", "\"gmt_offset_name\"");
+    modifiedJson = modifiedJson.replace("\"tzName\"", "\"tz_name\"");
+    modifiedJson = modifiedJson.replace("\"emojiU\"", "\"emoji_u\"");
     return modifiedJson;
   }
+
 }
