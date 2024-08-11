@@ -27,8 +27,8 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
         String urlToThis =
                 this.getClass().getResource(this.getClass().getSimpleName() + ".class").toString();
         String trimmed = urlToFile.substring(0, urlToFile.indexOf(DEFAULT_FILE));
-        if (!urlToThis.substring(0, trimmed.length()).equals(trimmed)) {
-            throw new RuntimeException(
+        if (!urlToThis.startsWith(trimmed)) {
+            throw new SecurityException(
                     DEFAULT_FILE + " is not in the same artifact as the loader: security issue");
         }
 
