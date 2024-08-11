@@ -30,7 +30,7 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
 
       loadLocationsFromBinary(inputStream, logger);
     } catch (IOException | ClassNotFoundException e) {
-      logger.log(Level.SEVERE, "Failed to load countries file: " + e.getMessage(), e);
+      logger.log(Level.SEVERE, String.format("Failed to load countries file: %s", e.getMessage()), e);
     }
   }
 
@@ -41,7 +41,7 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
       this.countries.addAll(loadedCountries);
       logger.info("Successfully loaded countries binary file");
     } catch (IOException | ClassNotFoundException e) {
-      logger.log(Level.SEVERE, "Failed to parse countries file: " + e.getMessage(), e);
+      logger.log(Level.SEVERE, String.format("Failed to parse countries file: %s", e.getMessage()), e);
     }
   }
 
