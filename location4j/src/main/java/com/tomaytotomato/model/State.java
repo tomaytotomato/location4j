@@ -128,6 +128,11 @@ public class State implements Serializable {
     this.countryIso3Code = countryIso3Code;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  @Generated("IntelliJ")
   public static final class Builder {
 
     private Integer id;
@@ -143,10 +148,6 @@ public class State implements Serializable {
     private BigDecimal longitude;
 
     private Builder() {
-    }
-
-    public static Builder aState() {
-      return new Builder();
     }
 
     public Builder id(Integer id) {
