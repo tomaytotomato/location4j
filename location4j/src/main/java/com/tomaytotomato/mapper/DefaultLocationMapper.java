@@ -12,8 +12,8 @@ public class DefaultLocationMapper implements LocationMapper {
     return Location.builder()
         .countryName(country.getName())
         .countryId(country.getId())
-        .countryIso2Code(country.getIso2())
-        .countryIso3Code(country.getIso3())
+        .countryIso2Code(country.getIso2Code())
+        .countryIso3Code(country.getIso3Code())
         .latitude(country.getLatitude())
         .longitude(country.getLongitude())
         .build();

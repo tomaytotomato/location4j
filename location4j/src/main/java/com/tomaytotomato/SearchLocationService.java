@@ -77,8 +77,8 @@ public class SearchLocationService implements SearchLocation {
 
         .countryName(topCountry.getName())
         .countryId(topCountry.getId())
-        .countryIso2Code(topCountry.getIso2())
-        .countryIso3Code(topCountry.getIso3())
+        .countryIso2Code(topCountry.getIso2Code())
+        .countryIso3Code(topCountry.getIso3Code())
         .latitude(topCountry.getLatitude())
         .longitude(topCountry.getLongitude());
 
@@ -148,8 +148,8 @@ public class SearchLocationService implements SearchLocation {
   private void buildCountryLookups(Country country) {
     countryNameToCountryMap.put(keyMaker(country.getName()), country);
     countryIdToCountryMap.put(country.getId(), country);
-    iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
-    iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
+    iso2CodeToCountryMap.put(keyMaker(country.getIso2Code()), country);
+    iso3CodeToCountryMap.put(keyMaker(country.getIso3Code()), country);
   }
 
   /**
@@ -159,37 +159,16 @@ public class SearchLocationService implements SearchLocation {
    * @param country The country the state belongs to.
    */
   private void buildStateLookups(State state, Country country) {
-    state.setCountryId(country.getId());
-    state.setCountryName(country.getName());
-    state.setCountryIso2Code(country.getIso2());
-    state.setCountryIso3Code(country.getIso3());
-
     stateIdToStateMap.put(state.getId(), state);
     stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>())
         .add(state);
     stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>())
         .add(state);
 
-    state.getCities().forEach(city -> buildCityLookups(city, state, country));
+    state.getCities().forEach(city -> cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()),
+        k -> new ArrayList<>()).add(city));
   }
 
-  /**
-   * Maps a city to various lookup maps.
-   *
-   * @param city    The city to be mapped.
-   * @param state   The state the city belongs to.
-   * @param country The country the city belongs to.
-   */
-  private void buildCityLookups(City city, State state, Country country) {
-    city.setCountryId(country.getId());
-    city.setCountryName(country.getName());
-    city.setCountryIso2Code(country.getIso2());
-    city.setCountryIso3Code(country.getIso3());
-    city.setStateId(state.getId());
-    city.setStateName(state.getName());
-    city.setStateCode(state.getStateCode());
-    cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()), k -> new ArrayList<>()).add(city);
-  }
 
   /**
    * Normalizes a key for consistent lookup.

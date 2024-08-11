@@ -67,6 +67,7 @@ public class TimeZone implements Serializable {
     return gmtOffsetName;
   }
 
+  @Generated("IntelliJ")
   public static final class Builder {
 
     private String zoneName;
