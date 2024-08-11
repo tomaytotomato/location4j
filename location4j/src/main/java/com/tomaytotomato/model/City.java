@@ -144,6 +144,11 @@ public class City implements Serializable {
     this.stateCode = stateCode;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  @Generated("IntelliJ")
   public static final class Builder {
 
     private Integer id;
@@ -159,10 +164,6 @@ public class City implements Serializable {
     private BigDecimal longitude;
 
     private Builder() {
-    }
-
-    public static Builder aCity() {
-      return new Builder();
     }
 
     public Builder id(Integer id) {

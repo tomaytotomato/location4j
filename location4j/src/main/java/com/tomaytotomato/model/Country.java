@@ -21,9 +21,8 @@ public class Country implements Serializable {
 
   private Integer id;
   private String name;
-  private String iso3;
-  private String iso2;
-  private String zoneName;
+  private String iso3Code;
+  private String iso2Code;
   private String phoneCode;
   private String numericCode;
   private String capital;
@@ -56,16 +55,12 @@ public class Country implements Serializable {
     return name;
   }
 
-  public String getIso3() {
-    return iso3;
+  public String getIso3Code() {
+    return iso3Code;
   }
 
-  public String getIso2() {
-    return iso2;
-  }
-
-  public String getZoneName() {
-    return zoneName;
+  public String getIso2Code() {
+    return iso2Code;
   }
 
   public String getPhoneCode() {
@@ -148,14 +143,17 @@ public class Country implements Serializable {
     return emojiU;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
 
+  @Generated("IntelliJ")
   public static final class Builder {
 
     private Integer id;
     private String name;
-    private String iso3;
-    private String iso2;
-    private String zoneName;
+    private String iso3Code;
+    private String iso2Code;
     private String phoneCode;
     private String numericCode;
     private String capital;
@@ -180,10 +178,6 @@ public class Country implements Serializable {
     private Builder() {
     }
 
-    public static Builder aCountry() {
-      return new Builder();
-    }
-
     public Builder id(Integer id) {
       this.id = id;
       return this;
@@ -194,18 +188,13 @@ public class Country implements Serializable {
       return this;
     }
 
-    public Builder iso3(String iso3) {
-      this.iso3 = iso3;
+    public Builder iso3Code(String iso3Code) {
+      this.iso3Code = iso3Code;
       return this;
     }
 
-    public Builder iso2(String iso2) {
-      this.iso2 = iso2;
-      return this;
-    }
-
-    public Builder zoneName(String zoneName) {
-      this.zoneName = zoneName;
+    public Builder iso2Code(String iso2Code) {
+      this.iso2Code = iso2Code;
       return this;
     }
 
@@ -313,7 +302,7 @@ public class Country implements Serializable {
       Country country = new Country();
       country.name = this.name;
       country.phoneCode = this.phoneCode;
-      country.iso3 = this.iso3;
+      country.iso3Code = this.iso3Code;
       country.longitude = this.longitude;
       country.currencyName = this.currencyName;
       country.numericCode = this.numericCode;
@@ -321,7 +310,7 @@ public class Country implements Serializable {
       country.capital = this.capital;
       country.region = this.region;
       country.translations = this.translations;
-      country.iso2 = this.iso2;
+      country.iso2Code = this.iso2Code;
       country.currencySymbol = this.currencySymbol;
       country.timezones = this.timezones;
       country.tld = this.tld;
@@ -329,7 +318,6 @@ public class Country implements Serializable {
       country.nativeName = this.nativeName;
       country.emoji = this.emoji;
       country.subregion = this.subregion;
-      country.zoneName = this.zoneName;
       country.regionId = this.regionId;
       country.latitude = this.latitude;
       country.id = this.id;
@@ -351,9 +339,8 @@ public class Country implements Serializable {
     }
     Country country = (Country) o;
     return Objects.equals(getId(), country.getId()) && Objects.equals(getName(),
-        country.getName()) && Objects.equals(getIso3(), country.getIso3())
-        && Objects.equals(getIso2(), country.getIso2()) && Objects.equals(
-        getZoneName(), country.getZoneName()) && Objects.equals(getPhoneCode(),
+        country.getName()) && Objects.equals(getIso3Code(), country.getIso3Code())
+        && Objects.equals(getIso2Code(), country.getIso2Code()) && Objects.equals(getPhoneCode(),
         country.getPhoneCode()) && Objects.equals(getNumericCode(),
         country.getNumericCode()) && Objects.equals(getCapital(), country.getCapital())
         && Objects.equals(getCurrency(), country.getCurrency()) && Objects.equals(
@@ -375,7 +362,7 @@ public class Country implements Serializable {
   @Generated("IntelliJ")
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getName(), getIso3(), getIso2(), getZoneName(), getPhoneCode(),
+    return Objects.hash(getId(), getName(), getIso3Code(), getIso2Code(), getPhoneCode(),
         getNumericCode(), getCapital(), getCurrency(), getCurrencyName(), getCurrencySymbol(),
         getTld(), getNativeName(), getRegion(), getRegionId(), getSubregion(), getSubregionId(),
         getStates(), getNationality(), getTimezones(), getTranslations(), getLatitude(),
