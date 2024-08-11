@@ -27,6 +27,8 @@ public class City implements Serializable {
   private String name;
   private BigDecimal latitude;
   private BigDecimal longitude;
+  private double latitudeDouble = 0.0;
+  private double longitudeDouble = 0.0;
 
   /**
    * Default constructor for City.
@@ -84,6 +86,24 @@ public class City implements Serializable {
 
   public String getName() {
     return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public double getLatitudeDouble() {
+    if (latitudeDouble == 0.0) {
+      latitudeDouble = latitude.doubleValue();
+    }
+    return latitudeDouble;
+  }
+
+  public double getLongitudeDouble() {
+    if (longitudeDouble == 0.0) {
+      longitudeDouble = longitude.doubleValue();
+    }
+    return longitudeDouble;
   }
 
   public BigDecimal getLatitude() {
