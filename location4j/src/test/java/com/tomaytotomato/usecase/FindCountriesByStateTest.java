@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.LocationService;
-import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.Country;
-import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,9 +18,7 @@ class FindCountriesByStateTest {
   private final FindCountry locationService;
 
   public FindCountriesByStateTest() {
-    var textNormaliser = new DefaultTextNormaliser();
-    var dataLoader = new DefaultCountriesDataLoaderImpl();
-    locationService = new LocationService(textNormaliser, dataLoader);
+    locationService = LocationService.builder().build();
   }
 
   @Description("Find All Countries By State Name, when null or blank then throw exception")

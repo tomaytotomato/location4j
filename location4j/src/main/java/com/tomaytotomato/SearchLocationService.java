@@ -1,18 +1,13 @@
 package com.tomaytotomato;
 
-import com.tomaytotomato.aliases.DefaultLocationAliases;
 import com.tomaytotomato.aliases.LocationAliases;
 import com.tomaytotomato.loader.CountriesDataLoader;
-import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.mapper.DefaultLocationMapper;
 import com.tomaytotomato.mapper.LocationMapper;
 import com.tomaytotomato.model.City;
 import com.tomaytotomato.model.Country;
 import com.tomaytotomato.model.Location;
 import com.tomaytotomato.model.State;
-import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.text.normaliser.TextNormaliser;
-import com.tomaytotomato.text.tokeniser.DefaultTextTokeniser;
 import com.tomaytotomato.text.tokeniser.TextTokeniser;
 import com.tomaytotomato.usecase.SearchLocation;
 import java.util.ArrayList;
@@ -51,17 +46,7 @@ public class SearchLocationService implements SearchLocation {
   private final LocationMapper locationMapper;
   private final LocationAliases locationAliases;
 
-  public SearchLocationService() {
-    textTokeniser = new DefaultTextTokeniser();
-    textNormaliser = new DefaultTextNormaliser();
-    locationMapper = new DefaultLocationMapper();
-    locationAliases = new DefaultLocationAliases();
-    var dataLoader = new DefaultCountriesDataLoaderImpl();
-    countries = dataLoader.getCountries();
-    buildDataStructures();
-  }
-
-  public SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
+  protected SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
       LocationMapper locationMapper, CountriesDataLoader dataLoader,
       LocationAliases locationAliases) {
     this.textTokeniser = textTokeniser;
@@ -70,6 +55,10 @@ public class SearchLocationService implements SearchLocation {
     this.locationAliases = locationAliases;
     countries = dataLoader.getCountries();
     buildDataStructures();
+  }
+
+  public static SearchLocationServiceBuilder builder() {
+    return new SearchLocationServiceBuilder();
   }
 
   private static Location buildLocationResult(Country topCountry, State topState, City topCity) {

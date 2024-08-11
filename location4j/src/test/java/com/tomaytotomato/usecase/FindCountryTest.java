@@ -5,9 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.LocationService;
-import com.tomaytotomato.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.model.Country;
-import com.tomaytotomato.text.normaliser.DefaultTextNormaliser;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,9 +19,7 @@ class FindCountryTest {
   private final FindCountry locationService;
 
   public FindCountryTest() {
-    var textNormaliser = new DefaultTextNormaliser();
-    var dataLoader = new DefaultCountriesDataLoaderImpl();
-    locationService = new LocationService(textNormaliser, dataLoader);
+    locationService = LocationService.builder().build();
   }
 
   @DisplayName("Find Country By ID, when valid and exists, then return Country")

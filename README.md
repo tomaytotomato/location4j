@@ -42,7 +42,7 @@ import com.tomaytotomato.SearchLocationService;
 public class Main {
 
     public static void main(String[] args) {
-        SearchLocationService service = new SearchLocationService();
+        SearchLocationService service = SearchLocationService.builder().build();
 
         // Find all locations named San Francisco
         List<Location> results = service.search("san francisco");
@@ -116,7 +116,7 @@ import com.tomaytotomato.LocationService;
 public class LocationServiceExample {
 
     public static void main(String[] args) {
-        LocationService locationService = new LocationService();
+        LocationService locationService = LocationService.builder().build();
 
         // Get all countries
         List<Country> countries = locationService.findAllCountries();
@@ -148,16 +148,18 @@ import com.tomaytotomato.SearchLocationService;
 public class LocationSearchServiceExample {
 
     public static void main(String[] args) {
-        SearchLocationService locationSearchService = new SearchLocationService();
+        SearchLocationService searchLocationService = SearchLocationService.builder()
+            .withTextNormaliser(new DefaultTextNormaliser())
+            .build();
 
         // Search for Santa Clara
-        List<Location> results = locationSearchService.search("Santa Clara");
+        List<Location> results = searchLocationService.search("Santa Clara");
 
         // Search for Santa Clara in the USA
-        List<Location> resultsUnitedStates = locationSearchService.search("Santa Clara USA");
+        List<Location> resultsUnitedStates = searchLocationService.search("Santa Clara USA");
 
         // Search for Santa Clara in California (it works with ISO2 or ISO3) codes
-        List<Location> resultsCalifornia = locationSearchService.search("Santa Clara US CA");
+        List<Location> resultsCalifornia = searchLocationService.search("Santa Clara US CA");
     }
 }
 

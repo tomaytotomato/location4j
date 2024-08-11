@@ -23,14 +23,13 @@ class SearchLocationTest {
   private final SearchLocation searchLocationService;
 
   public SearchLocationTest() {
-    var textNormaliser = new DefaultTextNormaliser();
-    var textTokeniser = new DefaultTextTokeniser();
-    var locationMapper = new DefaultLocationMapper();
-    var locationAliases = new DefaultLocationAliases();
-    var dataLoader = new DefaultCountriesDataLoaderImpl();
-
-    searchLocationService = new SearchLocationService(textTokeniser, textNormaliser, locationMapper,
-        dataLoader, locationAliases);
+    searchLocationService = SearchLocationService.builder()
+        .withLocationAliases(new DefaultLocationAliases())
+        .withLocationMapper(new DefaultLocationMapper())
+        .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
+        .withTextNormaliser(new DefaultTextNormaliser())
+        .withTextTokeniser(new DefaultTextTokeniser())
+        .build();
   }
 
   @Description("SearchLocation, when null or empty text, then throw exception")
@@ -38,9 +37,7 @@ class SearchLocationTest {
   void search_WhenNullOrBlank_ThenThrowException() {
 
     // When Then
-    assertThatThrownBy(() -> {
-      searchLocationService.search(null);
-    }).isInstanceOf(IllegalArgumentException.class)
+    assertThatThrownBy(() -> searchLocationService.search(null)).isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("SearchLocation Text cannot be null or empty");
   }
 

@@ -19,9 +19,10 @@ class FindCountryByISOCodeTest {
   private final FindCountry locationService;
 
   public FindCountryByISOCodeTest() {
-    var textNormaliser = new DefaultTextNormaliser();
-    var dataLoader = new DefaultCountriesDataLoaderImpl();
-    locationService = new LocationService(textNormaliser, dataLoader);
+    locationService = LocationService.builder()
+        .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
+        .withTextNormaliser(new DefaultTextNormaliser())
+        .build();
   }
 
   @DisplayName("Get Country By ISO2 Code, when null or blank then throw exception")
