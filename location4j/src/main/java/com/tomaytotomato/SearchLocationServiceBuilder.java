@@ -45,7 +45,8 @@ public final class SearchLocationServiceBuilder {
     return this;
   }
 
-  public SearchLocationServiceBuilder withCountriesDataLoader(CountriesDataLoader countriesDataLoader) {
+  public SearchLocationServiceBuilder withCountriesDataLoader(
+      CountriesDataLoader countriesDataLoader) {
     this.countriesDataLoader = countriesDataLoader;
     return this;
   }

@@ -107,8 +107,66 @@
         <groupId>org.apache.maven.plugins</groupId>
         <version>${maven-deploy-plugin.version}</version>
       </plugin>
+      <plugin>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <configuration>
+          <!-- optional: limit format enforcement to just the files changed by this feature branch -->
+          <formats>
+            <!-- you can define as many formats as you want, each is independent -->
+            <format>
+              <!-- define the files to apply to -->
+              <endWithNewline/>
+              <!-- define the steps to apply to those files -->
+              <includes>
+                <include>.gitattributes</include>
+                <include>.gitignore</include>
+              </includes>
+              <indent>
+                <spacesPerTab>4</spacesPerTab>
+                <tabs>true</tabs>
+              </indent>
+              <trimTrailingWhitespace/>
+            </format>
+          </formats>
+          <java>
+            <!-- no need to specify files, inferred automatically, but you can if you want -->
+
+            <!-- apply a specific flavor of google-java-format and reflow long strings -->
+            <googleJavaFormat>
+              <formatJavadoc>false</formatJavadoc>
+              <reflowLongStrings>true</reflowLongStrings>
+              <style>AOSP</style>
+              <version>1.23.0</version>
+            </googleJavaFormat>
+          </java>
+          <!-- define a language-specific format -->
+          <ratchetFrom>origin/master</ratchetFrom>
+        </configuration>
+        <groupId>com.diffplug.spotless</groupId>
+        <version>${spotless.version}</version>
+      </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <artifactId>junit-jupiter</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <scope>test</scope>
+      <version>${junit-jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>assertj-core</artifactId>
+      <groupId>org.assertj</groupId>
+      <scope>test</scope>
+      <version>${assertj-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.7.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
   <description>${parent.description}</description>
   <developers>
     <developer>
@@ -117,6 +175,18 @@
       <name>Bruce Taylor</name>
     </developer>
   </developers>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>${env.GITHUB_USERNAME}</name>
+      <!--suppress UnresolvedMavenProperty -->
+      <url>https://maven.pkg.github.com/${env.GITHUB_USERNAME}/${env.GITHUB_REPOSITORY}</url>
+    </repository>
+  </distributionManagement>
+
+  <!-- this version is overridden by Github Action check release.yml !-->
+  <groupId>com.tomaytotomato</groupId>
+
   <licenses>
     <license>
       <distribution>repo</distribution>
@@ -127,16 +197,27 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>location4j-parent</artifactId>
-    <groupId>com.tomaytotomato</groupId>
-    <version>1.0.0</version>
-  </parent>
-
   <properties>
+    <assertj-core.version>3.26.3</assertj-core.version>
+    <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+    <junit-jupiter.version>5.10.3</junit-jupiter.version>
+    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+    <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+    <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.language>java</sonar.language>
+    <sonar.organization>tomaytotomato</sonar.organization>
+    <spotless.version>2.43.0</spotless.version>
   </properties>
 
   <scm>
