@@ -50,10 +50,12 @@ jobs:
 
       - name: Build with Maven
         run: mvn verify
+        working-directory: location4j
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Run SonarCloud Scan
+        working-directory: location4j
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
