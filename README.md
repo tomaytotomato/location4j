@@ -3,7 +3,7 @@
 ![GitHub branch check runs](https://img.shields.io/github/check-runs/tomaytotomato/location4j/master)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=tomaytotomato_location4j&metric=bugs)](https://sonarcloud.io/summary/new_code?id=tomaytotomato_location4j)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tomaytotomato_location4j&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tomaytotomato_location4j)
-[![javadoc](https://javadoc.io/badge2/com.tomaytotomato/location4j/1.0.3/javadoc.svg)](https://javadoc.io/doc/com.tomaytotomato/location4j/1.0.3) 
+[![javadoc](https://javadoc.io/badge2/com.tomaytotomato/location4j/1.0.3/javadoc.svg)](https://javadoc.io/doc/com.tomaytotomato/location4j/1.0.3)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
 
@@ -71,7 +71,6 @@ public class Main {
 
 ## Features 🔬
 
-
 | Feature                         | Supported | Object   | Example                                                                         |
 |---------------------------------|-----------|----------|---------------------------------------------------------------------------------|
 | Search (free text)              | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
@@ -96,8 +95,10 @@ public class Main {
 >
 > US, San Francisco, california
 
-🟢 Latitude/Longitude searches can use `double`, `BigDecimal`, or `String` inputs for both values; the types must match (
-you can't mix a `String` latitude with a `BigDecimal` or `double` longitude) but the API will accept any of the three
+🟢 Latitude/Longitude searches can use `double`, `BigDecimal`, or `String` inputs for both values;
+the types must match (
+you can't mix a `String` latitude with a `BigDecimal` or `double` longitude) but the API will accept
+any of the three
 types.
 
 🔴 location4j cannot find a location based on a small town, street, or
@@ -107,7 +108,8 @@ zipcode/postcode.
 
 **Lookup countries**
 
-For simple lookups the `LocationService` can act like a repository, allow the retrieval of countries, states and city information.
+For simple lookups the `LocationService` can act like a repository, allow the retrieval of
+countries, states and city information.
 
 ```java
 
@@ -139,7 +141,8 @@ public class LocationServiceExample {
 
 **Search locations**
 
-Search any text for a location, the `SearchLocationService` can handle formatted or unformatted text. It will try and find matches against a variety of keywords it has in its dataset.
+Search any text for a location, the `SearchLocationService` can handle formatted or unformatted
+text. It will try and find matches against a variety of keywords it has in its dataset.
 
 ```java
 

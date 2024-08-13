@@ -144,7 +144,7 @@ public class SearchLocationService implements SearchLocation {
   /**
    * Maps state and its associated cities to various lookup maps.
    *
-   * @param state   The state to be mapped.
+   * @param state The state to be mapped.
    */
   private void buildStateLookups(State state) {
     stateIdToStateMap.put(state.getId(), state);
