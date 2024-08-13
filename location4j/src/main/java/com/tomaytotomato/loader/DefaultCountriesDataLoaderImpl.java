@@ -1,11 +1,13 @@
 package com.tomaytotomato.loader;
 
 import com.tomaytotomato.model.Country;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,18 +25,17 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
   public DefaultCountriesDataLoaderImpl() {
     var logger = Logger.getLogger(this.getClass().getName());
 
-    String urlToFile = getClass().getResource(DEFAULT_FILE).toString();
-    String urlToThis =
-        this.getClass().getResource(this.getClass().getSimpleName() + ".class").toString();
+    String urlToFile = getResource(DEFAULT_FILE).toString();
+    String urlToThis = getResource(this.getClass().getSimpleName() + ".class").toString();
     String trimmed = urlToFile.substring(0, urlToFile.indexOf(DEFAULT_FILE));
     if (!urlToThis.startsWith(trimmed)) {
       throw new SecurityException(
           DEFAULT_FILE + " is not in the same artifact as the loader: security issue");
     }
 
-    try (InputStream inputStream = getClass().getResourceAsStream(DEFAULT_FILE)) {
+    try (InputStream inputStream = getResourceAsStream(DEFAULT_FILE)) {
       logger.info("Attempting to load countries from " + DEFAULT_FILE);
-      if (inputStream == null) {
+      if (Objects.isNull(inputStream)) {
         throw new IllegalArgumentException("File not found: " + DEFAULT_FILE);
       }
 
@@ -43,6 +44,14 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
       logger.log(Level.SEVERE, String.format("Failed to load countries file: %s", e.getMessage()),
           e);
     }
+  }
+
+  protected InputStream getResourceAsStream(String resource) {
+    return getClass().getResourceAsStream(resource);
+  }
+
+  protected java.net.URL getResource(String resource) {
+    return getClass().getResource(resource);
   }
 
   private void loadLocationsFromBinary(InputStream inputStream, Logger logger)

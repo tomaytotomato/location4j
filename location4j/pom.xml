@@ -160,6 +160,12 @@
       <scope>test</scope>
       <version>${assertj-core.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.7.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <description>${parent.description}</description>
   <developers>
