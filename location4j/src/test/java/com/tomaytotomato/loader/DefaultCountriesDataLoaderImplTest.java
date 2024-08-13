@@ -17,7 +17,7 @@ class DefaultCountriesDataLoaderImplTest {
    */
   @DisplayName("Constructor should throw SecurityException for mismatched resource paths")
   @Test
-  void testSecurityExceptionThrownWhenFilePathIsInvalid() {
+  void constructor_WhenResourcePathsDoNotMatch_ShouldThrowSecurityException() {
 
     // Given
     class TestCountriesDataLoader extends DefaultCountriesDataLoaderImpl {
@@ -45,5 +45,34 @@ class DefaultCountriesDataLoaderImplTest {
     assertThatThrownBy(TestCountriesDataLoader::new)
         .isInstanceOf(SecurityException.class)
         .hasMessageContaining("/location4j.bin is not in the same artifact as the loader: security issue");
+  }
+
+  @DisplayName("Constructor should throw IllegalArgumentException if DEFAULT_FILE is not found")
+  @Test
+  void constructor_WhenFileNotFound_ShouldThrowIllegalArgumentException() {
+    class TestCountriesDataLoader extends DefaultCountriesDataLoaderImpl {
+      @Override
+      protected URL getResource(String resource) {
+        try {
+          if (resource.equals("/location4j.bin")) {
+            return new URI("file:///location4j.bin").toURL();
+          } else if (resource.equals("TestCountriesDataLoader.class")) {
+            return new URI("file:///same-path/DefaultCountriesDataLoaderImpl.class").toURL();
+          }
+        } catch (MalformedURLException | URISyntaxException e) {
+          throw new RuntimeException("Failed to create mock URL for resource: " + resource, e);
+        }
+        return null;
+      }
+
+      @Override
+      protected InputStream getResourceAsStream(String resource) {
+        return null;
+      }
+    }
+
+    assertThatThrownBy(TestCountriesDataLoader::new)
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("File not found: /location4j.bin");
   }
 }
