@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>location4j-parent</artifactId>
-  <groupId>com.tomaytotomato</groupId>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -16,6 +14,7 @@
       </plugins>
     </pluginManagement>
   </build>
+
   <description>A location service for Java, identify a city, state or country by multiple terms.
   </description>
   <developers>
@@ -25,6 +24,7 @@
       <name>Bruce Taylor</name>
     </developer>
   </developers>
+  <groupId>com.tomaytotomato</groupId>
 
   <licenses>
     <license>

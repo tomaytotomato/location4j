@@ -54,6 +54,10 @@ public class City implements Serializable {
     this.longitude = longitude;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public Integer getId() {
     return id;
   }
@@ -62,28 +66,56 @@ public class City implements Serializable {
     return countryId;
   }
 
+  public void setCountryId(Integer countryId) {
+    this.countryId = countryId;
+  }
+
   public String getCountryName() {
     return countryName;
+  }
+
+  public void setCountryName(String countryName) {
+    this.countryName = countryName;
   }
 
   public String getCountryIso2Code() {
     return countryIso2Code;
   }
 
+  public void setCountryIso2Code(String countryIso2Code) {
+    this.countryIso2Code = countryIso2Code;
+  }
+
   public String getCountryIso3Code() {
     return countryIso3Code;
+  }
+
+  public void setCountryIso3Code(String countryIso3Code) {
+    this.countryIso3Code = countryIso3Code;
   }
 
   public Integer getStateId() {
     return stateId;
   }
 
+  public void setStateId(Integer stateId) {
+    this.stateId = stateId;
+  }
+
   public String getStateName() {
     return stateName;
   }
 
+  public void setStateName(String stateName) {
+    this.stateName = stateName;
+  }
+
   public String getStateCode() {
     return stateCode;
+  }
+
+  public void setStateCode(String stateCode) {
+    this.stateCode = stateCode;
   }
 
   public String getName() {
@@ -116,36 +148,34 @@ public class City implements Serializable {
     return longitude;
   }
 
-  public void setCountryId(Integer countryId) {
-    this.countryId = countryId;
+  @Generated("IntelliJ")
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    City city = (City) o;
+    return Objects.equals(getId(), city.getId()) && Objects.equals(getCountryId(),
+        city.getCountryId()) && Objects.equals(getCountryName(), city.getCountryName())
+        && Objects.equals(getCountryIso2Code(), city.getCountryIso2Code())
+        && Objects.equals(getCountryIso3Code(), city.getCountryIso3Code())
+        && Objects.equals(getStateId(), city.getStateId()) && Objects.equals(
+        getStateName(), city.getStateName()) && Objects.equals(getStateCode(),
+        city.getStateCode()) && Objects.equals(getName(), city.getName())
+        && Objects.equals(getLatitude(), city.getLatitude()) && Objects.equals(
+        getLongitude(), city.getLongitude());
   }
 
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
-  public void setCountryIso2Code(String countryIso2Code) {
-    this.countryIso2Code = countryIso2Code;
-  }
-
-  public void setCountryIso3Code(String countryIso3Code) {
-    this.countryIso3Code = countryIso3Code;
-  }
-
-  public void setStateId(Integer stateId) {
-    this.stateId = stateId;
-  }
-
-  public void setStateName(String stateName) {
-    this.stateName = stateName;
-  }
-
-  public void setStateCode(String stateCode) {
-    this.stateCode = stateCode;
-  }
-
-  public static Builder builder() {
-    return new Builder();
+  @Generated("IntelliJ")
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
+        getCountryIso3Code(), getStateId(), getStateName(), getStateCode(), getName(),
+        getLatitude(),
+        getLongitude());
   }
 
   @Generated("IntelliJ")
@@ -225,35 +255,5 @@ public class City implements Serializable {
       return new City(id, countryId, countryName, countryIso2Code, countryIso3Code, stateId,
           stateName, stateCode, name, latitude, longitude);
     }
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    City city = (City) o;
-    return Objects.equals(getId(), city.getId()) && Objects.equals(getCountryId(),
-        city.getCountryId()) && Objects.equals(getCountryName(), city.getCountryName())
-        && Objects.equals(getCountryIso2Code(), city.getCountryIso2Code())
-        && Objects.equals(getCountryIso3Code(), city.getCountryIso3Code())
-        && Objects.equals(getStateId(), city.getStateId()) && Objects.equals(
-        getStateName(), city.getStateName()) && Objects.equals(getStateCode(),
-        city.getStateCode()) && Objects.equals(getName(), city.getName())
-        && Objects.equals(getLatitude(), city.getLatitude()) && Objects.equals(
-        getLongitude(), city.getLongitude());
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
-        getCountryIso3Code(), getStateId(), getStateName(), getStateCode(), getName(),
-        getLatitude(),
-        getLongitude());
   }
 }

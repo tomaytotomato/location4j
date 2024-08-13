@@ -68,6 +68,10 @@ public class State implements Serializable {
     this.longitude = longitude;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public Integer getId() {
     return id;
   }
@@ -76,16 +80,32 @@ public class State implements Serializable {
     return countryId;
   }
 
+  public void setCountryId(Integer id) {
+    this.countryId = id;
+  }
+
   public String getCountryName() {
     return countryName;
+  }
+
+  public void setCountryName(String countryName) {
+    this.countryName = countryName;
   }
 
   public String getCountryIso2Code() {
     return countryIso2Code;
   }
 
+  public void setCountryIso2Code(String countryIso2Code) {
+    this.countryIso2Code = countryIso2Code;
+  }
+
   public String getCountryIso3Code() {
     return countryIso3Code;
+  }
+
+  public void setCountryIso3Code(String countryIso3Code) {
+    this.countryIso3Code = countryIso3Code;
   }
 
   public String getName() {
@@ -112,24 +132,33 @@ public class State implements Serializable {
     return longitude;
   }
 
-  public void setCountryId(Integer id) {
-    this.countryId = id;
+  @Generated("IntelliJ")
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    State state = (State) o;
+    return Objects.equals(getId(), state.getId()) && Objects.equals(
+        getCountryId(), state.getCountryId()) && Objects.equals(getCountryName(),
+        state.getCountryName()) && Objects.equals(getCountryIso2Code(),
+        state.getCountryIso2Code()) && Objects.equals(getCountryIso3Code(),
+        state.getCountryIso3Code()) && Objects.equals(getName(), state.getName())
+        && Objects.equals(getType(), state.getType()) && Objects.equals(
+        getStateCode(), state.getStateCode()) && Objects.equals(getCities(),
+        state.getCities()) && Objects.equals(getLatitude(), state.getLatitude())
+        && Objects.equals(getLongitude(), state.getLongitude());
   }
 
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
-  public void setCountryIso2Code(String countryIso2Code) {
-    this.countryIso2Code = countryIso2Code;
-  }
-
-  public void setCountryIso3Code(String countryIso3Code) {
-    this.countryIso3Code = countryIso3Code;
-  }
-
-  public static Builder builder() {
-    return new Builder();
+  @Generated("IntelliJ")
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
+        getCountryIso3Code(), getName(), getType(), getStateCode(), getCities(), getLatitude(),
+        getLongitude());
   }
 
   @Generated("IntelliJ")
@@ -209,34 +238,5 @@ public class State implements Serializable {
       return new State(id, countryId, countryName, countryIso2Code, countryIso3Code, name, type,
           stateCode, cities, latitude, longitude);
     }
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    State state = (State) o;
-    return Objects.equals(getId(), state.getId()) && Objects.equals(
-        getCountryId(), state.getCountryId()) && Objects.equals(getCountryName(),
-        state.getCountryName()) && Objects.equals(getCountryIso2Code(),
-        state.getCountryIso2Code()) && Objects.equals(getCountryIso3Code(),
-        state.getCountryIso3Code()) && Objects.equals(getName(), state.getName())
-        && Objects.equals(getType(), state.getType()) && Objects.equals(
-        getStateCode(), state.getStateCode()) && Objects.equals(getCities(),
-        state.getCities()) && Objects.equals(getLatitude(), state.getLatitude())
-        && Objects.equals(getLongitude(), state.getLongitude());
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
-        getCountryIso3Code(), getName(), getType(), getStateCode(), getCities(), getLatitude(),
-        getLongitude());
   }
 }

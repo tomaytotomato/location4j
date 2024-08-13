@@ -68,6 +68,30 @@ public class TimeZone implements Serializable {
   }
 
   @Generated("IntelliJ")
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TimeZone timeZone = (TimeZone) o;
+    return Objects.equals(getZoneName(), timeZone.getZoneName())
+        && Objects.equals(getAbbreviation(), timeZone.getAbbreviation())
+        && Objects.equals(getTzName(), timeZone.getTzName()) && Objects.equals(
+        getGmtOffset(), timeZone.getGmtOffset()) && Objects.equals(getGmtOffsetName(),
+        timeZone.getGmtOffsetName());
+  }
+
+  @Generated("IntelliJ")
+  @Override
+  public int hashCode() {
+    return Objects.hash(getZoneName(), getAbbreviation(), getTzName(), getGmtOffset(),
+        getGmtOffsetName());
+  }
+
+  @Generated("IntelliJ")
   public static final class Builder {
 
     private String zoneName;
@@ -111,29 +135,5 @@ public class TimeZone implements Serializable {
     public TimeZone build() {
       return new TimeZone(zoneName, abbreviation, tzName, gmtOffset, gmtOffsetName);
     }
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    TimeZone timeZone = (TimeZone) o;
-    return Objects.equals(getZoneName(), timeZone.getZoneName())
-        && Objects.equals(getAbbreviation(), timeZone.getAbbreviation())
-        && Objects.equals(getTzName(), timeZone.getTzName()) && Objects.equals(
-        getGmtOffset(), timeZone.getGmtOffset()) && Objects.equals(getGmtOffsetName(),
-        timeZone.getGmtOffsetName());
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public int hashCode() {
-    return Objects.hash(getZoneName(), getAbbreviation(), getTzName(), getGmtOffset(),
-        getGmtOffsetName());
   }
 }

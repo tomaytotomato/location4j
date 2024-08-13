@@ -47,6 +47,10 @@ public class Country implements Serializable {
   Country() {
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public Integer getId() {
     return id;
   }
@@ -143,8 +147,45 @@ public class Country implements Serializable {
     return emojiU;
   }
 
-  public static Builder builder() {
-    return new Builder();
+  @Generated("IntelliJ")
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Country country = (Country) o;
+    return Objects.equals(getId(), country.getId()) && Objects.equals(getName(),
+        country.getName()) && Objects.equals(getIso3Code(), country.getIso3Code())
+        && Objects.equals(getIso2Code(), country.getIso2Code()) && Objects.equals(getPhoneCode(),
+        country.getPhoneCode()) && Objects.equals(getNumericCode(),
+        country.getNumericCode()) && Objects.equals(getCapital(), country.getCapital())
+        && Objects.equals(getCurrency(), country.getCurrency()) && Objects.equals(
+        getCurrencyName(), country.getCurrencyName()) && Objects.equals(getCurrencySymbol(),
+        country.getCurrencySymbol()) && Objects.equals(getTld(), country.getTld())
+        && Objects.equals(getNativeName(), country.getNativeName())
+        && Objects.equals(getRegion(), country.getRegion()) && Objects.equals(
+        getRegionId(), country.getRegionId()) && Objects.equals(getSubregion(),
+        country.getSubregion()) && Objects.equals(getSubregionId(),
+        country.getSubregionId()) && Objects.equals(getStates(), country.getStates())
+        && Objects.equals(getNationality(), country.getNationality())
+        && Objects.equals(getTimezones(), country.getTimezones())
+        && Objects.equals(getTranslations(), country.getTranslations())
+        && Objects.equals(getLatitude(), country.getLatitude()) && Objects.equals(
+        getLongitude(), country.getLongitude()) && Objects.equals(getEmoji(),
+        country.getEmoji()) && Objects.equals(getEmojiU(), country.getEmojiU());
+  }
+
+  @Generated("IntelliJ")
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getName(), getIso3Code(), getIso2Code(), getPhoneCode(),
+        getNumericCode(), getCapital(), getCurrency(), getCurrencyName(), getCurrencySymbol(),
+        getTld(), getNativeName(), getRegion(), getRegionId(), getSubregion(), getSubregionId(),
+        getStates(), getNationality(), getTimezones(), getTranslations(), getLatitude(),
+        getLongitude(), getEmoji(), getEmojiU());
   }
 
   @Generated("IntelliJ")
@@ -326,46 +367,5 @@ public class Country implements Serializable {
       country.emojiU = this.emojiU;
       return country;
     }
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Country country = (Country) o;
-    return Objects.equals(getId(), country.getId()) && Objects.equals(getName(),
-        country.getName()) && Objects.equals(getIso3Code(), country.getIso3Code())
-        && Objects.equals(getIso2Code(), country.getIso2Code()) && Objects.equals(getPhoneCode(),
-        country.getPhoneCode()) && Objects.equals(getNumericCode(),
-        country.getNumericCode()) && Objects.equals(getCapital(), country.getCapital())
-        && Objects.equals(getCurrency(), country.getCurrency()) && Objects.equals(
-        getCurrencyName(), country.getCurrencyName()) && Objects.equals(getCurrencySymbol(),
-        country.getCurrencySymbol()) && Objects.equals(getTld(), country.getTld())
-        && Objects.equals(getNativeName(), country.getNativeName())
-        && Objects.equals(getRegion(), country.getRegion()) && Objects.equals(
-        getRegionId(), country.getRegionId()) && Objects.equals(getSubregion(),
-        country.getSubregion()) && Objects.equals(getSubregionId(),
-        country.getSubregionId()) && Objects.equals(getStates(), country.getStates())
-        && Objects.equals(getNationality(), country.getNationality())
-        && Objects.equals(getTimezones(), country.getTimezones())
-        && Objects.equals(getTranslations(), country.getTranslations())
-        && Objects.equals(getLatitude(), country.getLatitude()) && Objects.equals(
-        getLongitude(), country.getLongitude()) && Objects.equals(getEmoji(),
-        country.getEmoji()) && Objects.equals(getEmojiU(), country.getEmojiU());
-  }
-
-  @Generated("IntelliJ")
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getName(), getIso3Code(), getIso2Code(), getPhoneCode(),
-        getNumericCode(), getCapital(), getCurrency(), getCurrencyName(), getCurrencySymbol(),
-        getTld(), getNativeName(), getRegion(), getRegionId(), getSubregion(), getSubregionId(),
-        getStates(), getNationality(), getTimezones(), getTranslations(), getLatitude(),
-        getLongitude(), getEmoji(), getEmojiU());
   }
 }

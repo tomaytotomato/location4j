@@ -17,9 +17,9 @@ import java.util.stream.Stream;
  * or "New" form part of a proper name.
  * </p>
  * <p><strong>Note:</strong> This class is experimental and may produce unexpected results in some
- * cases.
- * Users are encouraged to thoroughly test its behavior in their specific use cases. Future updates
- * might change how the tokenization logic works, and backward compatibility is not guaranteed.</p>
+ * cases. Users are encouraged to thoroughly test its behavior in their specific use cases. Future
+ * updates might change how the tokenization logic works, and backward compatibility is not
+ * guaranteed.</p>
  * <p>
  * For example, given the input "San Francisco New York", the tokeniser will produce:
  * <ul>
