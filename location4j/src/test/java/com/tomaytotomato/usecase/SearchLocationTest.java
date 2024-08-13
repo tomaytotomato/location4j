@@ -37,7 +37,8 @@ class SearchLocationTest {
   void search_WhenNullOrBlank_ThenThrowException() {
 
     // When Then
-    assertThatThrownBy(() -> searchLocationService.search(null)).isInstanceOf(IllegalArgumentException.class)
+    assertThatThrownBy(() -> searchLocationService.search(null)).isInstanceOf(
+            IllegalArgumentException.class)
         .hasMessageContaining("SearchLocation Text cannot be null or empty");
   }
 
