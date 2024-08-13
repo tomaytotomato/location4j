@@ -33,14 +33,17 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean verify
+        working-directory: location4j
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Package with Maven
         run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} && mvn package -DskipTests
+        working-directory: location4j
 
       - name: Deploy Github and Maven Central
         run: mvn deploy
+        working-directory: location4j
         env:
           GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
