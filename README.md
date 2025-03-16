@@ -185,6 +185,10 @@ with it.
 I may add other functionality in the future if needed e.g. geolocation to nearest place, geofencing
 etc.
 
+## More Info
+
+[Testing](TESTING.md)
+
 ## Credits 🙏
 
 Country data sourced
