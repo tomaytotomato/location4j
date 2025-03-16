@@ -1,18 +1,16 @@
 package com.tomaytotomato.location4j.usecase;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-
 import com.tomaytotomato.location4j.SearchLocationService;
 import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
 import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.location4j.mapper.DefaultLocationMapper;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
-import com.tomaytotomato.location4j.usecase.SearchLocation;
 import java.util.Arrays;
-import jdk.jfr.Description;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +31,7 @@ class SearchLocationTest {
         .build();
   }
 
-  @Description("SearchLocation, when null or empty text, then throw exception")
+  @DisplayName("SearchLocation, when null or empty text, then throw exception")
   @Test
   void search_WhenNullOrBlank_ThenThrowException() {
 
@@ -43,7 +41,7 @@ class SearchLocationTest {
         .hasMessageContaining("SearchLocation Text cannot be null or empty");
   }
 
-  @Description("SearchLocation, when text is too short, then return empty list")
+  @DisplayName("SearchLocation, when text is too short, then return empty list")
   @Test
   void search_WhenTextIsTooShort_ThenReturnEmptyList() {
     // When
@@ -53,7 +51,7 @@ class SearchLocationTest {
     assertThat(result).isEmpty();
   }
 
-  @Description("SearchLocation, when text contains country only, then return country match")
+  @DisplayName("SearchLocation, when text contains country only, then return country match")
   @ParameterizedTest
   @CsvSource({
       "United Kingdom",
@@ -71,7 +69,7 @@ class SearchLocationTest {
     assertThat(result).isNotEmpty().hasSize(1).extracting("countryName").containsOnly(countryName);
   }
 
-  @Description("SearchLocation, when text contains country ISO2, then return country match")
+  @DisplayName("SearchLocation, when text contains country ISO2, then return country match")
   @ParameterizedTest
   @CsvSource({
       "GB, United Kingdom|Eritrea|Kyrgyzstan|Liberia|Pakistan|Tajikistan",
@@ -93,7 +91,7 @@ class SearchLocationTest {
         .containsAll(Arrays.asList(expectedCountries));
   }
 
-  @Description("SearchLocation, when text contains country ISO3, then return country match")
+  @DisplayName("SearchLocation, when text contains country ISO3, then return country match")
   @ParameterizedTest
   @CsvSource({
       "GBR, United Kingdom",
@@ -114,7 +112,7 @@ class SearchLocationTest {
         .containsOnly(tuple(expectedCountryName, iso3Code));
   }
 
-  @Description("SearchLocation, when text contains state and country name, then return single match")
+  @DisplayName("SearchLocation, when text contains state and country name, then return single match")
   @ParameterizedTest
   @CsvSource({
       "Santa Clara CA, United States",

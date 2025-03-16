@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tomaytotomato.location4j.LocationService;
 import com.tomaytotomato.location4j.model.Country;
-import com.tomaytotomato.location4j.usecase.FindCountry;
-import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -22,7 +20,7 @@ class FindCountriesByStateTest {
     locationService = LocationService.builder().build();
   }
 
-  @Description("Find All Countries By State Name, when null or blank then throw exception")
+  @DisplayName("Find All Countries By State Name, when null or blank then throw exception")
   @Test
   void findAllCountriesWithStateName_WhenNullOrBlank_ThenThrowException() {
     //When Then
@@ -31,7 +29,7 @@ class FindCountriesByStateTest {
         .hasMessage("State name cannot be null or empty");
   }
 
-  @Description("Find All Countries By State Name, when not found then return empty list")
+  @DisplayName("Find All Countries By State Name, when not found then return empty list")
   @Test
   void findAllCountriesWithStateName_WhenStateNameNotFound_ThenReturnEmptyList() {
     //When
