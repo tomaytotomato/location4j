@@ -1,12 +1,9 @@
 package com.tomaytotomato.location4j.usecase;
 
 
+import com.tomaytotomato.location4j.LocationService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.tomaytotomato.location4j.LocationService;
-import com.tomaytotomato.location4j.usecase.FindState;
-import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -22,7 +19,7 @@ class FindStateTest {
     locationService = LocationService.builder().build();
   }
 
-  @Description("Find State By ID, when null then throw exception")
+  @DisplayName("Find State By ID, when null then throw exception")
   @Test
   void findStateById_WhenNull_ThenThrowException() {
     // When Then
@@ -31,7 +28,7 @@ class FindStateTest {
         .hasMessage("State ID cannot be null");
   }
 
-  @Description("Find State By ID, when ID not found then return Optional empty")
+  @DisplayName("Find State By ID, when ID not found then return Optional empty")
   @Test
   void findStateById_WhenStateNotFound_ThenReturnOptionalEmpty() {
     // When
@@ -58,7 +55,7 @@ class FindStateTest {
     assertThat(result).isNotEmpty().get().extracting("name").isEqualTo(expectedName);
   }
 
-  @Description("Find States By State Name, when null or blank then throw exception")
+  @DisplayName("Find States By State Name, when null or blank then throw exception")
   @Test
   void findAllStatesByStateName_WhenStateNameIsNullOrBlank_ThenThrowException() {
     // When Then
@@ -67,7 +64,7 @@ class FindStateTest {
         .hasMessage("State Name cannot be null or empty");
   }
 
-  @Description("Find States By State Name, when state name not found then return empty list")
+  @DisplayName("Find States By State Name, when state name not found then return empty list")
   @Test
   void findAllStatesByStateName_WhenStateNameDoesNotExists_ThenReturnEmptyList() {
     // When
@@ -77,7 +74,7 @@ class FindStateTest {
     assertThat(result).isEmpty();
   }
 
-  @Description("Find States By State Name, when state name too short then throw exception")
+  @DisplayName("Find States By State Name, when state name too short then throw exception")
   @Test
   void findAllStatesByStateName_WhenStateNameTooShort_ThenThrowException() {
     // When Then
@@ -106,7 +103,7 @@ class FindStateTest {
     assertThat(results).hasSize(expectedCount);
   }
 
-  @Description("Find States By State Code, when null or blank then throw exception")
+  @DisplayName("Find States By State Code, when null or blank then throw exception")
   @Test
   void findAllStatesByStateCode_WhenStateCodeIsNullOrBlank_ThenThrowException() {
     // When Then
@@ -115,7 +112,7 @@ class FindStateTest {
         .hasMessage("State Code cannot be null or empty");
   }
 
-  @Description("Find States By State Code, when state code not found then return empty list")
+  @DisplayName("Find States By State Code, when state code not found then return empty list")
   @Test
   void findAllStatesByStateCode_WhenStateCodeDoesNotExists_ThenReturnEmptyList() {
     // When
