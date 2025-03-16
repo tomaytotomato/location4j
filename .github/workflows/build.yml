@@ -49,7 +49,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build with Maven
-        run: mvn verify
+        run: mvn verify -Dmaven.test.useModulePath=false
         working-directory: location4j
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
