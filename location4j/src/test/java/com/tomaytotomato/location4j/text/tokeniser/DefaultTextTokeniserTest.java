@@ -2,17 +2,14 @@ package com.tomaytotomato.location4j.text.tokeniser;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
-import com.tomaytotomato.location4j.text.tokeniser.TextTokeniser;
-import jdk.jfr.Description;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DefaultTextTokeniserTest {
 
   private TextTokeniser textTokeniser = new DefaultTextTokeniser();
 
-  @Description("Tokenise, when text only has one word, then return one word")
+  @DisplayName("Tokenise, when text only has one word, then return one word")
   @Test
   void tokenise_WhenTextOnlyHasOneWord_ThenReturnOneToken() {
 
@@ -23,7 +20,7 @@ class DefaultTextTokeniserTest {
     assertThat(result).isNotEmpty().hasSize(1).contains("Glasgow");
   }
 
-  @Description("Tokenise, when text only has one word but lots of commas, then return one word")
+  @DisplayName("Tokenise, when text only has one word but lots of commas, then return one word")
   @Test
   void tokenise_WhenTextOnlyHasOneWordButLotsOfCommas_ThenReturnOneToken() {
 
@@ -34,7 +31,7 @@ class DefaultTextTokeniserTest {
     assertThat(result).isNotEmpty().hasSize(1).contains("Aberdeen");
   }
 
-  @Description("Tokenise, when text only has one word but lots of other random character, then return one word")
+  @DisplayName("Tokenise, when text only has one word but lots of other random character, then return one word")
   @Test
   void tokenise_WhenTextOnlyHasOneWordButLotsOfRandomCharacters_ThenReturnOneToken() {
 
@@ -46,7 +43,7 @@ class DefaultTextTokeniserTest {
   }
 
 
-  @Description("Tokenise, when text only has one word with valid characters, then return one word")
+  @DisplayName("Tokenise, when text only has one word with valid characters, then return one word")
   @Test
   void tokenise_WhenTextHasMultipleWordsWithPrefixes_ThenReturnCorrectTokens() {
 
