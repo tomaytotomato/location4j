@@ -1,11 +1,8 @@
 package com.tomaytotomato.location4j.text.normaliser;
 
+import jdk.jfr.Description;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
-import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
-import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
 
 class DefaultTextNormaliserTest {

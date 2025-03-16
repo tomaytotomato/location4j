@@ -1,12 +1,9 @@
 package com.tomaytotomato.location4j.text.tokeniser;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.tomaytotomato.location4j.text.tokeniser.PrefixAwareTextTokeniser;
-import com.tomaytotomato.location4j.text.tokeniser.TextTokeniser;
 import java.util.stream.Stream;
-import jdk.jfr.Description;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +14,7 @@ class PrefixAwareTextTokeniserTest {
 
   private TextTokeniser textTokeniser = new PrefixAwareTextTokeniser();
 
-  @Description("Tokenise, when text only has one word, then return one word")
+  @DisplayName("Tokenise, when text only has one word, then return one word")
   @Test
   void tokenise_WhenTextOnlyHasOneWord_ThenReturnOneToken() {
 
@@ -28,7 +25,7 @@ class PrefixAwareTextTokeniserTest {
     assertThat(result).isNotEmpty().hasSize(1).contains("Glasgow");
   }
 
-  @Description("Tokenise, when text only has one word but lots of commas, then return one word")
+  @DisplayName("Tokenise, when text only has one word but lots of commas, then return one word")
   @Test
   void tokenise_WhenTextOnlyHasOneWordButLotsOfCommas_ThenReturnOneToken() {
 
@@ -39,7 +36,7 @@ class PrefixAwareTextTokeniserTest {
     assertThat(result).isNotEmpty().hasSize(1).contains("Aberdeen");
   }
 
-  @Description("Tokenise, when text only has one word but lots of other random character, then return one word")
+  @DisplayName("Tokenise, when text only has one word but lots of other random character, then return one word")
   @Test
   void tokenise_WhenTextOnlyHasOneWordButLotsOfRandomCharacters_ThenReturnOneToken() {
 
@@ -50,7 +47,7 @@ class PrefixAwareTextTokeniserTest {
     assertThat(result).isNotEmpty().hasSize(1).contains("Dallas");
   }
 
-  @Description("Tokenise, when text has one or more words, then return appropriate amount of tokens")
+  @DisplayName("Tokenise, when text has one or more words, then return appropriate amount of tokens")
   @ParameterizedTest
   @CsvSource({
       "Aberdeen, Aberdeen",
@@ -97,7 +94,7 @@ class PrefixAwareTextTokeniserTest {
     assertThat(result).isNotEmpty().hasSize(expectedNames.length).contains(expectedNames);
   }
 
-  @Description("Tokenise, when text only has one word with valid characters, then return one word")
+  @DisplayName("Tokenise, when text only has one word with valid characters, then return one word")
   @Test
   void tokenise_WhenTextHasMultipleWordsWithPrefixes_ThenReturnCorrectTokens() {
 
