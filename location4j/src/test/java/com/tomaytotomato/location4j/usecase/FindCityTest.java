@@ -30,14 +30,14 @@ class FindCityTest {
     assertEquals("Tallahassee", result.getName());
   }
 
-  @Description("Find City by Lat/long with double")
+  @DisplayName("Find City by Lat/long with double")
   @Test
   void findCityByLatLongWithDouble() {
     var result = locationService.findClosestCityByLatLong(30.438, -84.280);
     assertEquals("Tallahassee", result.getName());
   }
 
-  @Description("Find City By ID, when null then throw exception")
+  @DisplayName("Find City By ID, when null then throw exception")
   @Test
   void findCityById_WhenNull_ThenThrowException() {
     // When Then
@@ -46,7 +46,7 @@ class FindCityTest {
         .hasMessage("City ID cannot be null");
   }
 
-  @Description("Find City By ID, when ID does not exist then return Optional empty")
+  @DisplayName("Find City By ID, when ID does not exist then return Optional empty")
   @Test
   void findCityById_WhenIdDoesNotExist_ThenReturnEmpty() {
     // When
@@ -56,7 +56,7 @@ class FindCityTest {
     assertThat(result).isEmpty();
   }
 
-  @Description("Find City By ID, when ID exists then return city")
+  @DisplayName("Find City By ID, when ID exists then return city")
   @ParameterizedTest
   @CsvSource({
       "1, Andorra la Vella",
@@ -73,7 +73,7 @@ class FindCityTest {
     assertThat(result).isNotEmpty().get().extracting("name").isEqualTo(expectedCityName);
   }
 
-  @Description("Find All Cities, when called is not empty")
+  @DisplayName("Find All Cities, when called is not empty")
   @Test
   void findAllCities_WhenCalled_ThenReturnListOfCities() {
 
@@ -84,7 +84,7 @@ class FindCityTest {
     assertThat(result).isNotEmpty().hasSize(150661);
   }
 
-  @Description("Find All Cities By City Name, when city name null or blank then throw exception")
+  @DisplayName("Find All Cities By City Name, when city name null or blank then throw exception")
   @Test
   void findAllCitiesByCityName_WhenStateNameIsNullOrBlank_ThenThrowException() {
     // When Then
@@ -93,7 +93,7 @@ class FindCityTest {
         .hasMessage("City Name cannot be null or empty");
   }
 
-  @Description("Find All Cities By City Name, when city name not found then return empty list")
+  @DisplayName("Find All Cities By City Name, when city name not found then return empty list")
   @Test
   void findAllCitiesByCityName_WhenCityNameDoesNotExist_ThenReturnEmptyList() {
     // When
