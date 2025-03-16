@@ -37,7 +37,7 @@ implementation group: 'com.tomaytotomato', name: 'location4j', version: '1.0.5'
 ## Quick Example 🏗
 
 ```java
-import com.tomaytotomato.SearchLocationService;
+import com.tomaytotomato.location4j.SearchLocationService;
 
 public class Main {
 
@@ -113,7 +113,7 @@ countries, states and city information.
 
 ```java
 
-import com.tomaytotomato.LocationService;
+import com.tomaytotomato.location4j.LocationService;
 
 public class LocationServiceExample {
 
@@ -146,7 +146,7 @@ text. It will try and find matches against a variety of keywords it has in its d
 
 ```java
 
-import com.tomaytotomato.SearchLocationService;
+import com.tomaytotomato.location4j.SearchLocationService;
 
 public class SearchLocationServiceExample {
 
@@ -184,6 +184,10 @@ with it.
 
 I may add other functionality in the future if needed e.g. geolocation to nearest place, geofencing
 etc.
+
+## More Info
+
+[Testing](TESTING.md)
 
 ## Credits 🙏
 

@@ -6,13 +6,14 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <includes>
             <include>**/*Test.java</include>
           </includes>
+          <useModulePath>false</useModulePath>
         </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
         <version>${maven-surefire-plugin.version}</version>
       </plugin>
       <plugin>

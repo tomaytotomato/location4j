@@ -32,7 +32,7 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Build with Maven
-        run: mvn clean verify
+        run: mvn clean verify -Dmaven.test.useModulePath=false
         working-directory: location4j
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
