@@ -81,6 +81,7 @@ public class JsonToBinaryConverter {
     // Use String::replace for simple string replacements
     var modifiedJson = jsonString.replace("\"native\"", "\"native_name\"");
     modifiedJson = modifiedJson.replace("\"zoneName\"", "\"zone_name\"");
+    modifiedJson = modifiedJson.replace("\"phonecode\"", "\"phone_code\"");
     modifiedJson = modifiedJson.replace("\"gmtOffset\"", "\"gmt_offset\"");
     modifiedJson = modifiedJson.replace("\"gmtOffsetName\"", "\"gmt_offset_name\"");
     modifiedJson = modifiedJson.replace("\"tzName\"", "\"tz_name\"");
