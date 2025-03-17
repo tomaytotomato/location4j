@@ -76,38 +76,37 @@ public class Main {
 
 ## Features 🔬
 
-| Feature                         | Supported | Object   | Example                                                                         |
-|---------------------------------|-----------|----------|---------------------------------------------------------------------------------|
-| Search (free text)              | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
-| Find All Countries              | ✅         | Country  | `findAllCountries()` -> `["Belgium", "Canada", ...]`                            |
-| Find Country by Id              | ✅         | Country  | `findCountryById(1)` -> `["Afghanistan"]`                                       |
-| Find Country by ISO2 code       | ✅         | Country  | `findCountryByISO2Code("CA")` -> `["Canada"]`                                   |
-| Find Country by ISO3 code       | ✅         | Country  | `findCountryByISO3Code("CAN")` -> `["Canada"]`                                  |
-| Find Country by Name            | ✅         | Country  | `findCountryByName("Canada")` -> `["Canada"]`                                   |
-| Find Country by Localised name  | ✅         | Country  | `findCountryByLocalisedName("Belgique")` -> `["Belgium"]`                       |
-| Find Countries by State name    | ✅         | Country  | `findAllCountriesByStateName("Texas")` -> `["USA"]`                             |
-| Find States by State name       | ✅         | State    | `findAllStatesByStateName("Texas")` -> `["Texas", "USA"]`                       |
-| Find State by State Id          | ✅         | State    | `findStateById(5)` -> `["California", "USA"]`                                   |
-| Find States by State code       | ✅         | State    | `findAllStatesByStateCode("CA")` -> `["California", "USA"]`                     |
-| Find City by City Id            | ✅         | City     | `findCityById(10)` -> `["Los Angeles", "California"]`                           |
-| Find City by latitude/longitude | ✅         | City     | `findClosestCityByLatLong(30.438, -84.280)` -> `["Tallahassee", "Florida"]`     |
-| Find Cities by City name        | ✅         | City     | `findAllCitiesByCityName("San Francisco")` -> `["San Francisco", "California"]` |
+## Features 🔬
 
-🟢 location4j can parse free text strings with or without punctuation or capitalisation e.g.
+| Feature                                    | Supported | Object   | Example                                                                         |
+|--------------------------------------------|-----------|----------|---------------------------------------------------------------------------------|
+| Search (free text)                         | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
+| Find All Countries                         | ✅         | Country  | `findAllCountries()` -> `["Belgium", "Canada", ...]`                            |
+| Find Country by Id                         | ✅         | Country  | `findCountryById(1)` -> `["Afghanistan"]`                                       |
+| Find Country by ISO2 code                  | ✅         | Country  | `findCountryByISO2Code("CA")` -> `["Canada"]`                                   |
+| Find Country by ISO3 code                  | ✅         | Country  | `findCountryByISO3Code("CAN")` -> `["Canada"]`                                  |
+| Find Country by Name                       | ✅         | Country  | `findCountryByName("Canada")` -> `["Canada"]`                                   |
+| Find Country by Localised name             | ✅         | Country  | `findCountryByLocalisedName("Belgique")` -> `["Belgium"]`                       |
+| Find Countries by State name               | ✅         | Country  | `findAllCountriesByStateName("Texas")` -> `["USA"]`                             |
+| Find States by State name                  | ✅         | State    | `findAllStatesByStateName("Texas")` -> `["Texas", "USA"]`                       |
+| Find State by State Id                     | ✅         | State    | `findStateById(5)` -> `["California", "USA"]`                                   |
+| Find States by State code                  | ✅         | State    | `findAllStatesByStateCode("CA")` -> `["California", "USA"]`                     |
+| Find City by City Id                       | ✅         | City     | `findCityById(10)` -> `["Los Angeles", "California"]`                           |
+| Find All Cities                            | ✅         | City     | `findAllCities()` -> `[All cities in database]`                                 |
+| Find Cities by City name                   | ✅         | City     | `findAllCitiesByCityName("San Francisco")` -> `["San Francisco", "California"]` |
+| Find Closest City by latitude/longitude    | ✅         | City     | `findClosestCityByLatLong(30.438, -84.280)` -> `["Tallahassee", "Florida"]`     |
+| Find Closest City by BigDecimal lat/long   | ✅         | City     | `findClosestCityByLatLong(new BigDecimal("30.438"), new BigDecimal("-84.280"))` |
+| Find Closest City by String lat/long       | ✅         | City     | `findClosestCityByLatLong("30.438", "-84.280")` -> `["Tallahassee", "Florida"]` |
+| Find Street or Address                     | ❌         | N/A      | Not supported - location4j does not provide street-level details                |
+| Find Zipcode/Postcode                      | ❌         | N/A      | Not supported - location4j does not include postal code data                    |
+| Find Small Towns/Villages                  | ❌         | N/A      | Not supported - location4j focuses on major cities and administrative divisions |
+
+ℹ️ location4j can parse free text strings with or without punctuation or capitalisation e.g.
 > San Francisco, CA, USA
 >
 > ca united states san francisco
 >
 > US, San Francisco, california
-
-🟢 Latitude/Longitude searches can use `double`, `BigDecimal`, or `String` inputs for both values;
-the types must match (
-you can't mix a `String` latitude with a `BigDecimal` or `double` longitude) but the API will accept
-any of the three
-types.
-
-🔴 location4j cannot find a location based on a small town, street, or
-zipcode/postcode.
 
 ## More Examples 🧪
 
