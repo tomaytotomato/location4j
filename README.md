@@ -15,6 +15,11 @@ cost-effective and fast. 🏎️
 
 Its built-in dataset provides quick lookups and no need for external HTTP calls. 📀
 
+## Requirements 📋
+
+- Java 21 or higher (uses JPMS and Java 21 features)
+- Maven 3.8+ (for building from source)
+
 ## Setup 🚀
 
 Get the latest version of the location4j library by adding it to your Maven pom.xml
