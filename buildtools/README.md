@@ -19,6 +19,12 @@ mvn exec:java -Dexec.mainClass="com.tomaytotomato.JsonToBinaryConverter"
 This will generate a new location4j.bin file in the library's resources
 folder - [library/src/main/resources](library/src/main/resources)
 
+## Note
+
+Ivory Coast - Country might not be fixed and will require manual editing as it has a `null` nativename
+
+See this pull request here - https://github.com/dr5hn/countries-states-cities-database/pull/979
+
 ## Credits 🙏
 
 Country data sourced
