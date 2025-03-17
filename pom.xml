@@ -15,7 +15,8 @@
     </pluginManagement>
   </build>
 
-  <description>A location service for Java, identify a city, state or country by multiple terms.
+  <description>location4j: Java library for efficient geographical lookups without external APIs.
+    Provides country, state, and city identification from free text with a built-in dataset.
   </description>
   <developers>
     <developer>
