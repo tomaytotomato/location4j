@@ -150,8 +150,10 @@ public class SearchLocationService implements SearchLocation {
     stateIdToStateMap.put(state.getId(), state);
     stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>())
         .add(state);
-    stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>())
-        .add(state);
+    if (!Objects.isNull(state.getStateCode())) {
+      stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getStateCode()), k -> new ArrayList<>())
+          .add(state);
+    }
 
     state.getCities().forEach(city -> cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()),
         k -> new ArrayList<>()).add(city));

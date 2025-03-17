@@ -86,11 +86,14 @@ public class LocationService implements FindCountry, FindState, FindCity {
                             keyMaker(state.getName()),
                             k -> new ArrayList<>())
                         .add(state);
-                    stateCodeToStatesMap
-                        .computeIfAbsent(
-                            keyMaker(state.getStateCode()),
-                            k -> new ArrayList<>())
-                        .add(state);
+
+                    if (!Objects.isNull(state.getStateCode())) {
+                      stateCodeToStatesMap
+                          .computeIfAbsent(
+                              keyMaker(state.getStateCode()),
+                              k -> new ArrayList<>())
+                          .add(state);
+                    }
 
                     state.getCities()
                         .forEach(
