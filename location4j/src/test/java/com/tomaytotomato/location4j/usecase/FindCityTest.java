@@ -81,7 +81,7 @@ class FindCityTest {
     var result = locationService.findAllCities();
 
     // Then
-    assertThat(result).isNotEmpty().hasSize(150661);
+    assertThat(result).isNotEmpty().hasSize(151024);
   }
 
   @DisplayName("Find All Cities By City Name, when city name null or blank then throw exception")
