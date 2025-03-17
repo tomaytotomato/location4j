@@ -168,7 +168,9 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <description>${parent.description}</description>
+  <description>location4j: Java library for efficient geographical lookups without external APIs.
+    Provides country, state, and city identification from free text with a built-in dataset.
+  </description>
   <developers>
     <developer>
       <email>dev@tomaytotomato.com</email>
