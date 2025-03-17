@@ -41,11 +41,11 @@ class FindStateTest {
   @DisplayName("Find State by ID, when ID exists then return State")
   @ParameterizedTest
   @CsvSource({
-      "32,  Žabljak Municipality",
+      "32,  Žabljak",
       "66,  Fiorentino",
       "5000, Gers",
       "123,  Żabbar",
-      "2,  Somali Region"
+      "2,  Somali"
   })
   void findStateById_WhenStateIdExists_ThenReturnState(Integer id, String expectedName) {
     // When
