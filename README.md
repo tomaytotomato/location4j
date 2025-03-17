@@ -3,7 +3,7 @@
 ![Build Status](https://github.com/tomaytotomato/location4j/actions/workflows/build.yml/badge.svg)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=tomaytotomato_location4j&metric=bugs)](https://sonarcloud.io/summary/new_code?id=tomaytotomato_location4j)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tomaytotomato_location4j&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tomaytotomato_location4j)
-[![javadoc](https://javadoc.io/badge2/com.tomaytotomato/location4j/1.0.6/javadoc.svg)](https://javadoc.io/doc/com.tomaytotomato/location4j/1.0.3)
+[![javadoc](https://javadoc.io/badge2/com.tomaytotomato/location4j/1.0.6/javadoc.svg)](https://javadoc.io/doc/com.tomaytotomato/location4j/1.0.6)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
 
@@ -36,7 +36,7 @@ Get the latest version of the location4j library by adding it to your Maven pom.
 **Gradle**
 
 ```gradle
-implementation group: 'com.tomaytotomato', name: 'location4j', version: '1.0.5'
+implementation group: 'com.tomaytotomato', name: 'location4j', version: '1.0.6'
 ```
 
 ## Quick Example 🏗
