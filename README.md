@@ -76,8 +76,6 @@ public class Main {
 
 ## Features 🔬
 
-## Features 🔬
-
 | Feature                                    | Supported | Object   | Example                                                                         |
 |--------------------------------------------|-----------|----------|---------------------------------------------------------------------------------|
 | Search (free text)                         | ✅         | Location | `search("kyiv")` -> `"Kyiv, Ukraine, Europe, UA"`                               |
