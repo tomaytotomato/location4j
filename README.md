@@ -6,6 +6,7 @@
 [![javadoc](https://javadoc.io/badge2/com.tomaytotomato/location4j/1.0.6/javadoc.svg)](https://javadoc.io/doc/com.tomaytotomato/location4j/1.0.6)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tomaytotomato/location4j)
 ![GitHub License](https://img.shields.io/github/license/tomaytotomato/location4j)
+[![libs.tech recommends](https://libs.tech/project/829971910/badge.svg)](https://libs.tech/project/829971910/location4j)
 
 location4j is a simple Java library designed for efficient and accurate geographical data lookups
 for countries, states, and cities. 🗺️
