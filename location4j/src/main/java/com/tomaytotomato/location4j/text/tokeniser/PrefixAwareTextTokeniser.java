@@ -12,14 +12,17 @@ import java.util.stream.Stream;
  * A text tokeniser that is aware of prefixes, grouping words with recognized prefixes into tokens.
  * <p>
  * This class implements the {@link TextTokeniser} interface and provides functionality for breaking
- * a string of text into meaningful tokens, taking into account common prefixes. This is
- * particularly useful for geographic names and other entities where prefixes such as "San", "Los",
- * or "New" form part of a proper name.
+ * a string of text into meaningful tokens, taking into account common prefixes.
  * </p>
- * <p><strong>Note:</strong> This class is experimental and may produce unexpected results in some
- * cases. Users are encouraged to thoroughly test its behavior in their specific use cases. Future
- * updates might change how the tokenization logic works, and backward compatibility is not
- * guaranteed.</p>
+ * <p>
+ * @apiNote <strong>EXPERIMENTAL:</strong> This class is experimental and its behavior may
+ * change in future releases without prior notice. Backward compatibility is not guaranteed.
+ * </p>
+ * <p>
+ * @implNote Current implementation has known limitations and might produce unexpected results
+ * in some edge cases, particularly with ambiguous prefixes. Users should thoroughly test in
+ * their specific use cases.
+ * </p>
  * <p>
  * For example, given the input "San Francisco New York", the tokeniser will produce:
  * <ul>

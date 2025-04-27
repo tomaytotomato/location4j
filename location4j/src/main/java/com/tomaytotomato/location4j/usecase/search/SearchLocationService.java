@@ -1,4 +1,4 @@
-package com.tomaytotomato.location4j;
+package com.tomaytotomato.location4j.usecase.search;
 
 import com.tomaytotomato.location4j.aliases.LocationAliases;
 import com.tomaytotomato.location4j.loader.CountriesDataLoader;
@@ -9,7 +9,6 @@ import com.tomaytotomato.location4j.model.Location;
 import com.tomaytotomato.location4j.model.State;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.TextTokeniser;
-import com.tomaytotomato.location4j.usecase.SearchLocation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

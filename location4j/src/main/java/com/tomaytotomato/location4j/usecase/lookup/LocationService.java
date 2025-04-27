@@ -1,4 +1,4 @@
-package com.tomaytotomato.location4j;
+package com.tomaytotomato.location4j.usecase.lookup;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -8,9 +8,6 @@ import com.tomaytotomato.location4j.model.City;
 import com.tomaytotomato.location4j.model.Country;
 import com.tomaytotomato.location4j.model.State;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
-import com.tomaytotomato.location4j.usecase.FindCity;
-import com.tomaytotomato.location4j.usecase.FindCountry;
-import com.tomaytotomato.location4j.usecase.FindState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

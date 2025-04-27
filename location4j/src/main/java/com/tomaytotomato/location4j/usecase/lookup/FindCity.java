@@ -1,4 +1,4 @@
-package com.tomaytotomato.location4j.usecase;
+package com.tomaytotomato.location4j.usecase.lookup;
 
 import com.tomaytotomato.location4j.model.City;
 import java.math.BigDecimal;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface for finding cities based on various criteria.
+ * Interface for finding cities based on various known criteria such as ID, Name and Lat/Long.
  */
 public interface FindCity {
 

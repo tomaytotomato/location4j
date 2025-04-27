@@ -1,11 +1,11 @@
-package com.tomaytotomato.location4j.usecase;
+package com.tomaytotomato.location4j.usecase.lookup;
 
 import com.tomaytotomato.location4j.model.Country;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface for finding countries based on various criteria.
+ * Interface for finding Countries based on various known criteria such as ID, Name and ISO codes.
  */
 public interface FindCountry {
 

@@ -1,4 +1,4 @@
-package com.tomaytotomato.location4j;
+package com.tomaytotomato.location4j.usecase.lookup;
 
 import com.tomaytotomato.location4j.loader.CountriesDataLoader;
 import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
