@@ -1,15 +1,19 @@
-package com.tomaytotomato.location4j;
+package com.tomaytotomato.location4j.usecase.search;
 
+import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
 import com.tomaytotomato.location4j.aliases.LocationAliases;
 import com.tomaytotomato.location4j.loader.CountriesDataLoader;
+import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.location4j.mapper.DefaultLocationMapper;
 import com.tomaytotomato.location4j.mapper.LocationMapper;
 import com.tomaytotomato.location4j.model.City;
 import com.tomaytotomato.location4j.model.Country;
 import com.tomaytotomato.location4j.model.Location;
 import com.tomaytotomato.location4j.model.State;
+import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
+import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
 import com.tomaytotomato.location4j.text.tokeniser.TextTokeniser;
-import com.tomaytotomato.location4j.usecase.SearchLocation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,8 +61,8 @@ public class SearchLocationService implements SearchLocation {
     buildDataStructures();
   }
 
-  public static SearchLocationServiceBuilder builder() {
-    return new SearchLocationServiceBuilder();
+  public static Builder builder() {
+    return new Builder();
   }
 
   private static Location buildLocationResult(Country topCountry, State topState, City topCity) {
@@ -430,5 +434,49 @@ public class SearchLocationService implements SearchLocation {
         .max(Map.Entry.comparingByValue())
         .map(Map.Entry::getKey)
         .orElse(null);
+  }
+
+  public static class Builder {
+
+    private TextTokeniser textTokeniser = new DefaultTextTokeniser();
+    private TextNormaliser textNormaliser = new DefaultTextNormaliser();
+    private LocationMapper locationMapper = new DefaultLocationMapper();
+    private LocationAliases locationAliases = new DefaultLocationAliases();
+    private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
+
+    Builder() {
+    }
+
+    public Builder withTextTokeniser(TextTokeniser textTokeniser) {
+      this.textTokeniser = textTokeniser;
+      return this;
+    }
+
+    public Builder withTextNormaliser(TextNormaliser textNormaliser) {
+      this.textNormaliser = textNormaliser;
+      return this;
+    }
+
+    public Builder withLocationMapper(LocationMapper locationMapper) {
+      this.locationMapper = locationMapper;
+      return this;
+    }
+
+    public Builder withLocationAliases(LocationAliases locationAliases) {
+      this.locationAliases = locationAliases;
+      return this;
+    }
+
+    public Builder withCountriesDataLoader(
+        CountriesDataLoader countriesDataLoader) {
+      this.countriesDataLoader = countriesDataLoader;
+      return this;
+    }
+
+    public SearchLocationService build() {
+      return new SearchLocationService(textTokeniser, textNormaliser, locationMapper,
+          countriesDataLoader,
+          locationAliases);
+    }
   }
 }

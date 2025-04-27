@@ -43,7 +43,7 @@ implementation group: 'com.tomaytotomato', name: 'location4j', version: '1.0.6'
 ## Quick Example 🏗
 
 ```java
-import com.tomaytotomato.location4j.SearchLocationService;
+import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
 
 public class Main {
 
@@ -116,7 +116,7 @@ countries, states and city information.
 
 ```java
 
-import com.tomaytotomato.location4j.LocationService;
+import com.tomaytotomato.location4j.usecase.lookup.LocationService;
 
 public class LocationServiceExample {
 
@@ -149,7 +149,7 @@ text. It will try and find matches against a variety of keywords it has in its d
 
 ```java
 
-import com.tomaytotomato.location4j.SearchLocationService;
+import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
 
 public class SearchLocationServiceExample {
 
