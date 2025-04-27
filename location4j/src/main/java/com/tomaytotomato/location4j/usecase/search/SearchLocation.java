@@ -1,4 +1,4 @@
-package com.tomaytotomato.location4j.usecase;
+package com.tomaytotomato.location4j.usecase.search;
 
 import com.tomaytotomato.location4j.model.Location;
 import java.util.List;

@@ -1,11 +1,12 @@
 package com.tomaytotomato.location4j.usecase;
 
-import com.tomaytotomato.location4j.SearchLocationService;
+import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
 import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
 import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.location4j.mapper.DefaultLocationMapper;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
+import com.tomaytotomato.location4j.usecase.search.SearchLocation;
 import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;

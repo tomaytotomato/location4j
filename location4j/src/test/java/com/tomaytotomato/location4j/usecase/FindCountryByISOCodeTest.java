@@ -4,9 +4,10 @@ package com.tomaytotomato.location4j.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.location4j.LocationService;
+import com.tomaytotomato.location4j.usecase.lookup.LocationService;
 import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
+import com.tomaytotomato.location4j.usecase.lookup.FindCountry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
