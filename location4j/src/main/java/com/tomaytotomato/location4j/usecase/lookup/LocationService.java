@@ -4,9 +4,11 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 import com.tomaytotomato.location4j.loader.CountriesDataLoader;
+import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
 import com.tomaytotomato.location4j.model.City;
 import com.tomaytotomato.location4j.model.Country;
 import com.tomaytotomato.location4j.model.State;
+import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,8 +54,8 @@ public class LocationService implements FindCountry, FindState, FindCity {
     buildDataStructures();
   }
 
-  public static LocationServiceBuilder builder() {
-    return new LocationServiceBuilder();
+  public static Builder builder() {
+    return new Builder();
   }
 
   private void buildDataStructures() {
@@ -290,5 +292,28 @@ public class LocationService implements FindCountry, FindState, FindCity {
                 }))
     );
     return city[0];
+  }
+
+  public static class Builder {
+
+    private TextNormaliser textNormaliser = new DefaultTextNormaliser();
+    private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
+
+    Builder() {
+    }
+
+    public Builder withCountriesDataLoader(CountriesDataLoader countriesDataLoader) {
+      this.countriesDataLoader = countriesDataLoader;
+      return this;
+    }
+
+    public Builder withTextNormaliser(TextNormaliser textNormaliser) {
+      this.textNormaliser = textNormaliser;
+      return this;
+    }
+
+    public LocationService build() {
+      return new LocationService(textNormaliser, countriesDataLoader);
+    }
   }
 }
