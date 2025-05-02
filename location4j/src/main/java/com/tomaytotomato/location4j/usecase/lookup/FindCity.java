@@ -1,6 +1,6 @@
 package com.tomaytotomato.location4j.usecase.lookup;
 
-import com.tomaytotomato.location4j.model.City;
+import com.tomaytotomato.location4j.model.lookup.City;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;

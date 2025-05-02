@@ -1,6 +1,6 @@
 package com.tomaytotomato.location4j.usecase.lookup;
 
-import com.tomaytotomato.location4j.model.Country;
+import com.tomaytotomato.location4j.model.lookup.Country;
 import java.util.List;
 import java.util.Optional;
 
