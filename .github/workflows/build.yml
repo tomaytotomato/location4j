@@ -17,6 +17,14 @@ on:
       - 'pom.xml'
       - '.github/**'
 
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual build trigger'
+        type: string
+
 jobs:
   build:
     name: "Build and Test"
