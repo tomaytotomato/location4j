@@ -3,9 +3,9 @@ package com.tomaytotomato;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
-import com.tomaytotomato.location4j.model.City;
-import com.tomaytotomato.location4j.model.Country;
-import com.tomaytotomato.location4j.model.State;
+import com.tomaytotomato.location4j.model.lookup.City;
+import com.tomaytotomato.location4j.model.lookup.Country;
+import com.tomaytotomato.location4j.model.lookup.State;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ public class JsonToBinaryConverter {
 
       ObjectMapper mapper = new ObjectMapper();
       mapper.setPropertyNamingStrategy(new SnakeCaseStrategy());
-      List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<List<Country>>() {
+      List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {
       });
 
       // Build links between each object

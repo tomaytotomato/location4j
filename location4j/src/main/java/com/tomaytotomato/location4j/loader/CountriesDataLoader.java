@@ -1,6 +1,6 @@
 package com.tomaytotomato.location4j.loader;
 
-import com.tomaytotomato.location4j.model.Country;
+import com.tomaytotomato.location4j.model.lookup.Country;
 import java.util.List;
 
 /**

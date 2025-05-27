@@ -4,12 +4,15 @@ import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
 import com.tomaytotomato.location4j.aliases.LocationAliases;
 import com.tomaytotomato.location4j.loader.CountriesDataLoader;
 import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.location4j.mapper.DefaultLocationMapper;
-import com.tomaytotomato.location4j.mapper.LocationMapper;
-import com.tomaytotomato.location4j.model.City;
-import com.tomaytotomato.location4j.model.Country;
-import com.tomaytotomato.location4j.model.Location;
-import com.tomaytotomato.location4j.model.State;
+import com.tomaytotomato.location4j.mapper.DefaultSearchLocationResultMapper;
+import com.tomaytotomato.location4j.mapper.SearchLocationResultMapper;
+import com.tomaytotomato.location4j.model.lookup.City;
+import com.tomaytotomato.location4j.model.lookup.Country;
+import com.tomaytotomato.location4j.model.lookup.State;
+import com.tomaytotomato.location4j.model.search.CityResult;
+import com.tomaytotomato.location4j.model.search.CountryResult;
+import com.tomaytotomato.location4j.model.search.SearchLocationResult;
+import com.tomaytotomato.location4j.model.search.StateResult;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
@@ -47,15 +50,15 @@ public class SearchLocationService implements SearchLocation {
 
   private final TextTokeniser textTokeniser;
   private final TextNormaliser textNormaliser;
-  private final LocationMapper locationMapper;
+  private final SearchLocationResultMapper searchLocationResultMapper;
   private final LocationAliases locationAliases;
 
   protected SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
-      LocationMapper locationMapper, CountriesDataLoader dataLoader,
+      SearchLocationResultMapper searchLocationResultMapper, CountriesDataLoader dataLoader,
       LocationAliases locationAliases) {
     this.textTokeniser = textTokeniser;
     this.textNormaliser = textNormaliser;
-    this.locationMapper = locationMapper;
+    this.searchLocationResultMapper = searchLocationResultMapper;
     this.locationAliases = locationAliases;
     countries = dataLoader.getCountries();
     buildDataStructures();
@@ -65,31 +68,46 @@ public class SearchLocationService implements SearchLocation {
     return new Builder();
   }
 
-  private static Location buildLocationResult(Country topCountry, State topState, City topCity) {
-    var locationBuilder = Location.builder()
-
-        .countryName(topCountry.getName())
-        .countryId(topCountry.getId())
-        .countryIso2Code(topCountry.getIso2Code())
-        .countryIso3Code(topCountry.getIso3Code())
-        .latitude(topCountry.getLatitude())
-        .longitude(topCountry.getLongitude());
-
-    if (!Objects.isNull(topState)) {
-      locationBuilder.stateName(topState.getName())
-          .stateCode(topState.getStateCode())
-          .stateId(topState.getId())
-          .latitude(topState.getLatitude())
-          .longitude(topState.getLongitude());
+  /**
+   * Builds a location result based on the found entities.
+   */
+  private static SearchLocationResult buildLocationResult(Country topCountry, State topState, City topCity) {
+    if (topCity != null) {
+      return new CityResult(
+          topCountry.getId(),
+          topCountry.getName(),
+          topCountry.getIso2Code(),
+          topCountry.getIso3Code(),
+          topState.getId(),
+          topState.getName(),
+          topState.getStateCode(),
+          topCity.getId(),
+          topCity.getName(),
+          topCity.getLatitude(),
+          topCity.getLongitude()
+      );
+    } else if (topState != null) {
+      return new StateResult(
+          topCountry.getId(),
+          topCountry.getName(),
+          topCountry.getIso2Code(),
+          topCountry.getIso3Code(),
+          topState.getId(),
+          topState.getName(),
+          topState.getStateCode(),
+          topState.getLatitude(),
+          topState.getLongitude()
+      );
+    } else {
+      return new CountryResult(
+          topCountry.getId(),
+          topCountry.getName(),
+          topCountry.getIso2Code(),
+          topCountry.getIso3Code(),
+          topCountry.getLatitude(),
+          topCountry.getLongitude()
+      );
     }
-
-    if (!Objects.isNull(topCity)) {
-      locationBuilder.city(topCity.getName())
-          .cityId(topCity.getId())
-          .latitude(topCity.getLatitude())
-          .longitude(topCity.getLongitude());
-    }
-    return locationBuilder.build();
   }
 
   public void buildDataStructures() {
@@ -178,7 +196,7 @@ public class SearchLocationService implements SearchLocation {
   }
 
   @Override
-  public List<Location> search(String text) {
+  public List<SearchLocationResult> search(String text) {
     if (Objects.isNull(text) || text.isEmpty()) {
       throw new IllegalArgumentException("SearchLocation Text cannot be null or empty");
     } else if (text.length() < 2) {
@@ -188,7 +206,7 @@ public class SearchLocationService implements SearchLocation {
     text = textNormaliser.normalise(text);
 
     // Direct matches
-    List<Location> directMatches = findDirectMatches(text);
+    List<SearchLocationResult> directMatches = findDirectMatches(text);
     if (!directMatches.isEmpty()) {
       return directMatches;
     }
@@ -203,38 +221,38 @@ public class SearchLocationService implements SearchLocation {
    * @param text The normalized search text.
    * @return A list of matching locations.
    */
-  private List<Location> findDirectMatches(String text) {
-    List<Location> matches = new ArrayList<>();
+  private List<SearchLocationResult> findDirectMatches(String text) {
+    List<SearchLocationResult> matches = new ArrayList<>();
 
     if (countryNameToCountryMap.containsKey(text)) {
-      matches.add(locationMapper.toLocation(countryNameToCountryMap.get(text)));
+      matches.add(searchLocationResultMapper.toCountryResult(countryNameToCountryMap.get(text)));
       return matches;
     }
 
     if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
-      matches.add(locationMapper.toLocation(iso3CodeToCountryMap.get(text)));
+      matches.add(searchLocationResultMapper.toCountryResult(iso3CodeToCountryMap.get(text)));
       return matches;
     }
 
     if (text.length() == 2) {
       if (iso2CodeToCountryMap.containsKey(text)) {
-        matches.add(locationMapper.toLocation(iso2CodeToCountryMap.get(text)));
+        matches.add(searchLocationResultMapper.toCountryResult(iso2CodeToCountryMap.get(text)));
       }
       if (stateCodeToStatesMap.containsKey(text)) {
         stateCodeToStatesMap.get(text)
-            .forEach(state -> matches.add(locationMapper.toLocation(state)));
+            .forEach(state -> matches.add(searchLocationResultMapper.toStateResult(state)));
       }
       return matches;
     }
 
     if (stateNameToStatesMap.containsKey(text)) {
       stateNameToStatesMap.get(text)
-          .forEach(state -> matches.add(locationMapper.toLocation(state)));
+          .forEach(state -> matches.add(searchLocationResultMapper.toStateResult(state)));
       return matches;
     }
 
     if (cityNameToCitiesMap.containsKey(text)) {
-      cityNameToCitiesMap.get(text).forEach(city -> matches.add(locationMapper.toLocation(city)));
+      cityNameToCitiesMap.get(text).forEach(city -> matches.add(searchLocationResultMapper.toCityResult(city)));
       return matches;
     }
 
@@ -247,7 +265,7 @@ public class SearchLocationService implements SearchLocation {
    * @param tokenizedText The tokenized search text.
    * @return A list of matching locations.
    */
-  private List<Location> findTokenizedMatches(List<String> tokenizedText) {
+  private List<SearchLocationResult> findTokenizedMatches(List<String> tokenizedText) {
     Map<Country, Integer> countryHitsCount = new HashMap<>();
     Map<State, Integer> stateHitsCount = new HashMap<>();
     Map<City, Integer> cityHitsCount = new HashMap<>();
@@ -392,7 +410,7 @@ public class SearchLocationService implements SearchLocation {
    * @param cityHitsCount    The map of city hits.
    * @return A list of top matching locations.
    */
-  private List<Location> getTopMatchingLocations(Map<Country, Integer> countryHitsCount,
+  private List<SearchLocationResult> getTopMatchingLocations(Map<Country, Integer> countryHitsCount,
       Map<State, Integer> stateHitsCount,
       Map<City, Integer> cityHitsCount) {
 
@@ -413,10 +431,10 @@ public class SearchLocationService implements SearchLocation {
         if (Objects.isNull(topCity)) {
           return List.of();
         } else {
-          return List.of(locationMapper.toLocation(topCity));
+          return List.of(searchLocationResultMapper.toCityResult(topCity));
         }
       } else {
-        return List.of(locationMapper.toLocation(topState));
+        return List.of(searchLocationResultMapper.toStateResult(topState));
       }
     } else {
       return List.of(buildLocationResult(topCountry, topState, topCity));
@@ -440,7 +458,7 @@ public class SearchLocationService implements SearchLocation {
 
     private TextTokeniser textTokeniser = new DefaultTextTokeniser();
     private TextNormaliser textNormaliser = new DefaultTextNormaliser();
-    private LocationMapper locationMapper = new DefaultLocationMapper();
+    private SearchLocationResultMapper searchLocationResultMapper = new DefaultSearchLocationResultMapper();
     private LocationAliases locationAliases = new DefaultLocationAliases();
     private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
 
@@ -457,8 +475,8 @@ public class SearchLocationService implements SearchLocation {
       return this;
     }
 
-    public Builder withLocationMapper(LocationMapper locationMapper) {
-      this.locationMapper = locationMapper;
+    public Builder withLocationMapper(SearchLocationResultMapper searchLocationResultMapper) {
+      this.searchLocationResultMapper = searchLocationResultMapper;
       return this;
     }
 
@@ -474,7 +492,7 @@ public class SearchLocationService implements SearchLocation {
     }
 
     public SearchLocationService build() {
-      return new SearchLocationService(textTokeniser, textNormaliser, locationMapper,
+      return new SearchLocationService(textTokeniser, textNormaliser, searchLocationResultMapper,
           countriesDataLoader,
           locationAliases);
     }
