@@ -31,9 +31,19 @@
             </goals>
             <id>jacoco-report</id>
             <phase>verify</phase>
+            <configuration>
+              <excludes>
+                <exclude>com/tomaytotomato/location4j/model/**</exclude>
+              </excludes>
+            </configuration>
           </execution>
           <execution>
             <configuration>
+              <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+              <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+              <excludes>
+                <exclude>com/tomaytotomato/location4j/model/**</exclude>
+              </excludes>
             </configuration>
             <goals>
               <goal>report</goal>
