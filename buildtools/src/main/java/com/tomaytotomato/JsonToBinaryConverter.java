@@ -45,7 +45,7 @@ public class JsonToBinaryConverter {
 
       ObjectMapper mapper = new ObjectMapper();
       mapper.setPropertyNamingStrategy(new SnakeCaseStrategy());
-      List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<List<Country>>() {
+      List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {
       });
 
       // Build links between each object
