@@ -5,9 +5,9 @@ import static java.lang.Math.sqrt;
 
 import com.tomaytotomato.location4j.loader.CountriesDataLoader;
 import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.location4j.model.City;
-import com.tomaytotomato.location4j.model.Country;
-import com.tomaytotomato.location4j.model.State;
+import com.tomaytotomato.location4j.model.lookup.City;
+import com.tomaytotomato.location4j.model.lookup.Country;
+import com.tomaytotomato.location4j.model.lookup.State;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import java.util.ArrayList;

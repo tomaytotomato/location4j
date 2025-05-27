@@ -1,6 +1,6 @@
 package com.tomaytotomato.location4j.usecase.search;
 
-import com.tomaytotomato.location4j.model.Location;
+import com.tomaytotomato.location4j.model.search.SearchLocationResult;
 import java.util.List;
 
 /**
@@ -29,8 +29,8 @@ public interface SearchLocation {
    * The method normalizes and tokenizes the input to find matching locations.
    *
    * @param text the free-text input used to search for locations
-   * @return a List of Location objects that match the input text
+   * @return a List of {@link SearchLocationResult} objects that match the input text
    */
-  List<Location> search(String text);
+  List<SearchLocationResult> search(String text);
 
 }
