@@ -1,12 +1,10 @@
-package com.tomaytotomato.location4j.usecase;
+package com.tomaytotomato.location4j.usecase.lookup;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.location4j.usecase.lookup.LocationService;
 import com.tomaytotomato.location4j.model.lookup.Country;
-import com.tomaytotomato.location4j.usecase.lookup.FindCountry;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

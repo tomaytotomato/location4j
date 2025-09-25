@@ -1,4 +1,4 @@
-package com.tomaytotomato.location4j.usecase;
+package com.tomaytotomato.location4j.usecase.search;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -11,8 +11,6 @@ import com.tomaytotomato.location4j.model.search.SearchLocationResult;
 import com.tomaytotomato.location4j.model.search.StateResult;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
-import com.tomaytotomato.location4j.usecase.search.SearchLocation;
-import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
