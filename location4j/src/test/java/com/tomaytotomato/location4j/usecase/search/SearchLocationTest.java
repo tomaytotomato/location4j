@@ -204,4 +204,37 @@ class SearchLocationTest {
 
     assertThat(description).isEqualTo(expectedDescription);
   }
+
+  /**
+   * Bug detected - https://github.com/tomaytotomato/location4j/issues/45
+   * Test cases for special city combinations that include state and country information
+   */
+  @ParameterizedTest
+  @DisplayName("Handling special city combinations: {0}")
+  @CsvSource(delimiter = '|', value = {
+      "New York, NY, USA|United States|US|USA|New York|New York City",
+      "Los Angeles CA|United States|US|USA|California|Los Angeles",
+      "Mexico|Mexico|MX|MEX|Mexico City|Mexico",
+      "Rio de Janeiro Brazil|Brazil|BR|BRA|Rio de Janeiro|Rio de Janeiro"
+  })
+  void search_WithSpecialCityCombinations_ReturnsCityResult(
+      String searchText,
+      String expectedCountry,
+      String expectedIso2,
+      String expectedIso3,
+      String expectedState,
+      String expectedCity) {
+
+    var results = searchLocationService.search(searchText);
+
+    assertThat(results).isNotEmpty().hasSize(1);
+    assertThat(results.getFirst()).isInstanceOf(CityResult.class);
+
+    CityResult cityResult = (CityResult) results.getFirst();
+    assertThat(cityResult.getCountryName()).isEqualTo(expectedCountry);
+    assertThat(cityResult.getCountryIso2Code()).isEqualTo(expectedIso2);
+    assertThat(cityResult.getCountryIso3Code()).isEqualTo(expectedIso3);
+    assertThat(cityResult.getStateName()).isEqualTo(expectedState);
+    assertThat(cityResult.getCityName()).isEqualTo(expectedCity);
+  }
 }
