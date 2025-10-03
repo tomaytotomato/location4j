@@ -119,7 +119,7 @@ class FindCountryTest {
   @ParameterizedTest
   @CsvSource({
       "United Kingdom, United Kingdom",
-      "Cote D'Ivoire, Ivory Coast",
+      "Côte D'Ivoire, Ivory Coast",
       "Deutschland, Germany",
       "Nederland, Netherlands",
       "Belgique, Belgium",

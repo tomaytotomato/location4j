@@ -71,13 +71,13 @@ public class LocationService implements FindCountry, FindState, FindCity {
               .forEach(
                   translatedName ->
                       localisedNameToCountryMap.put(translatedName, country));
-          iso2CodeToCountryMap.put(keyMaker(country.getIso2Code()), country);
-          iso3CodeToCountryMap.put(keyMaker(country.getIso3Code()), country);
+          iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
+          iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
 
           country.getStates()
               .forEach(
                   state -> {
-                    state.setCountryId(country.getId());
+                    // Country ID is already set during build time - no need to set it here
 
                     stateIdToStateMap.put(state.getId(), state);
                     stateNameToStatesMap
@@ -86,10 +86,10 @@ public class LocationService implements FindCountry, FindState, FindCity {
                             k -> new ArrayList<>())
                         .add(state);
 
-                    if (!Objects.isNull(state.getStateCode())) {
+                    if (!Objects.isNull(state.getIso2())) {
                       stateCodeToStatesMap
                           .computeIfAbsent(
-                              keyMaker(state.getStateCode()),
+                              keyMaker(state.getIso2()),
                               k -> new ArrayList<>())
                           .add(state);
                     }
@@ -97,8 +97,8 @@ public class LocationService implements FindCountry, FindState, FindCity {
                     state.getCities()
                         .forEach(
                             city -> {
-                              city.setCountryId(country.getId());
-                              city.setStateId(state.getId());
+                              // Country ID and State ID are already set during build time - no need to set them here
+
                               cityNameToCitiesMap
                                   .computeIfAbsent(
                                       keyMaker(
@@ -191,7 +191,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
     stateName = textNormaliser.normalise(stateName);
     if (stateNameToStatesMap.containsKey(stateName)) {
       return stateNameToStatesMap.get(stateName).stream()
-          .map(state -> findCountryById(state.getCountryId()))
+          .map(state -> findCountryById(state.getCountry().getId()))
           .filter(Optional::isPresent)
           .map(Optional::get)
           .collect(

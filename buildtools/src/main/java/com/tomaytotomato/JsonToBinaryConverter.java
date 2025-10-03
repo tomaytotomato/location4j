@@ -1,6 +1,7 @@
 package com.tomaytotomato;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.tomaytotomato.location4j.model.lookup.City;
@@ -45,6 +46,13 @@ public class JsonToBinaryConverter {
 
       ObjectMapper mapper = new ObjectMapper();
       mapper.setPropertyNamingStrategy(new SnakeCaseStrategy());
+
+      // Configure Jackson to be resilient to schema changes (only in buildtools)
+      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+      mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+      mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+      mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+
       List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {
       });
 
@@ -86,8 +94,7 @@ public class JsonToBinaryConverter {
     modifiedJson = modifiedJson.replace("\"gmtOffsetName\"", "\"gmt_offset_name\"");
     modifiedJson = modifiedJson.replace("\"tzName\"", "\"tz_name\"");
     modifiedJson = modifiedJson.replace("\"emojiU\"", "\"emoji_u\"");
-    modifiedJson = modifiedJson.replace("\"iso2\"", "\"iso2_code\"");
-    modifiedJson = modifiedJson.replace("\"iso3\"", "\"iso3_code\"");
+    modifiedJson = modifiedJson.replace("\"iso3166_2\"", "\"iso31662\"");
 
     return modifiedJson;
   }
@@ -96,8 +103,8 @@ public class JsonToBinaryConverter {
     return Country.builder()
         .id(country.getId())
         .name(country.getName())
-        .iso2Code(country.getIso2Code())
-        .iso3Code(country.getIso3Code())
+        .iso2Code(country.getIso2())
+        .iso3Code(country.getIso3())
         .phoneCode(country.getPhoneCode())
         .numericCode(country.getNumericCode())
         .capital(country.getCapital())
@@ -126,11 +133,8 @@ public class JsonToBinaryConverter {
         .id(state.getId())
         .name(state.getName())
         .type(state.getType())
-        .countryId(country.getId())
-        .countryName(country.getName())
-        .countryIso2Code(country.getIso2Code())
-        .countryIso3Code(country.getIso3Code())
-        .stateCode(state.getStateCode())
+        .country(country)
+        .iso2(state.getIso2())
         .latitude(state.getLatitude())
         .longitude(state.getLongitude())
         .cities(cities)
@@ -140,16 +144,13 @@ public class JsonToBinaryConverter {
   private static City buildCityLinksToStateAndCountry(City city, State state, Country country) {
     return City.builder()
         .id(city.getId())
-        .countryId(country.getId())
-        .countryName(country.getName())
-        .countryIso2Code(country.getIso2Code())
-        .countryIso3Code(country.getIso3Code())
-        .stateCode(state.getStateCode())
-        .stateId(state.getId())
-        .stateName(state.getName())
         .name(city.getName())
         .longitude(city.getLongitude())
         .latitude(city.getLatitude())
+        .country(country)
+        .state(state)
+        .timezone(city.getTimezone())
+        .wikiDataId(city.getWikiDataId())
         .build();
   }
 }

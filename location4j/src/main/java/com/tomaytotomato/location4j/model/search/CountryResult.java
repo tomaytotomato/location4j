@@ -6,32 +6,28 @@ import java.math.BigDecimal;
  * Represents a country-level search result.
  */
 public record CountryResult(
-    Integer countryId,
-    String countryName,
-    String countryIso2Code,
-    String countryIso3Code,
+    Integer id,
+    String name,
+    String iso2,
+    String iso3,
     BigDecimal latitude,
     BigDecimal longitude
 ) implements SearchLocationResult {
 
+
   @Override
-  public Integer getCountryId() {
-    return countryId;
+  public String getName() {
+    return "";
   }
 
   @Override
-  public String getCountryName() {
-    return countryName;
+  public CountryResult getCountry() {
+    return null;
   }
 
   @Override
-  public String getCountryIso2Code() {
-    return countryIso2Code;
-  }
-
-  @Override
-  public String getCountryIso3Code() {
-    return countryIso3Code;
+  public TimeZoneResult getTimeZone() {
+    return null;
   }
 
   @Override

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import javax.annotation.processing.Generated;
 
 /**
@@ -21,8 +20,8 @@ public class Country implements Serializable {
 
   private Integer id;
   private String name;
-  private String iso3Code;
-  private String iso2Code;
+  private String iso3;
+  private String iso2;
   private String phoneCode;
   private String numericCode;
   private String capital;
@@ -43,6 +42,8 @@ public class Country implements Serializable {
   private BigDecimal longitude;
   private String emoji;
   private String emojiU;
+  private Integer population;
+  private Integer gdp;
 
   Country() {
   }
@@ -59,12 +60,12 @@ public class Country implements Serializable {
     return name;
   }
 
-  public String getIso3Code() {
-    return iso3Code;
+  public String getIso3() {
+    return iso3;
   }
 
-  public String getIso2Code() {
-    return iso2Code;
+  public String getIso2() {
+    return iso2;
   }
 
   public String getPhoneCode() {
@@ -147,54 +148,17 @@ public class Country implements Serializable {
     return emojiU;
   }
 
-  @Generated("IntelliJ")
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Country country = (Country) o;
-    return Objects.equals(getId(), country.getId()) && Objects.equals(getName(),
-        country.getName()) && Objects.equals(getIso3Code(), country.getIso3Code())
-        && Objects.equals(getIso2Code(), country.getIso2Code()) && Objects.equals(getPhoneCode(),
-        country.getPhoneCode()) && Objects.equals(getNumericCode(),
-        country.getNumericCode()) && Objects.equals(getCapital(), country.getCapital())
-        && Objects.equals(getCurrency(), country.getCurrency()) && Objects.equals(
-        getCurrencyName(), country.getCurrencyName()) && Objects.equals(getCurrencySymbol(),
-        country.getCurrencySymbol()) && Objects.equals(getTld(), country.getTld())
-        && Objects.equals(getNativeName(), country.getNativeName())
-        && Objects.equals(getRegion(), country.getRegion()) && Objects.equals(
-        getRegionId(), country.getRegionId()) && Objects.equals(getSubregion(),
-        country.getSubregion()) && Objects.equals(getSubregionId(),
-        country.getSubregionId()) && Objects.equals(getStates(), country.getStates())
-        && Objects.equals(getNationality(), country.getNationality())
-        && Objects.equals(getTimezones(), country.getTimezones())
-        && Objects.equals(getTranslations(), country.getTranslations())
-        && Objects.equals(getLatitude(), country.getLatitude()) && Objects.equals(
-        getLongitude(), country.getLongitude()) && Objects.equals(getEmoji(),
-        country.getEmoji()) && Objects.equals(getEmojiU(), country.getEmojiU());
-  }
+  public Integer getPopulation() { return population; }
 
-  @Generated("IntelliJ")
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getName(), getIso3Code(), getIso2Code(), getPhoneCode(),
-        getNumericCode(), getCapital(), getCurrency(), getCurrencyName(), getCurrencySymbol(),
-        getTld(), getNativeName(), getRegion(), getRegionId(), getSubregion(), getSubregionId(),
-        getStates(), getNationality(), getTimezones(), getTranslations(), getLatitude(),
-        getLongitude(), getEmoji(), getEmojiU());
-  }
+  public Integer getGdp() { return gdp; }
 
   @Generated("IntelliJ")
   public static final class Builder {
 
     private Integer id;
     private String name;
-    private String iso3Code;
-    private String iso2Code;
+    private String iso3;
+    private String iso2;
     private String phoneCode;
     private String numericCode;
     private String capital;
@@ -215,6 +179,8 @@ public class Country implements Serializable {
     private BigDecimal longitude;
     private String emoji;
     private String emojiU;
+    private Integer population;
+    private Integer gdp;
 
     private Builder() {
     }
@@ -230,12 +196,12 @@ public class Country implements Serializable {
     }
 
     public Builder iso3Code(String iso3Code) {
-      this.iso3Code = iso3Code;
+      this.iso3 = iso3Code;
       return this;
     }
 
     public Builder iso2Code(String iso2Code) {
-      this.iso2Code = iso2Code;
+      this.iso2 = iso2Code;
       return this;
     }
 
@@ -339,11 +305,21 @@ public class Country implements Serializable {
       return this;
     }
 
+    public Builder population(Integer population) {
+      this.population = population;
+      return this;
+    }
+
+    public Builder gdp(Integer gdp) {
+      this.gdp = gdp;
+      return this;
+    }
+
     public Country build() {
       Country country = new Country();
       country.name = this.name;
       country.phoneCode = this.phoneCode;
-      country.iso3Code = this.iso3Code;
+      country.iso3 = this.iso3;
       country.longitude = this.longitude;
       country.currencyName = this.currencyName;
       country.numericCode = this.numericCode;
@@ -351,7 +327,7 @@ public class Country implements Serializable {
       country.capital = this.capital;
       country.region = this.region;
       country.translations = this.translations;
-      country.iso2Code = this.iso2Code;
+      country.iso2 = this.iso2;
       country.currencySymbol = this.currencySymbol;
       country.timezones = this.timezones;
       country.tld = this.tld;
@@ -365,6 +341,8 @@ public class Country implements Serializable {
       country.states = this.states;
       country.nationality = this.nationality;
       country.emojiU = this.emojiU;
+      country.population = this.population;
+      country.gdp = this.gdp;
       return country;
     }
   }

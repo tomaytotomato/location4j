@@ -19,125 +19,34 @@ public class City implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private Integer id;
-  private Integer countryId;
-  private String countryName;
-  private String countryIso2Code;
-  private String countryIso3Code;
-  private Integer stateId;
-  private String stateName;
-  private String stateCode;
   private String name;
+  private transient Country country;
+  private transient State state;
   private BigDecimal latitude;
   private BigDecimal longitude;
   private double latitudeDouble = 0.0;
   private double longitudeDouble = 0.0;
+  private String timezone;
+  private String wikiDataId;
 
-  /**
-   * Default constructor for City.
-   */
   City() {
-  }
 
-  private City(Integer id, Integer countryId, String countryName, String countryIso2Code,
-      String countryIso3Code, Integer stateId, String stateName, String stateCode, String name,
-      BigDecimal latitude, BigDecimal longitude) {
-    this.id = id;
-    this.countryId = countryId;
-    this.countryName = countryName;
-    this.countryIso2Code = countryIso2Code;
-    this.countryIso3Code = countryIso3Code;
-    this.stateId = stateId;
-    this.stateName = stateName;
-    this.stateCode = stateCode;
-    this.name = name;
-    this.latitude = latitude;
-    this.longitude = longitude;
-  }
-
-  public static Builder builder() {
-    return new Builder();
   }
 
   public Integer getId() {
     return id;
   }
 
-  public Integer getCountryId() {
-    return countryId;
-  }
-
-  public void setCountryId(Integer countryId) {
-    this.countryId = countryId;
-  }
-
-  public String getCountryName() {
-    return countryName;
-  }
-
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
-  public String getCountryIso2Code() {
-    return countryIso2Code;
-  }
-
-  public void setCountryIso2Code(String countryIso2Code) {
-    this.countryIso2Code = countryIso2Code;
-  }
-
-  public String getCountryIso3Code() {
-    return countryIso3Code;
-  }
-
-  public void setCountryIso3Code(String countryIso3Code) {
-    this.countryIso3Code = countryIso3Code;
-  }
-
-  public Integer getStateId() {
-    return stateId;
-  }
-
-  public void setStateId(Integer stateId) {
-    this.stateId = stateId;
-  }
-
-  public String getStateName() {
-    return stateName;
-  }
-
-  public void setStateName(String stateName) {
-    this.stateName = stateName;
-  }
-
-  public String getStateCode() {
-    return stateCode;
-  }
-
-  public void setStateCode(String stateCode) {
-    this.stateCode = stateCode;
-  }
-
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public Country getCountry() {
+    return country;
   }
 
-  public double getLatitudeDouble() {
-    if (latitudeDouble == 0.0) {
-      latitudeDouble = latitude.doubleValue();
-    }
-    return latitudeDouble;
-  }
-
-  public double getLongitudeDouble() {
-    if (longitudeDouble == 0.0) {
-      longitudeDouble = longitude.doubleValue();
-    }
-    return longitudeDouble;
+  public State getState() {
+    return state;
   }
 
   public BigDecimal getLatitude() {
@@ -148,50 +57,60 @@ public class City implements Serializable {
     return longitude;
   }
 
-  @Generated("IntelliJ")
+  public double getLatitudeDouble() {
+    return latitudeDouble;
+  }
+
+  public double getLongitudeDouble() {
+    return longitudeDouble;
+  }
+
+  public String getTimezone() {
+    return timezone;
+  }
+
+  public String getWikiDataId() {
+    return wikiDataId;
+  }
+
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
     City city = (City) o;
-    return Objects.equals(getId(), city.getId()) && Objects.equals(getCountryId(),
-        city.getCountryId()) && Objects.equals(getCountryName(), city.getCountryName())
-        && Objects.equals(getCountryIso2Code(), city.getCountryIso2Code())
-        && Objects.equals(getCountryIso3Code(), city.getCountryIso3Code())
-        && Objects.equals(getStateId(), city.getStateId()) && Objects.equals(
-        getStateName(), city.getStateName()) && Objects.equals(getStateCode(),
-        city.getStateCode()) && Objects.equals(getName(), city.getName())
-        && Objects.equals(getLatitude(), city.getLatitude()) && Objects.equals(
-        getLongitude(), city.getLongitude());
+    return Double.compare(getLatitudeDouble(), city.getLatitudeDouble()) == 0
+        && Double.compare(getLongitudeDouble(), city.getLongitudeDouble()) == 0
+        && Objects.equals(getId(), city.getId()) && Objects.equals(getName(),
+        city.getName()) && Objects.equals(getCountry(), city.getCountry())
+        && Objects.equals(getState(), city.getState()) && Objects.equals(
+        getLatitude(), city.getLatitude()) && Objects.equals(getLongitude(),
+        city.getLongitude()) && Objects.equals(getTimezone(), city.getTimezone())
+        && Objects.equals(getWikiDataId(), city.getWikiDataId());
   }
 
-  @Generated("IntelliJ")
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
-        getCountryIso3Code(), getStateId(), getStateName(), getStateCode(), getName(),
-        getLatitude(),
-        getLongitude());
+    return Objects.hash(getId(), getName(), getCountry(), getState(), getLatitude(), getLongitude(),
+        getLatitudeDouble(), getLongitudeDouble(), getTimezone(), getWikiDataId());
   }
 
-  @Generated("IntelliJ")
-  public static final class Builder {
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder {
 
     private Integer id;
-    private Integer countryId;
-    private String countryName;
-    private String countryIso2Code;
-    private String countryIso3Code;
-    private Integer stateId;
-    private String stateName;
-    private String stateCode;
     private String name;
+    private Country country;
+    private State state;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private double latitudeDouble;
+    private double longitudeDouble;
+    private String timezone;
+    private String wikiDataId;
 
     private Builder() {
     }
@@ -201,38 +120,13 @@ public class City implements Serializable {
       return this;
     }
 
-    public Builder countryId(Integer countryId) {
-      this.countryId = countryId;
+    public Builder country(Country country) {
+      this.country = country;
       return this;
     }
 
-    public Builder countryName(String countryName) {
-      this.countryName = countryName;
-      return this;
-    }
-
-    public Builder countryIso2Code(String countryIso2Code) {
-      this.countryIso2Code = countryIso2Code;
-      return this;
-    }
-
-    public Builder countryIso3Code(String countryIso3Code) {
-      this.countryIso3Code = countryIso3Code;
-      return this;
-    }
-
-    public Builder stateId(Integer stateId) {
-      this.stateId = stateId;
-      return this;
-    }
-
-    public Builder stateName(String stateName) {
-      this.stateName = stateName;
-      return this;
-    }
-
-    public Builder stateCode(String stateCode) {
-      this.stateCode = stateCode;
+    public Builder state(State state) {
+      this.state = state;
       return this;
     }
 
@@ -251,9 +145,39 @@ public class City implements Serializable {
       return this;
     }
 
+    public Builder latitudeDouble(double latitudeDouble) {
+      this.latitudeDouble = latitudeDouble;
+      return this;
+    }
+
+    public Builder longitudeDouble(double longitudeDouble) {
+      this.longitudeDouble = longitudeDouble;
+      return this;
+    }
+
+    public Builder timezone(String timezone) {
+      this.timezone = timezone;
+      return this;
+    }
+
+    public Builder wikiDataId(String wikiDataId) {
+      this.wikiDataId = wikiDataId;
+      return this;
+    }
+
     public City build() {
-      return new City(id, countryId, countryName, countryIso2Code, countryIso3Code, stateId,
-          stateName, stateCode, name, latitude, longitude);
+      City city = new City();
+      city.id = this.id;
+      city.name = this.name;
+      city.country = this.country;
+      city.state = this.state;
+      city.latitudeDouble = this.latitudeDouble;
+      city.longitudeDouble = this.longitudeDouble;
+      city.timezone = this.timezone;
+      city.latitude = this.latitude;
+      city.longitude = this.longitude;
+      city.wikiDataId = this.wikiDataId;
+      return city;
     }
   }
 }

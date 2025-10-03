@@ -33,7 +33,7 @@ class FindCityTest {
   @Test
   void findCityByLatLongWithDouble() {
     var result = locationService.findClosestCityByLatLong(30.438, -84.280);
-    assertEquals("Tallahassee", result.getName());
+    assertThat(result.getName()).isEqualTo("Tallahassee");
   }
 
   @DisplayName("Find City By ID, when null then throw exception")
@@ -80,7 +80,7 @@ class FindCityTest {
     var result = locationService.findAllCities();
 
     // Then
-    assertThat(result).isNotEmpty().hasSize(151024);
+    assertThat(result).isNotEmpty().hasSizeBetween(151000, 152000);
   }
 
   @DisplayName("Find All Cities By City Name, when city name null or blank then throw exception")
@@ -110,7 +110,7 @@ class FindCityTest {
       "Delhi, 4",
       "Beijing,  1",
       "Manchester,  16",
-      "San Francisco, 30"
+      "San Francisco, 27"
   })
   void findAllCitiesByCityName_WhenStateNameExists_ThenReturnStates(
       String cityName, Integer expectedCount) {

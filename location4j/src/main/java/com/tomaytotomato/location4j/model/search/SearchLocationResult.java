@@ -4,10 +4,9 @@ import java.math.BigDecimal;
 
 public sealed interface SearchLocationResult permits CountryResult, StateResult, CityResult {
 
-  Integer getCountryId();
-  String getCountryName();
-  String getCountryIso2Code();
-  String getCountryIso3Code();
+  String getName();
+  CountryResult getCountry();
+  TimeZoneResult getTimeZone();
   BigDecimal getLatitude();
   BigDecimal getLongitude();
 }

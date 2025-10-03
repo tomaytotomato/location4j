@@ -4,15 +4,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.processing.Generated;
 
 /**
- * Represents a state data class.
- * <p>
- * This class provides methods to access state details, including its geographic coordinates,
- * country association, and the list of cities within the state.
- * </p>
+ * Represents a state/province with various attributes such as name, codes, and geographic information.
  */
 public class State implements Serializable {
 
@@ -20,52 +15,18 @@ public class State implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private Integer id;
-  private Integer countryId;
-  private String countryName;
-  private String countryIso2Code;
-  private String countryIso3Code;
   private String name;
+  private String nativeName;
   private String type;
-  private String stateCode;
-  private List<City> cities;
+  private String iso2;
+  private String iso31662;
+  private TimeZone timezone;
   private BigDecimal latitude;
   private BigDecimal longitude;
+  private transient Country country;
+  private transient List<City> cities;
 
-  /**
-   * Default constructor for State.
-   */
   State() {
-  }
-
-  /**
-   * Constructs a new State with the specified attributes.
-   *
-   * @param id              the unique identifier of the state
-   * @param countryId       the unique identifier of the country associated with the state
-   * @param countryName     the name of the country associated with the state
-   * @param countryIso2Code the ISO 3166-1 alpha-2 code of the country
-   * @param countryIso3Code the ISO 3166-1 alpha-3 code of the country
-   * @param name            the name of the state
-   * @param type            the type or classification of the state (e.g., province, region)
-   * @param stateCode       the code of the state
-   * @param cities          the list of cities within the state
-   * @param latitude        the latitude of the state's geographic center
-   * @param longitude       the longitude of the state's geographic center
-   */
-  private State(Integer id, Integer countryId, String countryName, String countryIso2Code,
-      String countryIso3Code, String name, String type, String stateCode, List<City> cities,
-      BigDecimal latitude, BigDecimal longitude) {
-    this.id = id;
-    this.countryId = countryId;
-    this.countryName = countryName;
-    this.countryIso2Code = countryIso2Code;
-    this.countryIso3Code = countryIso3Code;
-    this.name = name;
-    this.type = type;
-    this.stateCode = stateCode;
-    this.cities = cities;
-    this.latitude = latitude;
-    this.longitude = longitude;
   }
 
   public static Builder builder() {
@@ -76,52 +37,24 @@ public class State implements Serializable {
     return id;
   }
 
-  public Integer getCountryId() {
-    return countryId;
-  }
-
-  public void setCountryId(Integer id) {
-    this.countryId = id;
-  }
-
-  public String getCountryName() {
-    return countryName;
-  }
-
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
-  public String getCountryIso2Code() {
-    return countryIso2Code;
-  }
-
-  public void setCountryIso2Code(String countryIso2Code) {
-    this.countryIso2Code = countryIso2Code;
-  }
-
-  public String getCountryIso3Code() {
-    return countryIso3Code;
-  }
-
-  public void setCountryIso3Code(String countryIso3Code) {
-    this.countryIso3Code = countryIso3Code;
-  }
-
   public String getName() {
     return name;
   }
+
+  public String getNativeName() { return nativeName; }
 
   public String getType() {
     return type;
   }
 
-  public String getStateCode() {
-    return stateCode;
+  public String getIso2() {
+    return iso2;
   }
 
-  public List<City> getCities() {
-    return cities;
+  public String getIso31662() { return iso31662; }
+
+  public TimeZone getTimezone() {
+    return timezone;
   }
 
   public BigDecimal getLatitude() {
@@ -132,49 +65,27 @@ public class State implements Serializable {
     return longitude;
   }
 
-  @Generated("IntelliJ")
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    State state = (State) o;
-    return Objects.equals(getId(), state.getId()) && Objects.equals(
-        getCountryId(), state.getCountryId()) && Objects.equals(getCountryName(),
-        state.getCountryName()) && Objects.equals(getCountryIso2Code(),
-        state.getCountryIso2Code()) && Objects.equals(getCountryIso3Code(),
-        state.getCountryIso3Code()) && Objects.equals(getName(), state.getName())
-        && Objects.equals(getType(), state.getType()) && Objects.equals(
-        getStateCode(), state.getStateCode()) && Objects.equals(getCities(),
-        state.getCities()) && Objects.equals(getLatitude(), state.getLatitude())
-        && Objects.equals(getLongitude(), state.getLongitude());
+  public List<City> getCities() {
+    return cities;
   }
 
-  @Generated("IntelliJ")
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getCountryId(), getCountryName(), getCountryIso2Code(),
-        getCountryIso3Code(), getName(), getType(), getStateCode(), getCities(), getLatitude(),
-        getLongitude());
+  public Country getCountry() {
+    return country;
   }
 
   @Generated("IntelliJ")
   public static final class Builder {
-
     private Integer id;
-    private Integer countryId;
-    private String countryName;
-    private String countryIso2Code;
-    private String countryIso3Code;
     private String name;
+    private String nativeName;
     private String type;
-    private String stateCode;
-    private List<City> cities;
+    private String iso2;
+    private String iso31662;
+    private TimeZone timezone;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private Country country;
+    private List<City> cities;
 
     private Builder() {
     }
@@ -184,28 +95,13 @@ public class State implements Serializable {
       return this;
     }
 
-    public Builder countryId(Integer countryId) {
-      this.countryId = countryId;
-      return this;
-    }
-
-    public Builder countryName(String countryName) {
-      this.countryName = countryName;
-      return this;
-    }
-
-    public Builder countryIso2Code(String countryIso2Code) {
-      this.countryIso2Code = countryIso2Code;
-      return this;
-    }
-
-    public Builder countryIso3Code(String countryIso3Code) {
-      this.countryIso3Code = countryIso3Code;
-      return this;
-    }
-
     public Builder name(String name) {
       this.name = name;
+      return this;
+    }
+
+    public  Builder nativeName(String nativeName) {
+      this.nativeName = nativeName;
       return this;
     }
 
@@ -214,13 +110,18 @@ public class State implements Serializable {
       return this;
     }
 
-    public Builder stateCode(String stateCode) {
-      this.stateCode = stateCode;
+    public Builder iso2(String iso2) {
+      this.iso2 = iso2;
       return this;
     }
 
-    public Builder cities(List<City> cities) {
-      this.cities = cities;
+    public Builder iso31662(String iso31662) {
+      this.iso31662 = iso31662;
+      return this;
+    }
+
+    public Builder timezone(TimeZone timezone) {
+      this.timezone = timezone;
       return this;
     }
 
@@ -234,9 +135,30 @@ public class State implements Serializable {
       return this;
     }
 
+    public Builder country(Country country) {
+      this.country = country;
+      return this;
+    }
+
+    public Builder cities(List<City> cities) {
+      this.cities = cities;
+      return this;
+    }
+
     public State build() {
-      return new State(id, countryId, countryName, countryIso2Code, countryIso3Code, name, type,
-          stateCode, cities, latitude, longitude);
+      State state = new State();
+      state.id = this.id;
+      state.name = this.name;
+      state.nativeName = this.nativeName;
+      state.type = this.type;
+      state.iso2 = this.iso2;
+      state.iso31662 = this.iso31662;
+      state.timezone = this.timezone;
+      state.latitude = this.latitude;
+      state.longitude = this.longitude;
+      state.country = this.country;
+      state.cities = this.cities;
+      return state;
     }
   }
 }

@@ -6,37 +6,32 @@ import java.math.BigDecimal;
  * Represents a city-level search result, that has much richer information
  */
 public record CityResult(
-    Integer countryId,
-    String countryName,
-    String countryIso2Code,
-    String countryIso3Code,
-    Integer stateId,
-    String stateName,
-    String stateCode,
-    Integer cityId,
-    String cityName,
+    Integer id,
+    String name,
+    CountryResult country,
+    StateResult state,
     BigDecimal latitude,
-    BigDecimal longitude
+    BigDecimal longitude,
+    TimeZoneResult timezone,
+    String wikiDataId
 ) implements SearchLocationResult {
 
-  @Override
-  public Integer getCountryId() {
-    return countryId;
+  public String getName() {
+    return name;
   }
 
   @Override
-  public String getCountryName() {
-    return countryName;
+  public CountryResult getCountry() {
+    return country;
+  }
+
+  public StateResult getState() {
+    return state;
   }
 
   @Override
-  public String getCountryIso2Code() {
-    return countryIso2Code;
-  }
-
-  @Override
-  public String getCountryIso3Code() {
-    return countryIso3Code;
+  public TimeZoneResult getTimeZone() {
+    return timezone;
   }
 
   @Override
@@ -49,23 +44,4 @@ public record CityResult(
     return longitude;
   }
 
-  public Integer getStateId() {
-    return stateId;
-  }
-
-  public String getStateName() {
-    return stateName;
-  }
-
-  public String getStateCode() {
-    return stateCode;
-  }
-
-  public Integer getCityId() {
-    return cityId;
-  }
-
-  public String getCityName() {
-    return cityName;
-  }
 }
