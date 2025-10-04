@@ -16,27 +16,8 @@ public record CityResult(
     String wikiDataId
 ) implements SearchLocationResult {
 
-  public String name() {
-    return name;
-  }
-
-  @Override
-  public CountryResult country() {
-    return country;
-  }
-
   public StateResult getState() {
     return state;
-  }
-
-  @Override
-  public BigDecimal latitude() {
-    return latitude;
-  }
-
-  @Override
-  public BigDecimal longitude() {
-    return longitude;
   }
 
 }

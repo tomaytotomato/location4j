@@ -1,33 +1,24 @@
 package com.tomaytotomato.location4j.debug;
 
-import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
-import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.location4j.mapper.DefaultSearchLocationResultMapper;
-import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
-import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
-import org.junit.jupiter.api.Test;
-
+import com.tomaytotomato.location4j.loader.TestDataLoader;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
 
 /**
  * Enumerates ambiguous location names across country, state and city levels.
  * This is a diagnostic test and will always pass (unless internal structures change).
  */
-public class AmbiguityEnumerationTest {
+class AmbiguityEnumerationTest extends TestDataLoader {
 
   @SuppressWarnings("unchecked")
   @Test
   void enumerateAmbiguities() throws Exception {
-    var service = SearchLocationService.builder()
-        .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
-        .withLocationAliases(new DefaultLocationAliases())
-        .withLocationMapper(new DefaultSearchLocationResultMapper())
-        .withTextNormaliser(new DefaultTextNormaliser())
-        .withTextTokeniser(new DefaultTextTokeniser())
-        .build();
+    var service = getSearchLocationService();
 
     Map<String, Object> maps = new LinkedHashMap<>();
     maps.put("countryNameToCountryMap", reflectMap(service, "countryNameToCountryMap"));
@@ -57,8 +48,6 @@ public class AmbiguityEnumerationTest {
     System.out.println("--- Ambiguous Location Name Summary (" + ambiguityRecords.size() + ") ---");
     ambiguityRecords.forEach(System.out::println);
 
-    // Ensure we at least detect some known real-world ambiguities
-    // Not asserting specific names to avoid fragility if dataset changes; just ensure list isn't empty.
     assert !ambiguityRecords.isEmpty();
   }
 

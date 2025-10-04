@@ -1,18 +1,14 @@
 package com.tomaytotomato.location4j.usecase.lookup;
 
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
-
-import com.tomaytotomato.location4j.loader.CountriesDataLoader;
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.location4j.loader.DataLoader;
+import com.tomaytotomato.location4j.loader.DefaultDataLoader;
+import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,92 +21,39 @@ import java.util.stream.Collectors;
 public class LocationService implements FindCountry, FindState, FindCity {
 
   private final List<Country> countries;
-
-  /**
-   * One-to-one mappings (1:1)
-   */
-  private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
-
-  private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
-  private final Map<String, Country> localisedNameToCountryMap = new HashMap<>();
-  private final Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
-  private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
-  private final Map<Integer, State> stateIdToStateMap = new HashMap<>();
-  private final Map<Integer, City> cityIdToCityMap = new HashMap<>();
-
-  /**
-   * One-to-many mappings (1:n)
-   */
-  private final Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
-
-  private final Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
-  private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
+  private final Map<String, Country> countryNameToCountryMap;
+  private final Map<Integer, Country> countryIdToCountryMap;
+  private final Map<String, Country> localisedNameToCountryMap;
+  private final Map<String, Country> iso2CodeToCountryMap;
+  private final Map<String, Country> iso3CodeToCountryMap;
+  private final Map<Integer, State> stateIdToStateMap;
+  private final Map<Integer, City> cityIdToCityMap;
+  private final Map<String, List<State>> stateNameToStatesMap;
+  private final Map<String, List<State>> stateCodeToStatesMap;
+  private final Map<String, List<City>> cityNameToCitiesMap;
 
   private final TextNormaliser textNormaliser;
 
-  protected LocationService(TextNormaliser textNormaliser, CountriesDataLoader dataLoader) {
+  protected LocationService(TextNormaliser textNormaliser, DataLoader dataLoader) {
     this.textNormaliser = textNormaliser;
-    countries = dataLoader.getCountries();
-    buildDataStructures();
+
+    // Load pre-built data structures
+    Location4JData location4JData = dataLoader.getLocation4JData();
+    this.countries = location4JData.getCountries();
+    this.countryNameToCountryMap = location4JData.getCountryNameToCountryMap();
+    this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
+    this.localisedNameToCountryMap = location4JData.getLocalisedNameToCountryMap();
+    this.iso2CodeToCountryMap = location4JData.getIso2CodeToCountryMap();
+    this.iso3CodeToCountryMap = location4JData.getIso3CodeToCountryMap();
+    this.stateIdToStateMap = location4JData.getStateIdToStateMap();
+    this.cityIdToCityMap = location4JData.getCityIdToCityMap();
+    this.stateNameToStatesMap = location4JData.getStateNameToStatesMap();
+    this.stateCodeToStatesMap = location4JData.getStateCodeToStatesMap();
+    this.cityNameToCitiesMap = location4JData.getCityNameToCitiesMap();
   }
 
   public static Builder builder() {
     return new Builder();
-  }
-
-  private void buildDataStructures() {
-
-    countries.forEach(
-        country -> {
-          countryIdToCountryMap.put(country.getId(), country);
-          countryNameToCountryMap.put(keyMaker(country.getName()), country);
-
-          localisedNameToCountryMap.put(keyMaker(country.getNativeName()), country);
-          country.getTranslations().values().stream()
-              .map(this::keyMaker)
-              .forEach(
-                  translatedName ->
-                      localisedNameToCountryMap.put(translatedName, country));
-          iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
-          iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
-
-          country.getStates()
-              .forEach(
-                  state -> {
-                    // Country ID is already set during build time - no need to set it here
-
-                    stateIdToStateMap.put(state.getId(), state);
-                    stateNameToStatesMap
-                        .computeIfAbsent(
-                            keyMaker(state.getName()),
-                            k -> new ArrayList<>())
-                        .add(state);
-
-                    if (!Objects.isNull(state.getIso2())) {
-                      stateCodeToStatesMap
-                          .computeIfAbsent(
-                              keyMaker(state.getIso2()),
-                              k -> new ArrayList<>())
-                          .add(state);
-                    }
-
-                    if (!Objects.isNull(state.getCities())) {
-                      state.getCities()
-                          .forEach(
-                              city -> {
-                                // Country ID and State ID are already set during build time - no need to set them here
-
-                                cityNameToCitiesMap
-                                    .computeIfAbsent(
-                                        keyMaker(
-                                            city.getName()),
-                                        k -> new ArrayList<>())
-                                    .add(city);
-                                cityIdToCityMap.put(city.getId(), city);
-                              });
-                    }
-                  });
-        });
   }
 
   @Override
@@ -172,18 +115,6 @@ public class LocationService implements FindCountry, FindState, FindCity {
     return Collections.unmodifiableList(countries);
   }
 
-  /**
-   * Normalizes a key for consistent lookup.
-   *
-   * @param key The key to be normalized.
-   * @return The normalized key.
-   */
-  private String keyMaker(String key) {
-    if (Objects.isNull(key) || key.isEmpty()) {
-      throw new IllegalArgumentException("Key cannot be null or empty");
-    }
-    return textNormaliser.normalise(key);
-  }
 
   @Override
   public List<Country> findAllCountriesByStateName(String stateName) {
@@ -326,13 +257,13 @@ public class LocationService implements FindCountry, FindState, FindCity {
   public static class Builder {
 
     private TextNormaliser textNormaliser = new DefaultTextNormaliser();
-    private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
+    private DataLoader dataLoader = new DefaultDataLoader();
 
     Builder() {
     }
 
-    public Builder withCountriesDataLoader(CountriesDataLoader countriesDataLoader) {
-      this.countriesDataLoader = countriesDataLoader;
+    public Builder withDataLoader(DataLoader dataLoader) {
+      this.dataLoader = dataLoader;
       return this;
     }
 
@@ -342,7 +273,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
     }
 
     public LocationService build() {
-      return new LocationService(textNormaliser, countriesDataLoader);
+      return new LocationService(textNormaliser, dataLoader);
     }
   }
 }

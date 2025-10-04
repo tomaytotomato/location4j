@@ -2,10 +2,11 @@ package com.tomaytotomato.location4j.usecase.search;
 
 import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
 import com.tomaytotomato.location4j.aliases.LocationAliases;
-import com.tomaytotomato.location4j.loader.CountriesDataLoader;
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.location4j.loader.DataLoader;
+import com.tomaytotomato.location4j.loader.DefaultDataLoader;
 import com.tomaytotomato.location4j.mapper.DefaultSearchLocationResultMapper;
 import com.tomaytotomato.location4j.mapper.SearchLocationResultMapper;
+import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
@@ -29,21 +30,14 @@ public class SearchLocationService implements SearchLocation {
 
   private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-  private final List<Country> countries;
-  /**
-   * 1 to 1 mappings
-   */
-  private final Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
-  private final Map<String, Country> countryNameToCountryMap = new HashMap<>();
-  private final Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
-  private final Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
-  private final Map<Integer, State> stateIdToStateMap = new HashMap<>();
-  /**
-   * 1 to many mappings
-   */
-  private final Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
-  private final Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
-  private final Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
+  private final Map<Integer, Country> countryIdToCountryMap;
+  private final Map<String, Country> countryNameToCountryMap;
+  private final Map<String, Country> iso2CodeToCountryMap;
+  private final Map<String, Country> iso3CodeToCountryMap;
+  private final Map<Integer, State> stateIdToStateMap;
+  private final Map<String, List<State>> stateNameToStatesMap;
+  private final Map<String, List<State>> stateCodeToStatesMap;
+  private final Map<String, List<City>> cityNameToCitiesMap;
 
   private final TextTokeniser textTokeniser;
   private final TextNormaliser textNormaliser;
@@ -51,39 +45,30 @@ public class SearchLocationService implements SearchLocation {
   private final LocationAliases locationAliases;
 
   protected SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
-      SearchLocationResultMapper searchLocationResultMapper, CountriesDataLoader dataLoader,
+      SearchLocationResultMapper searchLocationResultMapper, DataLoader dataLoader,
       LocationAliases locationAliases) {
     this.textTokeniser = textTokeniser;
     this.textNormaliser = textNormaliser;
     this.searchLocationResultMapper = searchLocationResultMapper;
     this.locationAliases = locationAliases;
-    countries = dataLoader.getCountries();
-    buildDataStructures();
+
+    // Load pre-built data structures
+    Location4JData location4JData = dataLoader.getLocation4JData();
+    this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
+    this.countryNameToCountryMap = new HashMap<>(location4JData.getCountryNameToCountryMap());
+    this.iso2CodeToCountryMap = new HashMap<>(location4JData.getIso2CodeToCountryMap());
+    this.iso3CodeToCountryMap = new HashMap<>(location4JData.getIso3CodeToCountryMap());
+    this.stateIdToStateMap = location4JData.getStateIdToStateMap();
+    this.stateNameToStatesMap = new HashMap<>(location4JData.getStateNameToStatesMap());
+    this.stateCodeToStatesMap = new HashMap<>(location4JData.getStateCodeToStatesMap());
+    this.cityNameToCitiesMap = new HashMap<>(location4JData.getSearchCityNameToCitiesMap());
+
+    // Add custom aliases on top of pre-built data structures
+    addAliases();
   }
 
   public static Builder builder() {
     return new Builder();
-  }
-
-  /**
-   * Builds a location result based on the found entities.
-   */
-  private SearchLocationResult buildLocationResult(Country topCountry, State topState, City topCity) {
-    if (topCity != null) {
-      return searchLocationResultMapper.toCityResult(topCity);
-    } else if (topState != null) {
-      return searchLocationResultMapper.toStateResult(topState);
-    } else {
-      return searchLocationResultMapper.toCountryResult(topCountry);
-    }
-  }
-
-  public void buildDataStructures() {
-    countries.forEach(country -> {
-      buildCountryLookups(country);
-      country.getStates().forEach(this::buildStateLookups);
-    });
-    addAliases();
   }
 
   /**
@@ -117,36 +102,6 @@ public class SearchLocationService implements SearchLocation {
       var cities = cityNameToCitiesMap.get(keyMaker(originalKey));
       cityNameToCitiesMap.put(alias, cities);
     });
-  }
-
-  /**
-   * Maps a country to various lookup maps.
-   *
-   * @param country The country to be mapped.
-   */
-  private void buildCountryLookups(Country country) {
-    countryNameToCountryMap.put(keyMaker(country.getName()), country);
-    countryIdToCountryMap.put(country.getId(), country);
-    iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
-    iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
-  }
-
-  /**
-   * Maps state and its associated cities to various lookup maps.
-   *
-   * @param state The state to be mapped.
-   */
-  private void buildStateLookups(State state) {
-    stateIdToStateMap.put(state.getId(), state);
-    stateNameToStatesMap.computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>())
-        .add(state);
-    if (!Objects.isNull(state.getIso2())) {
-      stateCodeToStatesMap.computeIfAbsent(keyMaker(state.getIso2()), k -> new ArrayList<>())
-          .add(state);
-    }
-
-    state.getCities().forEach(city -> cityNameToCitiesMap.computeIfAbsent(keyMaker(city.getName()),
-        k -> new ArrayList<>()).add(city));
   }
 
 
@@ -462,7 +417,7 @@ public class SearchLocationService implements SearchLocation {
     private TextNormaliser textNormaliser = new DefaultTextNormaliser();
     private SearchLocationResultMapper searchLocationResultMapper = new DefaultSearchLocationResultMapper();
     private LocationAliases locationAliases = new DefaultLocationAliases();
-    private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
+    private DataLoader dataLoader = new DefaultDataLoader();
 
     Builder() {
     }
@@ -487,15 +442,15 @@ public class SearchLocationService implements SearchLocation {
       return this;
     }
 
-    public Builder withCountriesDataLoader(
-        CountriesDataLoader countriesDataLoader) {
-      this.countriesDataLoader = countriesDataLoader;
+    public Builder withDataLoader(
+        DataLoader dataLoader) {
+      this.dataLoader = dataLoader;
       return this;
     }
 
     public SearchLocationService build() {
       return new SearchLocationService(textTokeniser, textNormaliser, searchLocationResultMapper,
-          countriesDataLoader,
+          dataLoader,
           locationAliases);
     }
   }
