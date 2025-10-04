@@ -37,6 +37,9 @@ public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
         location4JData = (Location4JData) objectInputStream.readObject();
         logger.info("Location4J data loaded successfully");
       }
+    } catch (IOException | ClassNotFoundException e) {
+      logger.log(Level.SEVERE, "Failed to load location4j data", e);
+      throw new RuntimeException("Failed to load location4j data", e);
     }
   }
 

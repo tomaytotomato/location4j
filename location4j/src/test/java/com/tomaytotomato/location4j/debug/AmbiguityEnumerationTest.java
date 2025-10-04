@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Enumerates ambiguous location names across country, state and city levels.
  * This is a diagnostic test and will always pass (unless internal structures change).
  */
-public class AmbiguityEnumerationTest {
+class AmbiguityEnumerationTest {
 
   @SuppressWarnings("unchecked")
   @Test
@@ -57,8 +57,6 @@ public class AmbiguityEnumerationTest {
     System.out.println("--- Ambiguous Location Name Summary (" + ambiguityRecords.size() + ") ---");
     ambiguityRecords.forEach(System.out::println);
 
-    // Ensure we at least detect some known real-world ambiguities
-    // Not asserting specific names to avoid fragility if dataset changes; just ensure list isn't empty.
     assert !ambiguityRecords.isEmpty();
   }
 
