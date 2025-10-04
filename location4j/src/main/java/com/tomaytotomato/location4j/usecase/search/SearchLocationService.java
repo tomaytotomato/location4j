@@ -30,7 +30,6 @@ public class SearchLocationService implements SearchLocation {
 
   private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-  private final List<Country> countries;
   private final Map<Integer, Country> countryIdToCountryMap;
   private final Map<String, Country> countryNameToCountryMap;
   private final Map<String, Country> iso2CodeToCountryMap;
@@ -55,7 +54,6 @@ public class SearchLocationService implements SearchLocation {
 
     // Load pre-built data structures
     Location4JData location4JData = dataLoader.getLocation4JData();
-    this.countries = location4JData.getCountries();
     this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
     this.countryNameToCountryMap = new HashMap<>(location4JData.getCountryNameToCountryMap());
     this.iso2CodeToCountryMap = new HashMap<>(location4JData.getIso2CodeToCountryMap());
@@ -71,27 +69,6 @@ public class SearchLocationService implements SearchLocation {
 
   public static Builder builder() {
     return new Builder();
-  }
-
-  /**
-   * Builds a location result based on the found entities.
-   */
-  private SearchLocationResult buildLocationResult(Country topCountry, State topState, City topCity) {
-    if (topCity != null) {
-      return searchLocationResultMapper.toCityResult(topCity);
-    } else if (topState != null) {
-      return searchLocationResultMapper.toStateResult(topState);
-    } else {
-      return searchLocationResultMapper.toCountryResult(topCountry);
-    }
-  }
-
-  /**
-   * Deprecated: Data structures are now pre-built. Only aliases are added at runtime.
-   * @deprecated Use constructor - data structures are pre-built during serialization
-   */
-  public void buildDataStructures() {
-    addAliases();
   }
 
   /**

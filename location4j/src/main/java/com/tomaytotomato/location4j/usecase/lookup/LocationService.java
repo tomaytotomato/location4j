@@ -56,19 +56,6 @@ public class LocationService implements FindCountry, FindState, FindCity {
     return new Builder();
   }
 
-  /**
-   * Normalizes a key for consistent lookup.
-   *
-   * @param key The key to be normalized.
-   * @return The normalized key.
-   */
-  private String keyMaker(String key) {
-    if (Objects.isNull(key) || key.isEmpty()) {
-      throw new IllegalArgumentException("Key cannot be null or empty");
-    }
-    return textNormaliser.normalise(key);
-  }
-
   @Override
   public Optional<Country> findCountryById(Integer id) {
     if (Objects.isNull(id)) {

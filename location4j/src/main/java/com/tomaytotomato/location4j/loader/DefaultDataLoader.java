@@ -2,12 +2,10 @@ package com.tomaytotomato.location4j.loader;
 
 import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.Country;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -38,8 +36,7 @@ public class DefaultDataLoader implements DataLoader {
         logger.info("Location4J data loaded successfully");
       }
     } catch (IOException | ClassNotFoundException e) {
-      logger.log(Level.SEVERE, "Failed to load location4j data", e);
-      throw new RuntimeException("Failed to load location4j data", e);
+      logger.severe("Failed to load Location4J data: " + e.getMessage());
     }
   }
 

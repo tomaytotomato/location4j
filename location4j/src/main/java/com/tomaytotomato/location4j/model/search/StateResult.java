@@ -17,24 +17,4 @@ public record StateResult(
     CountryResult country,
     List<CityResult> cities
     ) implements SearchLocationResult {
-
-  @Override
-  public String name() {
-    return name;
-  }
-
-  @Override
-  public CountryResult country() {
-    return country;
-  }
-
-  @Override
-  public BigDecimal latitude() {
-    return latitude;
-  }
-
-  @Override
-  public BigDecimal longitude() {
-    return longitude;
-  }
 }
