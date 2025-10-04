@@ -2,15 +2,12 @@ package com.tomaytotomato.location4j.usecase.search;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.location4j.mapper.DefaultSearchLocationResultMapper;
+
 import com.tomaytotomato.location4j.model.search.CityResult;
 import com.tomaytotomato.location4j.model.search.CountryResult;
 import com.tomaytotomato.location4j.model.search.SearchLocationResult;
 import com.tomaytotomato.location4j.model.search.StateResult;
-import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
-import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
+import com.tomaytotomato.location4j.loader.TestDataLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,18 +19,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SearchLocationServiceTest {
+class SearchLocationServiceTest extends TestDataLoader {
 
   private final SearchLocation searchLocationService;
 
   public SearchLocationServiceTest() {
-    searchLocationService = SearchLocationService.builder()
-        .withLocationAliases(new DefaultLocationAliases())
-        .withLocationMapper(new DefaultSearchLocationResultMapper())
-        .withCountriesDataLoader(new DefaultCountriesDataLoaderImpl())
-        .withTextNormaliser(new DefaultTextNormaliser())
-        .withTextTokeniser(new DefaultTextTokeniser())
-        .build();
+    searchLocationService = getSearchLocationService();
   }
 
   @DisplayName("SearchLocation, when null or empty text, then throw exception")

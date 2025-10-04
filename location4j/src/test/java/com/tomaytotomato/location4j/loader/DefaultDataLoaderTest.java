@@ -6,13 +6,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class DefaultCountriesDataLoaderImplTest {
+class DefaultDataLoaderTest {
 
   @DisplayName("Should successfully load Location4J data")
   @Test
   void constructor_WhenFileExists_ShouldLoadDataSuccessfully() {
     // Given & When
-    DefaultCountriesDataLoaderImpl loader = new DefaultCountriesDataLoaderImpl();
+    DefaultDataLoader loader = new DefaultDataLoader();
 
     // Then
     assertThat(loader.getLocation4JData()).isNotNull();
@@ -25,7 +25,7 @@ class DefaultCountriesDataLoaderImplTest {
   @Test
   void constructor_WhenFileNotFound_ShouldThrowRuntimeException() {
     // Given
-    class TestCountriesDataLoader extends DefaultCountriesDataLoaderImpl {
+    class TestDataLoader extends DefaultDataLoader {
       @Override
       protected void loadData() {
         try (var inputStream = this.getClass().getResourceAsStream("/non-existent-file.bin")) {
@@ -39,7 +39,7 @@ class DefaultCountriesDataLoaderImplTest {
     }
 
     // When & Then
-    assertThatThrownBy(TestCountriesDataLoader::new)
+    assertThatThrownBy(TestDataLoader::new)
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("Failed to load location4j data");
   }
@@ -48,7 +48,7 @@ class DefaultCountriesDataLoaderImplTest {
   @Test
   void getLocation4JData_ShouldHavePreBuiltDataStructures() {
     // Given
-    DefaultCountriesDataLoaderImpl loader = new DefaultCountriesDataLoaderImpl();
+    DefaultDataLoader loader = new DefaultDataLoader();
 
     // When
     var data = loader.getLocation4JData();

@@ -13,17 +13,17 @@ import java.util.logging.Logger;
 /**
  * The default loader for retrieving Countries from the DEFAULT_FILE located in the location4j.jar
  */
-public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
+public class DefaultDataLoader implements DataLoader {
 
   private static final String DEFAULT_FILE = "/location4j.bin";
-  private static final Logger logger = Logger.getLogger(DefaultCountriesDataLoaderImpl.class.getName());
+  private static final Logger logger = Logger.getLogger(DefaultDataLoader.class.getName());
 
   private Location4JData location4JData;
 
   /**
    * Loads a list of {@link Country} from the location4j.bin file.
    */
-  public DefaultCountriesDataLoaderImpl() {
+  public DefaultDataLoader() {
     loadData();
   }
 

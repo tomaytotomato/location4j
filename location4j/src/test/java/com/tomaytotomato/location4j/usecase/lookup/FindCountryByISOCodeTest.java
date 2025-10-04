@@ -4,8 +4,7 @@ package com.tomaytotomato.location4j.usecase.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
-import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
+import com.tomaytotomato.location4j.loader.TestDataLoader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -13,7 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FindCountryByISOCodeTest extends BaseLocationServiceTest {
+class FindCountryByISOCodeTest extends TestDataLoader {
 
   private final FindCountry locationService;
 

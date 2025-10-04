@@ -1,19 +1,14 @@
 package com.tomaytotomato.location4j.usecase.lookup;
 
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
-
-import com.tomaytotomato.location4j.loader.CountriesDataLoader;
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.location4j.loader.DataLoader;
+import com.tomaytotomato.location4j.loader.DefaultDataLoader;
 import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,7 +34,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
 
   private final TextNormaliser textNormaliser;
 
-  protected LocationService(TextNormaliser textNormaliser, CountriesDataLoader dataLoader) {
+  protected LocationService(TextNormaliser textNormaliser, DataLoader dataLoader) {
     this.textNormaliser = textNormaliser;
 
     // Load pre-built data structures
@@ -275,13 +270,13 @@ public class LocationService implements FindCountry, FindState, FindCity {
   public static class Builder {
 
     private TextNormaliser textNormaliser = new DefaultTextNormaliser();
-    private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
+    private DataLoader dataLoader = new DefaultDataLoader();
 
     Builder() {
     }
 
-    public Builder withCountriesDataLoader(CountriesDataLoader countriesDataLoader) {
-      this.countriesDataLoader = countriesDataLoader;
+    public Builder withDataLoader(DataLoader dataLoader) {
+      this.dataLoader = dataLoader;
       return this;
     }
 
@@ -291,7 +286,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
     }
 
     public LocationService build() {
-      return new LocationService(textNormaliser, countriesDataLoader);
+      return new LocationService(textNormaliser, dataLoader);
     }
   }
 }

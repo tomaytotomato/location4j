@@ -2,8 +2,8 @@ package com.tomaytotomato.location4j.usecase.search;
 
 import com.tomaytotomato.location4j.aliases.DefaultLocationAliases;
 import com.tomaytotomato.location4j.aliases.LocationAliases;
-import com.tomaytotomato.location4j.loader.CountriesDataLoader;
-import com.tomaytotomato.location4j.loader.DefaultCountriesDataLoaderImpl;
+import com.tomaytotomato.location4j.loader.DataLoader;
+import com.tomaytotomato.location4j.loader.DefaultDataLoader;
 import com.tomaytotomato.location4j.mapper.DefaultSearchLocationResultMapper;
 import com.tomaytotomato.location4j.mapper.SearchLocationResultMapper;
 import com.tomaytotomato.location4j.model.Location4JData;
@@ -46,7 +46,7 @@ public class SearchLocationService implements SearchLocation {
   private final LocationAliases locationAliases;
 
   protected SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
-      SearchLocationResultMapper searchLocationResultMapper, CountriesDataLoader dataLoader,
+      SearchLocationResultMapper searchLocationResultMapper, DataLoader dataLoader,
       LocationAliases locationAliases) {
     this.textTokeniser = textTokeniser;
     this.textNormaliser = textNormaliser;
@@ -440,7 +440,7 @@ public class SearchLocationService implements SearchLocation {
     private TextNormaliser textNormaliser = new DefaultTextNormaliser();
     private SearchLocationResultMapper searchLocationResultMapper = new DefaultSearchLocationResultMapper();
     private LocationAliases locationAliases = new DefaultLocationAliases();
-    private CountriesDataLoader countriesDataLoader = new DefaultCountriesDataLoaderImpl();
+    private DataLoader dataLoader = new DefaultDataLoader();
 
     Builder() {
     }
@@ -465,15 +465,15 @@ public class SearchLocationService implements SearchLocation {
       return this;
     }
 
-    public Builder withCountriesDataLoader(
-        CountriesDataLoader countriesDataLoader) {
-      this.countriesDataLoader = countriesDataLoader;
+    public Builder withDataLoader(
+        DataLoader dataLoader) {
+      this.dataLoader = dataLoader;
       return this;
     }
 
     public SearchLocationService build() {
       return new SearchLocationService(textTokeniser, textNormaliser, searchLocationResultMapper,
-          countriesDataLoader,
+          dataLoader,
           locationAliases);
     }
   }
