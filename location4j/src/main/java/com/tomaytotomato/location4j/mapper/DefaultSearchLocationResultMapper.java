@@ -8,7 +8,6 @@ import com.tomaytotomato.location4j.model.search.CityResult;
 import com.tomaytotomato.location4j.model.search.CountryResult;
 import com.tomaytotomato.location4j.model.search.StateResult;
 import com.tomaytotomato.location4j.model.search.TimeZoneResult;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +15,9 @@ public class DefaultSearchLocationResultMapper implements SearchLocationResultMa
 
   @Override
   public CountryResult toCountryResult(Country country) {
-    Objects.requireNonNull(country);
+    if (Objects.isNull(country)) {
+      return null;
+    }
     return new CountryResult(
         country.getId(),
         country.getName(),
@@ -30,6 +31,9 @@ public class DefaultSearchLocationResultMapper implements SearchLocationResultMa
 
   @Override
   public StateResult toStateResult(State state) {
+    if (state == null) {
+      return null;
+    }
     return new StateResult(
         state.getId(),
         state.getName(),
@@ -39,22 +43,23 @@ public class DefaultSearchLocationResultMapper implements SearchLocationResultMa
         state.getLongitude(),
         toTimeZoneResult(state.getTimezone()),
         toCountryResult(state.getCountry()),
-        state.getCities() == null ? null : state.getCities().stream().map(this::toCityResult).toList()
+        state.getCities().stream().map(this::toCityResultWithoutStateCities).toList()
     );
   }
 
   @Override
   public CityResult toCityResult(City city) {
-    Objects.requireNonNull(city);
-
+    if (city == null) {
+      return null;
+    }
     return new CityResult(
         city.getId(),
         city.getName(),
-        null,
-        null,
+        toCountryResult(city.getCountry()),
+        toStateResult(city.getState()),
         city.getLatitude(),
         city.getLongitude(),
-        null,
+        toTimeZoneResult(city.getTimezone()),
         city.getWikiDataId()
     );
   }
@@ -71,6 +76,45 @@ public class DefaultSearchLocationResultMapper implements SearchLocationResultMa
         timezone.getTzName(),
         timezone.getGmtOffset(),
         timezone.getGmtOffsetName()
+    );
+  }
+
+  /**
+   * Prevents a circular dependency by creating a City without the State's other cities
+   */
+  private CityResult toCityResultWithoutStateCities(City city) {
+    if (Objects.isNull(city)) {
+      return null;
+    }
+    return new CityResult(
+        city.getId(),
+        city.getName(),
+        toCountryResult(city.getCountry()),
+        toShallowState(city.getState()),
+        city.getLatitude(),
+        city.getLongitude(),
+        toTimeZoneResult(city.getTimezone()),
+        city.getWikiDataId()
+    );
+  }
+
+  /**
+   * Prevents a circular dependency by creating a State without other cities
+   */
+  private StateResult toShallowState(State state) {
+    if (Objects.isNull(state)) {
+      return null;
+    }
+    return new StateResult(
+        state.getId(),
+        state.getName(),
+        state.getIso2(),
+        state.getIso31662(),
+        state.getLatitude(),
+        state.getLongitude(),
+        toTimeZoneResult(state.getTimezone()),
+        toCountryResult(state.getCountry()),
+        List.of()
     );
   }
 }

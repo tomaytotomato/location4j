@@ -9,10 +9,7 @@ import com.tomaytotomato.location4j.mapper.SearchLocationResultMapper;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
-import com.tomaytotomato.location4j.model.search.CityResult;
-import com.tomaytotomato.location4j.model.search.CountryResult;
 import com.tomaytotomato.location4j.model.search.SearchLocationResult;
-import com.tomaytotomato.location4j.model.search.StateResult;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
@@ -284,6 +281,7 @@ public class SearchLocationService implements SearchLocation {
 
   /**
    * Populates state and city hit counts based on tokenized text without filtering.
+   * All tokens are processed to allow for disambiguation - no early termination.
    *
    * @param tokenizedText    The tokenized search text.
    * @param countryHitsCount The map to populate with country hits.
@@ -295,27 +293,27 @@ public class SearchLocationService implements SearchLocation {
       Map<State, Integer> stateHitsCount,
       Map<City, Integer> cityHitsCount) {
 
-    var stateFound = false;
-    var cityFound = false;
-
     for (String token : tokenizedText) {
-      if (stateNameToStatesMap.containsKey(token) && !stateFound) {
+      // Check for state matches by name
+      if (stateNameToStatesMap.containsKey(token)) {
         stateNameToStatesMap.get(token).forEach(state -> {
           var country = countryIdToCountryMap.get(state.getCountry().getId());
           stateHitsCount.put(state, stateHitsCount.getOrDefault(state, 0) + 1);
           countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
         });
-        stateFound = true;
       }
-      if (stateCodeToStatesMap.containsKey(token) && !stateFound) {
+      
+      // Check for state matches by code
+      if (stateCodeToStatesMap.containsKey(token)) {
         stateCodeToStatesMap.get(token).forEach(state -> {
           var country = countryIdToCountryMap.get(state.getCountry().getId());
           stateHitsCount.put(state, stateHitsCount.getOrDefault(state, 0) + 1);
           countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
         });
-        stateFound = true;
       }
-      if (cityNameToCitiesMap.containsKey(token) && !cityFound) {
+      
+      // Check for city matches by name
+      if (cityNameToCitiesMap.containsKey(token)) {
         cityNameToCitiesMap.get(token).forEach(city -> {
           var country = countryIdToCountryMap.get(city.getCountry().getId());
           var state = stateIdToStateMap.get(city.getState().getId());
@@ -323,7 +321,6 @@ public class SearchLocationService implements SearchLocation {
           cityHitsCount.put(city, cityHitsCount.getOrDefault(city, 0) + 1);
           countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
         });
-        cityFound = true;
       }
     }
   }
@@ -375,6 +372,7 @@ public class SearchLocationService implements SearchLocation {
 
   /**
    * Retrieves the top matching locations based on hit counts.
+   * Uses improved scoring that considers hierarchical reinforcement.
    *
    * @param countryHitsCount The map of country hits.
    * @param stateHitsCount   The map of state hits.
@@ -385,30 +383,63 @@ public class SearchLocationService implements SearchLocation {
       Map<State, Integer> stateHitsCount,
       Map<City, Integer> cityHitsCount) {
 
-    var topCountry = getTopCountry(countryHitsCount);
-
-    var topCity = cityHitsCount.entrySet().stream()
-        .max(Map.Entry.comparingByValue())
-        .map(Map.Entry::getKey)
-        .orElse(null);
-
-    var topState = stateHitsCount.entrySet().stream()
-        .max(Map.Entry.comparingByValue())
-        .map(Map.Entry::getKey)
-        .orElse(null);
-
-    if (Objects.isNull(topCountry)) {
-      if (Objects.isNull(topState)) {
-        if (Objects.isNull(topCity)) {
-          return List.of();
-        } else {
-          return List.of(searchLocationResultMapper.toCityResult(topCity));
-        }
-      } else {
-        return List.of(searchLocationResultMapper.toStateResult(topState));
+    // Calculate composite scores for cities that consider hierarchical reinforcement
+    City bestCity = null;
+    int bestCityScore = 0;
+    
+    for (Map.Entry<City, Integer> cityEntry : cityHitsCount.entrySet()) {
+      City city = cityEntry.getKey();
+      int cityHits = cityEntry.getValue();
+      
+      // Get hits for the city's state and country
+      State cityState = stateIdToStateMap.get(city.getState().getId());
+      Country cityCountry = countryIdToCountryMap.get(city.getCountry().getId());
+      
+      int stateHits = stateHitsCount.getOrDefault(cityState, 0);
+      int countryHits = countryHitsCount.getOrDefault(cityCountry, 0);
+      
+      // Calculate composite score: city hits + state hits + country hits
+      // This favors cities where the state/country also have matches (hierarchical reinforcement)
+      int compositeScore = cityHits + stateHits + countryHits;
+      
+      if (compositeScore > bestCityScore) {
+        bestCityScore = compositeScore;
+        bestCity = city;
       }
+    }
+    
+    // Find best state (with hierarchical reinforcement)
+    State bestState = null;
+    int bestStateScore = 0;
+    
+    for (Map.Entry<State, Integer> stateEntry : stateHitsCount.entrySet()) {
+      State state = stateEntry.getKey();
+      int stateHits = stateEntry.getValue();
+      
+      Country stateCountry = countryIdToCountryMap.get(state.getCountry().getId());
+      int countryHits = countryHitsCount.getOrDefault(stateCountry, 0);
+      
+      // Calculate composite score: state hits + country hits
+      int compositeScore = stateHits + countryHits;
+      
+      if (compositeScore > bestStateScore) {
+        bestStateScore = compositeScore;
+        bestState = state;
+      }
+    }
+
+    // Find best country
+    Country bestCountry = getTopCountry(countryHitsCount);
+
+    // Return the most specific result with the highest composite score
+    if (bestCity != null && bestCityScore > 0) {
+      return List.of(searchLocationResultMapper.toCityResult(bestCity));
+    } else if (bestState != null && bestStateScore > 0) {
+      return List.of(searchLocationResultMapper.toStateResult(bestState));
+    } else if (bestCountry != null) {
+      return List.of(searchLocationResultMapper.toCountryResult(bestCountry));
     } else {
-      return List.of(buildLocationResult(topCountry, topState, topCity));
+      return List.of();
     }
   }
 
