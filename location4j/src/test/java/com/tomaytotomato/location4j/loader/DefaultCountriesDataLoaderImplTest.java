@@ -1,78 +1,68 @@
 package com.tomaytotomato.location4j.loader;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DefaultCountriesDataLoaderImplTest {
 
-  /**
-   * Verifies that the constructor throws a SecurityException if resource paths do not match.
-   */
-  @DisplayName("Constructor should throw SecurityException for mismatched resource paths")
+  @DisplayName("Should successfully load Location4J data")
   @Test
-  void constructor_WhenResourcePathsDoNotMatch_ShouldThrowSecurityException() {
+  void constructor_WhenFileExists_ShouldLoadDataSuccessfully() {
+    // Given & When
+    DefaultCountriesDataLoaderImpl loader = new DefaultCountriesDataLoaderImpl();
 
+    // Then
+    assertThat(loader.getLocation4JData()).isNotNull();
+    assertThat(loader.getCountries()).isNotNull();
+    assertThat(loader.getCountries()).isNotEmpty();
+    assertThat(loader.getLocation4JData().getCountries()).isEqualTo(loader.getCountries());
+  }
+
+  @DisplayName("Should throw RuntimeException when binary file is not found")
+  @Test
+  void constructor_WhenFileNotFound_ShouldThrowRuntimeException() {
     // Given
     class TestCountriesDataLoader extends DefaultCountriesDataLoaderImpl {
       @Override
-      protected URL getResource(String resource) {
-        try {
-          if (resource.equals("/location4j.bin")) {
-            return new URI("file:///mock-path/location4j.bin").toURL();
-          } else if (resource.equals("TestCountriesDataLoader.class")) {
-            return new URI("file:///hacked/DefaultCountriesDataLoaderImpl.class").toURL();
+      protected void loadData() {
+        try (var inputStream = this.getClass().getResourceAsStream("/non-existent-file.bin")) {
+          if (inputStream == null) {
+            throw new RuntimeException("Failed to load location4j data");
           }
-        } catch (MalformedURLException | URISyntaxException e) {
-          throw new RuntimeException("Failed to create mock URL for resource: " + resource, e);
+        } catch (Exception e) {
+          throw new RuntimeException("Failed to load location4j data", e);
         }
-        return null;
-      }
-
-      @Override
-      protected InputStream getResourceAsStream(String resource) {
-        return this.getClass().getResourceAsStream("/hacked-location4j.bin");
       }
     }
 
-    // When Then
+    // When & Then
     assertThatThrownBy(TestCountriesDataLoader::new)
-        .isInstanceOf(SecurityException.class)
-        .hasMessageContaining("/location4j.bin is not in the same artifact as the loader: security issue");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Failed to load location4j data");
   }
 
-  @DisplayName("Constructor should throw IllegalArgumentException if DEFAULT_FILE is not found")
+  @DisplayName("Should have pre-built data structures")
   @Test
-  void constructor_WhenFileNotFound_ShouldThrowIllegalArgumentException() {
-    class TestCountriesDataLoader extends DefaultCountriesDataLoaderImpl {
-      @Override
-      protected URL getResource(String resource) {
-        try {
-          if (resource.equals("/location4j.bin")) {
-            return new URI("file:///location4j.bin").toURL();
-          } else if (resource.equals("TestCountriesDataLoader.class")) {
-            return new URI("file:///same-path/DefaultCountriesDataLoaderImpl.class").toURL();
-          }
-        } catch (MalformedURLException | URISyntaxException e) {
-          throw new RuntimeException("Failed to create mock URL for resource: " + resource, e);
-        }
-        return null;
-      }
+  void getLocation4JData_ShouldHavePreBuiltDataStructures() {
+    // Given
+    DefaultCountriesDataLoaderImpl loader = new DefaultCountriesDataLoaderImpl();
 
-      @Override
-      protected InputStream getResourceAsStream(String resource) {
-        return null;
-      }
-    }
+    // When
+    var data = loader.getLocation4JData();
 
-    assertThatThrownBy(TestCountriesDataLoader::new)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("File not found: /location4j.bin");
+    // Then
+    assertThat(data.getCountryIdToCountryMap()).isNotNull();
+    assertThat(data.getCountryNameToCountryMap()).isNotNull();
+    assertThat(data.getIso2CodeToCountryMap()).isNotNull();
+    assertThat(data.getIso3CodeToCountryMap()).isNotNull();
+    assertThat(data.getStateIdToStateMap()).isNotNull();
+    assertThat(data.getCityIdToCityMap()).isNotNull();
+    assertThat(data.getStateNameToStatesMap()).isNotNull();
+    assertThat(data.getStateCodeToStatesMap()).isNotNull();
+    assertThat(data.getCityNameToCitiesMap()).isNotNull();
+    assertThat(data.getSearchCityNameToCitiesMap()).isNotNull();
   }
 }

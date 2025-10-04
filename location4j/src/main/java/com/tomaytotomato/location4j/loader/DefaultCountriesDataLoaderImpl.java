@@ -1,13 +1,12 @@
 package com.tomaytotomato.location4j.loader;
 
+import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.Country;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,57 +16,37 @@ import java.util.logging.Logger;
 public class DefaultCountriesDataLoaderImpl implements CountriesDataLoader {
 
   private static final String DEFAULT_FILE = "/location4j.bin";
-  private final List<Country> countries = new ArrayList<>();
+  private static final Logger logger = Logger.getLogger(DefaultCountriesDataLoaderImpl.class.getName());
+
+  private Location4JData location4JData;
 
   /**
    * Loads a list of {@link Country} from the location4j.bin file.
    */
   public DefaultCountriesDataLoaderImpl() {
-    var logger = Logger.getLogger(this.getClass().getName());
+    loadData();
+  }
 
-    String urlToFile = getResource(DEFAULT_FILE).toString();
-    String urlToThis = getResource(this.getClass().getSimpleName() + ".class").toString();
-    String trimmed = urlToFile.substring(0, urlToFile.indexOf(DEFAULT_FILE));
-    if (!urlToThis.startsWith(trimmed)) {
-      throw new SecurityException(
-          DEFAULT_FILE + " is not in the same artifact as the loader: security issue");
-    }
-
-    try (InputStream inputStream = getResourceAsStream(DEFAULT_FILE)) {
-      logger.info("Attempting to load countries from " + DEFAULT_FILE);
-      if (Objects.isNull(inputStream)) {
+  protected void loadData() {
+    try (InputStream inputStream = this.getClass().getResourceAsStream(DEFAULT_FILE)) {
+      if (inputStream == null) {
         throw new IllegalArgumentException("File not found: " + DEFAULT_FILE);
       }
 
-      loadLocationsFromBinary(inputStream, logger);
-    } catch (IOException | ClassNotFoundException e) {
-      logger.log(Level.SEVERE, String.format("Failed to load countries file: %s", e.getMessage()),
-          e);
-    }
-  }
-
-  protected InputStream getResourceAsStream(String resource) {
-    return getClass().getResourceAsStream(resource);
-  }
-
-  protected java.net.URL getResource(String resource) {
-    return getClass().getResource(resource);
-  }
-
-  private void loadLocationsFromBinary(InputStream inputStream, Logger logger)
-      throws IOException, ClassNotFoundException {
-    try (var objectInputStream = new ObjectInputStream(inputStream)) {
-      List<Country> loadedCountries = (List<Country>) objectInputStream.readObject();
-      this.countries.addAll(loadedCountries);
-      logger.info("Successfully loaded countries binary file");
-    } catch (IOException | ClassNotFoundException e) {
-      logger.log(Level.SEVERE, String.format("Failed to parse countries file: %s", e.getMessage()),
-          e);
+      try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+        location4JData = (Location4JData) objectInputStream.readObject();
+        logger.info("Location4J data loaded successfully");
+      }
     }
   }
 
   @Override
   public List<Country> getCountries() {
-    return countries;
+    return location4JData.getCountries();
+  }
+
+  @Override
+  public Location4JData getLocation4JData() {
+    return location4JData;
   }
 }

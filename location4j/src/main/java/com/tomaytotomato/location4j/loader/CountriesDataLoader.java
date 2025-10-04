@@ -1,5 +1,6 @@
 package com.tomaytotomato.location4j.loader;
 
+import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface CountriesDataLoader {
    */
   List<Country> getCountries();
 
+  Location4JData getLocation4JData();
 }

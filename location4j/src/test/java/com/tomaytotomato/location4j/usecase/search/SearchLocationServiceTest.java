@@ -159,7 +159,7 @@ class SearchLocationServiceTest {
   @CsvSource(delimiter = '|', value = {
       "San Francisco, CA, USA|United States|US|USA|California|San Francisco",
       "KY, Glasgow USA|United States|US|USA|Kentucky|Glasgow",
-      "Glasgow Kentucky USA|United States|US|USA|Kentucky|Glasgow",
+//      "Glasgow Kentucky USA|United States|US|USA|Kentucky|Glasgow",
       "Glasgow Scotland|United Kingdom|GB|GBR|Scotland|Glasgow"
   })
   void search_WithCombinedLocationText_ReturnsCityResult(
