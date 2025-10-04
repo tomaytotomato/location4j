@@ -1,8 +1,10 @@
 package com.tomaytotomato.location4j.model.lookup;
 
+import com.tomaytotomato.location4j.model.lookup.State.Builder;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -20,13 +22,13 @@ public class City implements Serializable {
 
   private Integer id;
   private String name;
-  private transient Country country;
-  private transient State state;
+  private Country country;
+  private State state;
   private BigDecimal latitude;
   private BigDecimal longitude;
   private double latitudeDouble = 0.0;
   private double longitudeDouble = 0.0;
-  private String timezone;
+  private TimeZone timezone;
   private String wikiDataId;
 
   City() {
@@ -58,14 +60,22 @@ public class City implements Serializable {
   }
 
   public double getLatitudeDouble() {
+    // If double value is not set (0.0) but BigDecimal value exists, convert it
+    if (latitudeDouble == 0.0 && latitude != null && latitude.doubleValue() != 0.0) {
+      return latitude.doubleValue();
+    }
     return latitudeDouble;
   }
 
   public double getLongitudeDouble() {
+    // If double value is not set (0.0) but BigDecimal value exists, convert it
+    if (longitudeDouble == 0.0 && longitude != null && longitude.doubleValue() != 0.0) {
+      return longitude.doubleValue();
+    }
     return longitudeDouble;
   }
 
-  public String getTimezone() {
+  public TimeZone getTimezone() {
     return timezone;
   }
 
@@ -109,7 +119,7 @@ public class City implements Serializable {
     private BigDecimal longitude;
     private double latitudeDouble;
     private double longitudeDouble;
-    private String timezone;
+    private TimeZone timezone;
     private String wikiDataId;
 
     private Builder() {
@@ -155,8 +165,13 @@ public class City implements Serializable {
       return this;
     }
 
-    public Builder timezone(String timezone) {
+    public Builder timezone(TimeZone timezone) {
       this.timezone = timezone;
+      return this;
+    }
+
+    public Builder timezone(String timezone) {
+      this.timezone = TimeZone.builder().tzName(timezone).build();
       return this;
     }
 

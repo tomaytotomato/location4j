@@ -29,6 +29,10 @@ public class TimeZone implements Serializable {
   TimeZone() {
   }
 
+  public TimeZone(String zoneName) {
+    this.zoneName = zoneName;
+  }
+
   /**
    * Constructs a new TimeZone with the specified attributes.
    *
@@ -89,6 +93,10 @@ public class TimeZone implements Serializable {
   public int hashCode() {
     return Objects.hash(getZoneName(), getAbbreviation(), getTzName(), getGmtOffset(),
         getGmtOffsetName());
+  }
+
+  public static Builder builder() {
+    return new Builder();
   }
 
   @Generated("IntelliJ")

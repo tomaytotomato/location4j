@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ public class JsonToBinaryConverter {
 
   public static void main(String[] args) {
     logger.setLevel(Level.ALL);
+    int countryCounter, stateCounter, cityCounter = 0;
 
     try (InputStream inputStream = JsonToBinaryConverter.class.getResourceAsStream(JSON_FILE)) {
       if (inputStream == null) {
@@ -47,11 +49,11 @@ public class JsonToBinaryConverter {
       ObjectMapper mapper = new ObjectMapper();
       mapper.setPropertyNamingStrategy(new SnakeCaseStrategy());
 
-      // Configure Jackson to be resilient to schema changes (only in buildtools)
-      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
       mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
       mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+      mapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
 
       List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {
       });
@@ -95,6 +97,8 @@ public class JsonToBinaryConverter {
     modifiedJson = modifiedJson.replace("\"tzName\"", "\"tz_name\"");
     modifiedJson = modifiedJson.replace("\"emojiU\"", "\"emoji_u\"");
     modifiedJson = modifiedJson.replace("\"iso3166_2\"", "\"iso31662\"");
+    // Remove problematic timezone strings that can't be deserialized
+    modifiedJson = modifiedJson.replaceAll("\"timezone\":\\s*\"[^\"]*\"", "\"timezone\": null");
 
     return modifiedJson;
   }

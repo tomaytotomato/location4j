@@ -72,7 +72,7 @@ class SearchLocationTest {
     assertThat(result.getFirst()).isInstanceOf(CountryResult.class);
 
     var countryResult = (CountryResult) result.getFirst();
-    assertThat(countryResult.getCountry().getName()).isEqualTo(countryName);
+    assertThat(countryResult.country().name()).isEqualTo(countryName);
   }
 
   @DisplayName("SearchLocation, when text contains country ISO2, then return country match")
@@ -95,8 +95,8 @@ class SearchLocationTest {
     assertThat(result).isNotEmpty().hasSize(expectedCountries.length);
 
     List<String> countryNames = result.stream()
-        .map(SearchLocationResult::getCountry)
-        .map(CountryResult::getName)
+        .map(SearchLocationResult::country)
+        .map(CountryResult::name)
         .collect(Collectors.toList());
 
     assertThat(countryNames).containsAll(Arrays.asList(expectedCountries));
@@ -122,8 +122,8 @@ class SearchLocationTest {
     assertThat(result.getFirst()).isInstanceOf(CountryResult.class);
 
     CountryResult countryResult = (CountryResult) result.getFirst();
-    assertThat(countryResult.getCountry().getName()).isEqualTo(expectedCountryName);
-    assertThat(countryResult.getCountry().iso3()).isEqualTo(iso3Code);
+    assertThat(countryResult.country().name()).isEqualTo(expectedCountryName);
+    assertThat(countryResult.country().iso3()).isEqualTo(iso3Code);
   }
 
   @DisplayName("SearchLocation, when text contains state and country name, then return single match")
@@ -150,7 +150,7 @@ class SearchLocationTest {
 
     // Then
     assertThat(result).isNotEmpty().hasSize(1);
-    assertThat(result.getFirst().getCountry().getName()).isEqualTo(countryName);
+    assertThat(result.getFirst().country().name()).isEqualTo(countryName);
   }
 
   @ParameterizedTest
@@ -177,11 +177,11 @@ class SearchLocationTest {
     assertThat(results.getFirst()).isInstanceOf(CityResult.class);
 
     CityResult cityResult = (CityResult) results.getFirst();
-    assertThat(cityResult.getCountry().getName()).isEqualTo(expectedCountry);
-    assertThat(cityResult.getCountry().iso2()).isEqualTo(expectedIso2);
-    assertThat(cityResult.getCountry().iso3()).isEqualTo(expectedIso3);
-    assertThat(cityResult.getState().getName()).isEqualTo(expectedState);
-    assertThat(cityResult.getName()).isEqualTo(expectedCity);
+    assertThat(cityResult.country().name()).isEqualTo(expectedCountry);
+    assertThat(cityResult.country().iso2()).isEqualTo(expectedIso2);
+    assertThat(cityResult.country().iso3()).isEqualTo(expectedIso3);
+    assertThat(cityResult.getState().name()).isEqualTo(expectedState);
+    assertThat(cityResult.name()).isEqualTo(expectedCity);
   }
 
   @ParameterizedTest
@@ -195,12 +195,12 @@ class SearchLocationTest {
     var result = searchLocationService.search(searchText).getFirst();
 
     var description = switch (result) {
-      case CountryResult countryResult -> "Country: " + countryResult.getCountry().getName();
+      case CountryResult countryResult -> "Country: " + countryResult.country().name();
       case StateResult stateResult ->
-          "State: " + stateResult.getName() + ", " + stateResult.getCountry().getName();
-      case CityResult cityResult -> "City: " + cityResult.getName() + ", " +
-          cityResult.getState().getName() + ", " +
-          cityResult.getCountry().getName();
+          "State: " + stateResult.name() + ", " + stateResult.country().name();
+      case CityResult cityResult -> "City: " + cityResult.name() + ", " +
+          cityResult.getState().name() + ", " +
+          cityResult.country().name();
     };
 
     assertThat(description).isEqualTo(expectedDescription);
@@ -232,10 +232,10 @@ class SearchLocationTest {
     assertThat(results.getFirst()).isInstanceOf(CityResult.class);
 
     CityResult cityResult = (CityResult) results.getFirst();
-    assertThat(cityResult.getCountry().getName()).isEqualTo(expectedCountry);
-    assertThat(cityResult.getCountry().iso2()).isEqualTo(expectedIso2);
-    assertThat(cityResult.getCountry().iso3()).isEqualTo(expectedIso3);
+    assertThat(cityResult.country().name()).isEqualTo(expectedCountry);
+    assertThat(cityResult.country().iso2()).isEqualTo(expectedIso2);
+    assertThat(cityResult.country().iso3()).isEqualTo(expectedIso3);
     assertThat(cityResult.getState().name()).isEqualTo(expectedState);
-    assertThat(cityResult.getName()).isEqualTo(expectedCity);
+    assertThat(cityResult.name()).isEqualTo(expectedCity);
   }
 }

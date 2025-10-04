@@ -1,6 +1,7 @@
 module location4j {
   requires java.compiler;
   requires java.logging;
+  requires java.sql;
   exports com.tomaytotomato.location4j.aliases;
   exports com.tomaytotomato.location4j.loader;
   exports com.tomaytotomato.location4j.mapper;

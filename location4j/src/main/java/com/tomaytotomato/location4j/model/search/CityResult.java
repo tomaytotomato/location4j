@@ -16,12 +16,12 @@ public record CityResult(
     String wikiDataId
 ) implements SearchLocationResult {
 
-  public String getName() {
+  public String name() {
     return name;
   }
 
   @Override
-  public CountryResult getCountry() {
+  public CountryResult country() {
     return country;
   }
 
@@ -30,17 +30,12 @@ public record CityResult(
   }
 
   @Override
-  public TimeZoneResult getTimeZone() {
-    return timezone;
-  }
-
-  @Override
-  public BigDecimal getLatitude() {
+  public BigDecimal latitude() {
     return latitude;
   }
 
   @Override
-  public BigDecimal getLongitude() {
+  public BigDecimal longitude() {
     return longitude;
   }
 

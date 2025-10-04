@@ -94,19 +94,21 @@ public class LocationService implements FindCountry, FindState, FindCity {
                           .add(state);
                     }
 
-                    state.getCities()
-                        .forEach(
-                            city -> {
-                              // Country ID and State ID are already set during build time - no need to set them here
+                    if (!Objects.isNull(state.getCities())) {
+                      state.getCities()
+                          .forEach(
+                              city -> {
+                                // Country ID and State ID are already set during build time - no need to set them here
 
-                              cityNameToCitiesMap
-                                  .computeIfAbsent(
-                                      keyMaker(
-                                          city.getName()),
-                                      k -> new ArrayList<>())
-                                  .add(city);
-                              cityIdToCityMap.put(city.getId(), city);
-                            });
+                                cityNameToCitiesMap
+                                    .computeIfAbsent(
+                                        keyMaker(
+                                            city.getName()),
+                                        k -> new ArrayList<>())
+                                    .add(city);
+                                cityIdToCityMap.put(city.getId(), city);
+                              });
+                    }
                   });
         });
   }
@@ -279,12 +281,8 @@ public class LocationService implements FindCountry, FindState, FindCity {
         it ->
             it.forEach(
                 (c -> {
-                  var d =
-                      sqrt(
-                          pow(latitude - c.getLatitudeDouble(), 2)
-                              + pow(
-                              longitude - c.getLongitudeDouble(),
-                              2));
+                  var d = haversineDistance(latitude, longitude, 
+                      c.getLatitudeDouble(), c.getLongitudeDouble());
                   if (d < distance[0]) {
                     city[0] = c;
                     distance[0] = d;
@@ -292,6 +290,37 @@ public class LocationService implements FindCountry, FindState, FindCity {
                 }))
     );
     return city[0];
+  }
+
+  /**
+   * Calculate the great circle distance between two points on Earth using the Haversine formula.
+   * 
+   * @param lat1 Latitude of first point in decimal degrees
+   * @param lon1 Longitude of first point in decimal degrees  
+   * @param lat2 Latitude of second point in decimal degrees
+   * @param lon2 Longitude of second point in decimal degrees
+   * @return Distance in kilometers
+   */
+  private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+    final double R = 6371.0; // Earth's radius in kilometers
+    
+    // Convert degrees to radians
+    double lat1Rad = Math.toRadians(lat1);
+    double lon1Rad = Math.toRadians(lon1);
+    double lat2Rad = Math.toRadians(lat2);
+    double lon2Rad = Math.toRadians(lon2);
+    
+    // Calculate differences
+    double dLat = lat2Rad - lat1Rad;
+    double dLon = lon2Rad - lon1Rad;
+    
+    // Apply Haversine formula
+    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+               Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+               Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    
+    return R * c;
   }
 
   public static class Builder {

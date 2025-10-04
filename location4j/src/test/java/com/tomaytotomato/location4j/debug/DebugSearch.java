@@ -49,14 +49,14 @@ public class DebugSearch {
             if (!results.isEmpty()) {
                 var result = results.get(0);
                 System.out.println("[DEBUG_LOG] Result type: " + result.getClass().getSimpleName());
-                System.out.println("[DEBUG_LOG] Country: " + result.getCountry().getName());
+                System.out.println("[DEBUG_LOG] Country: " + result.country().name());
                 if (result instanceof com.tomaytotomato.location4j.model.search.CityResult) {
                     var cityResult = (com.tomaytotomato.location4j.model.search.CityResult) result;
-                    System.out.println("[DEBUG_LOG] State: " + cityResult.getState().getName());
-                    System.out.println("[DEBUG_LOG] City: " + cityResult.getName());
+                    System.out.println("[DEBUG_LOG] State: " + cityResult.getState().name());
+                    System.out.println("[DEBUG_LOG] City: " + cityResult.name());
                 } else if (result instanceof com.tomaytotomato.location4j.model.search.StateResult) {
                     var stateResult = (com.tomaytotomato.location4j.model.search.StateResult) result;
-                    System.out.println("[DEBUG_LOG] State: " + stateResult.getName());
+                    System.out.println("[DEBUG_LOG] State: " + stateResult.name());
                 }
             }
         }

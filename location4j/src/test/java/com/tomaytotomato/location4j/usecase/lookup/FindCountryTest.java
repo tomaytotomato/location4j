@@ -13,12 +13,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FindCountryTest {
+class FindCountryTest extends BaseLocationServiceTest {
 
   private final FindCountry locationService;
 
   public FindCountryTest() {
-    locationService = LocationService.builder().build();
+    locationService = getLocationService();
   }
 
   @DisplayName("Find Country By ID, when valid and exists, then return Country")

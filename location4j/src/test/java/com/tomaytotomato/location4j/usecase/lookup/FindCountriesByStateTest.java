@@ -11,12 +11,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FindCountriesByStateTest {
+class FindCountriesByStateTest extends BaseLocationServiceTest {
 
   private final FindCountry locationService;
 
   public FindCountriesByStateTest() {
-    locationService = LocationService.builder().build();
+    locationService = getLocationService();
   }
 
   @DisplayName("Find All Countries By State Name, when null or blank then throw exception")

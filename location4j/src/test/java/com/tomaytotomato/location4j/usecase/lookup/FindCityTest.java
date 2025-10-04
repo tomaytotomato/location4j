@@ -12,12 +12,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FindCityTest {
+class FindCityTest extends BaseLocationServiceTest {
 
   private final FindCity locationService;
 
   public FindCityTest() {
-    locationService = LocationService.builder().build();
+    locationService = getLocationService();
   }
 
   @DisplayName("Find City by Lat/long with BigDecimal")

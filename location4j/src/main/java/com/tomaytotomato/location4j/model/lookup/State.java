@@ -3,6 +3,7 @@ package com.tomaytotomato.location4j.model.lookup;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
 
@@ -23,8 +24,8 @@ public class State implements Serializable {
   private TimeZone timezone;
   private BigDecimal latitude;
   private BigDecimal longitude;
-  private transient Country country;
-  private transient List<City> cities;
+  private Country country;
+  private List<City> cities = new ArrayList<>();
 
   State() {
   }
@@ -85,7 +86,7 @@ public class State implements Serializable {
     private BigDecimal latitude;
     private BigDecimal longitude;
     private Country country;
-    private List<City> cities;
+    private List<City> cities = new ArrayList<>();
 
     private Builder() {
     }

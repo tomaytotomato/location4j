@@ -1,6 +1,7 @@
 package com.tomaytotomato.location4j.model.search;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Represents a country-level search result.
@@ -11,32 +12,28 @@ public record CountryResult(
     String iso2,
     String iso3,
     BigDecimal latitude,
-    BigDecimal longitude
+    BigDecimal longitude,
+    List<TimeZoneResult> timezones
 ) implements SearchLocationResult {
 
 
   @Override
-  public String getName() {
-    return "";
+  public String name() {
+    return name;
   }
 
   @Override
-  public CountryResult getCountry() {
-    return null;
+  public CountryResult country() {
+    return this;
   }
 
   @Override
-  public TimeZoneResult getTimeZone() {
-    return null;
-  }
-
-  @Override
-  public BigDecimal getLatitude() {
+  public BigDecimal latitude() {
     return latitude;
   }
 
   @Override
-  public BigDecimal getLongitude() {
+  public BigDecimal longitude() {
     return longitude;
   }
 }

@@ -23,7 +23,8 @@ public class DefaultSearchLocationResultMapper implements SearchLocationResultMa
         country.getIso2(),
         country.getIso3(),
         country.getLatitude(),
-        country.getLongitude()
+        country.getLongitude(),
+        country.getTimezones().stream().map(this::toTimeZoneResult).toList()
     );
   }
 
