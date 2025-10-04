@@ -32,12 +32,6 @@ jobs:
     strategy:
       matrix:
         java: [21, 25]
-        profile: [java21, java25]
-        include:
-          - java: 21
-            profile: java21
-          - java: 25
-            profile: java25
 
     steps:
       - name: Checkout repository
