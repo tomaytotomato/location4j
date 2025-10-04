@@ -8,39 +8,29 @@ on:
       - 'location4j/src/**'
       - 'pom.xml'
       - '.github/**'
-
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'location4j/src/**'
-      - 'pom.xml'
-      - '.github/**'
-
-  workflow_dispatch:
-    inputs:
-      reason:
-        description: 'Reason for manual trigger'
-        required: false
-        default: 'Manual build trigger'
-        type: string
-
 jobs:
   build:
     name: "Build and Test"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [21, 25]
+        profile: [java21, java25]
+        include:
+          - java: 21
+            profile: java21
+          - java: 25
+            profile: java25
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up JDK 21
+      - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '21'
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          java-version: ${{ matrix.java }}
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
@@ -57,14 +47,13 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build with Maven
-        run: mvn verify -Dmaven.test.useModulePath=false
+        run: mvn verify -P${{ matrix.profile }} -Dmaven.test.useModulePath=false -Dgpg.skip=true
         working-directory: location4j
-        env:
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Run SonarCloud Scan
+        if: matrix.java == 21 # Only run Sonar on one version to avoid duplicate reports
         working-directory: location4j
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar -Dsonar.projectKey=tomaytotomato_location4j -Dsonar.organization=tomaytotomato -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+        run: mvn sonar:sonar -Dsonar.projectKey=tomaytotomato_location4j -Dsonar.organization=tomaytotomato -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
