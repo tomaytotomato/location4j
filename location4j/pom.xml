@@ -211,18 +211,21 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <assertj-core.version>3.26.3</assertj-core.version>
-    <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <junit-jupiter.version>5.10.3</junit-jupiter.version>
-    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
-    <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
-    <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <assertj-core.version>3.27.6</assertj-core.version>
+    <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <junit-jupiter.version>6.0.0</junit-jupiter.version>
+    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+    <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+    <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+    <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
+    <spotless.version>3.0.0</spotless.version>
+
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
     <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml
     </sonar.coverage.jacoco.xmlReportPaths>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -230,8 +233,30 @@
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.language>java</sonar.language>
     <sonar.organization>tomaytotomato</sonar.organization>
-    <spotless.version>2.43.0</spotless.version>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>java21</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>java25</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+      </properties>
+    </profile>
+  </profiles>
 
   <scm>
     <connection>scm:git:https://github.com/tomaytotomato/location4j.git</connection>

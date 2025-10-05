@@ -36,9 +36,13 @@ public class JsonToBinaryConverter {
   private static final Logger logger = Logger.getLogger(JsonToBinaryConverter.class.getName());
   private static final TextNormaliser textNormaliser = new DefaultTextNormaliser();
 
+  // Add counters for logging
+  private static int countryCounter = 0;
+  private static int stateCounter = 0;
+  private static int cityCounter = 0;
+
   public static void main(String[] args) {
     logger.setLevel(Level.ALL);
-    int countryCounter, stateCounter, cityCounter = 0;
 
     try (InputStream inputStream = JsonToBinaryConverter.class.getResourceAsStream(JSON_FILE)) {
       if (inputStream == null) {
@@ -65,6 +69,9 @@ public class JsonToBinaryConverter {
       List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {
       });
 
+      countryCounter = countries.size();
+      logger.info("Number of countries loaded: " + countryCounter);
+
       // Build links between each object
       List<Country> updatedCountries = countries.stream().map(country -> {
         List<State> updatedStates = country.getStates().stream().map(state -> {
@@ -72,10 +79,20 @@ public class JsonToBinaryConverter {
           List<City> cities = state.getCities().stream()
               .map(city -> buildCityLinksToStateAndCountry(city, state, country)).toList();
 
+          // Increment city counter
+          cityCounter += cities.size();
+
           return buildStateLinksToCountry(country, state, cities);
         }).toList();
+
+        // Increment state counter
+        stateCounter += updatedStates.size();
+
         return buildCountry(country, updatedStates);
       }).toList();
+
+      logger.info("Number of states processed: " + stateCounter);
+      logger.info("Number of cities processed: " + cityCounter);
 
       // Pre-build all data structures
       Location4JData location4JData = buildLocation4JData(updatedCountries);
@@ -89,6 +106,7 @@ public class JsonToBinaryConverter {
         objectOutputStream.writeObject(location4JData);
         logger.info("Data successfully serialized to binary format.");
       }
+      logger.info(String.format("Summary: Countries=%d, States=%d, Cities=%d", countryCounter, stateCounter, cityCounter));
     } catch (IOException e) {
       logger.log(Level.SEVERE,
           String.format("IO Exception occurred during serialization: %s", e.getMessage()), e);
@@ -102,6 +120,7 @@ public class JsonToBinaryConverter {
    */
   private static Location4JData buildLocation4JData(List<Country> countries) {
     logger.info("Building pre-computed data structures...");
+    logger.info("Countries to process in data structures: " + countries.size());
 
     Location4JData data = new Location4JData();
     data.setCountries(countries);
