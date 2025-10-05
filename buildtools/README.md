@@ -10,7 +10,7 @@ Note: it is not included in the released version of the library!
 ## How to build a new location4j data binary
 
 ```shell
-cd tools
+cd buildtools
 maven clean compile
 mvn exec:java -Dexec.mainClass="com.tomaytotomato.JsonToBinaryConverter"
 
