@@ -61,8 +61,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build location4j (compile only, no tests)
-        run: mvn clean compile -Pjava${{ matrix.java }} -DskipTests
+      - name: Build location4j (install to local maven repo, no tests)
+        run: mvn clean install -Pjava${{ matrix.java }} -DskipTests
         working-directory: location4j
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

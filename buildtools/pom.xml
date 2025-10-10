@@ -6,6 +6,18 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.13.0</version>
+        <configuration>
+          <!-- Don't use module path, use classpath for everything -->
+          <compilerArgs>
+            <arg>--add-reads</arg>
+            <arg>ALL-UNNAMED=ALL-UNNAMED</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
           <skip>true</skip>
