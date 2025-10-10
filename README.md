@@ -190,7 +190,9 @@ etc.
 
 ## More Info
 
-[Testing](TESTING.md)
+[Testing](docs/TESTING.md)
+[Development](docs/DEVELOPMENT.md)
+[Build Tools](buildtools/README.md)
 
 ## Credits 🙏
 

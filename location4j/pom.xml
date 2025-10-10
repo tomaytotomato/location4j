@@ -197,7 +197,7 @@
     </repository>
   </distributionManagement>
 
-  <!-- this version is overridden by Github Action check release.yml !-->
+  <!-- this version is overridden by GitHub Action check release.yml !-->
   <groupId>com.tomaytotomato</groupId>
 
   <licenses>

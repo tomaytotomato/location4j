@@ -66,6 +66,29 @@
     <spotless.version>2.43.0</spotless.version>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>java21</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>java25</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+      </properties>
+    </profile>
+  </profiles>
+
   <scm>
     <connection>scm:git:https://github.com/tomaytotomato/location4j.git</connection>
     <developerConnection>scm:git:ssh://git@github.com:tomaytotomato/location4j.git

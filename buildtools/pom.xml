@@ -6,12 +6,42 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.13.0</version>
+        <configuration>
+          <!-- Don't use module path, use classpath for everything -->
+          <compilerArgs>
+            <arg>--add-reads</arg>
+            <arg>ALL-UNNAMED=ALL-UNNAMED</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
           <skip>true</skip>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
         <version>${maven-deploy-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>generate-location4j-bin</id>
+            <phase>package</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>com.tomaytotomato.JsonToBinaryConverter</mainClass>
+              <classpathScope>compile</classpathScope>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -53,4 +83,26 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.skip>true</sonar.skip>
   </properties>
+  <profiles>
+    <profile>
+      <id>java21</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>java25</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+      </properties>
+    </profile>
+  </profiles>
 </project>
