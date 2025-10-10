@@ -61,6 +61,12 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Build location4j (compile only, no tests)
+        run: mvn clean compile -Pjava${{ matrix.java }} -DskipTests
+        working-directory: location4j
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
       - name: Build buildtools and generate location4j.bin
         run: mvn clean package -Pjava${{ matrix.java }}
         working-directory: buildtools
@@ -73,7 +79,7 @@ jobs:
           cp location4j/target/generated-resources/location4j.bin location4j/src/main/resources/location4j.bin
           ls -la location4j/src/main/resources/
 
-      - name: Build and test location4j
+      - name: Build and test location4j with binary file
         run: mvn verify -Pjava${{ matrix.java }} -Dmaven.test.useModulePath=false
         working-directory: location4j
         env:

@@ -71,4 +71,26 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.skip>true</sonar.skip>
   </properties>
+  <profiles>
+    <profile>
+      <id>java21</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>java25</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+      </properties>
+    </profile>
+  </profiles>
 </project>
