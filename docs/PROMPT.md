@@ -31,7 +31,7 @@ The project consists of **two Maven modules**:
 #### 1. **buildtools** Module (NOT published)
 - **Purpose**: Converts open-source JSON data into an optimized binary format (location4j.bin)
 - **Location**: `/buildtools/`
-- **Main class**: `com.tomaytotomato.JsonToBinaryConverter`
+- **Main class**: `com.tomaytotomato.Location4JDataBuilder`
 - **Input**: `location4j-countries.json` (from dr5hn/countries-states-cities-database)
 - **Output**: `location4j.bin` → copied to `location4j/src/main/resources/`
 - **Dependencies**: Jackson (for JSON parsing), location4j (to use model classes)

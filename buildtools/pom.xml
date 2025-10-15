@@ -37,7 +37,7 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>com.tomaytotomato.JsonToBinaryConverter</mainClass>
+              <mainClass>com.tomaytotomato.Location4JDataBuilder</mainClass>
               <classpathScope>compile</classpathScope>
             </configuration>
           </execution>

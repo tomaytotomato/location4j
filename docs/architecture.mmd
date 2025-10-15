@@ -1,0 +1,17 @@
+architecture-beta
+    group buildtools(server)[buildtools]
+
+    service data(database)[location4j binary] in location4j
+    service countries(cloud)[Countries Dataset JSON]
+    service buildtool(server)[Location4JDataBuilder] in buildtools
+
+    data:L -- R:buildtool
+    countries:T -- B:buildtool
+
+    group location4j(database)[location4j]
+
+    service search(search)[search] in location4j
+    service lookup(lookup)[lookup] in location4j
+
+    data:L -- R:search
+    data:L -- R:lookup

@@ -1,12 +1,9 @@
 package com.tomaytotomato.location4j.model.lookup;
 
-import com.tomaytotomato.location4j.model.lookup.State.Builder;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.Objects;
-import javax.annotation.processing.Generated;
 
 /**
  * Represents a city with various attributes such as name, state, and country.

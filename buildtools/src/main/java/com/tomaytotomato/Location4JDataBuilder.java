@@ -28,12 +28,12 @@ import java.util.logging.Logger;
  * This tool is used to transform the opensource JSON data into a binary format for use by
  * location4j.
  */
-public class JsonToBinaryConverter {
+public class Location4JDataBuilder {
 
   private static final String JSON_FILE = "/location4j-countries.json";
   private static final String OUTPUT_FILE = "../location4j/target/generated-resources/location4j.bin";
 
-  private static final Logger logger = Logger.getLogger(JsonToBinaryConverter.class.getName());
+  private static final Logger logger = Logger.getLogger(Location4JDataBuilder.class.getName());
   private static final TextNormaliser textNormaliser = new DefaultTextNormaliser();
 
   // Add counters for logging
@@ -44,7 +44,7 @@ public class JsonToBinaryConverter {
   public static void main(String[] args) {
     logger.setLevel(Level.ALL);
 
-    try (InputStream inputStream = JsonToBinaryConverter.class.getResourceAsStream(JSON_FILE)) {
+    try (InputStream inputStream = Location4JDataBuilder.class.getResourceAsStream(JSON_FILE)) {
       if (inputStream == null) {
         logger.severe("JSON file not found at path: " + JSON_FILE);
         throw new IllegalArgumentException("File not found!");
@@ -145,7 +145,7 @@ public class JsonToBinaryConverter {
 
       localisedNameToCountryMap.put(keyMaker(country.getNativeName()), country);
       country.getTranslations().values().stream()
-          .map(JsonToBinaryConverter::keyMaker)
+          .map(Location4JDataBuilder::keyMaker)
           .forEach(translatedName -> localisedNameToCountryMap.put(translatedName, country));
       iso2CodeToCountryMap.put(keyMaker(country.getIso2()), country);
       iso3CodeToCountryMap.put(keyMaker(country.getIso3()), country);
