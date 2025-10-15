@@ -1,0 +1,16 @@
+---
+config:
+  theme: redux
+---
+flowchart TD
+    A(["Search"]) -- text input --> B{"Is Valid?"}
+    B -- Yes --> D["Normalise text"]
+    D --> n1["Direct match text"]
+    B -- No --> n2["Return invalid response"]
+    n1 --> n3{"Is there a match?"}
+    n3 -- No --> n5["Tokenise text"]
+    n5 --> n6["Find token matches"]
+    n6 --> n7["Compute token matches into score"]
+    n7 --> n8["Build result(s)"]
+    n8 --> n9["Return result(s)"]
+    n3 -- Yes --> n8

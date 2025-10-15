@@ -1,0 +1,67 @@
+classDiagram
+    direction TB
+    class Country {
+        Integer id;
+        String name;
+        String iso3;
+        String iso2;
+        String phoneCode;
+        String numericCode;
+        String capital;
+        String currency;
+        String currencyName;
+        String currencySymbol;
+        String tld;
+        String nativeName;
+        String region;
+        String regionId;
+        String subregion;
+        String subregionId;
+        List states;
+        String nationality;
+        List timezones;
+        Map translations;
+        BigDecimal latitude;
+        BigDecimal longitude;
+        String emoji;
+        String emojiU;
+        Integer population;
+        Integer gdp;
+    }
+    class State {
+        Integer id;
+        String name;
+        String nativeName;
+        String type;
+        String iso2;
+        String iso31662;
+        TimeZone timezone;
+        BigDecimal latitude;
+        BigDecimal longitude;
+        Country country;
+        List cities;
+    }
+    class City {
+        Integer id;
+        String name;
+        Country country;
+        State state;
+        BigDecimal latitude;
+        BigDecimal longitude;
+        double latitudeDouble;
+        double longitudeDouble;
+        TimeZone timezone;
+        String wikiDataId;
+    }
+    class Timezone {
+        String zoneName;
+        String abbreviation;
+        String tzName;
+        Integer gmtOffset;
+        String gmtOffsetName;
+    }
+    Country "1" -- "*" State
+    State "1" -- "*" City
+    Country "1" -- "*" Timezone
+    State "1" -- "1" Timezone
+    City "1" -- "1" Timezone

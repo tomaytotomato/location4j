@@ -12,7 +12,7 @@ Note: it is not included in the released version of the library!
 ```shell
 cd buildtools
 maven clean compile
-mvn exec:java -Dexec.mainClass="com.tomaytotomato.JsonToBinaryConverter"
+mvn exec:java -Dexec.mainClass="com.tomaytotomato.Location4JDataBuilder"
 
 ```
 
