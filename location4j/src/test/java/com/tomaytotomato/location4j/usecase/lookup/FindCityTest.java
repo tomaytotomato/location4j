@@ -111,6 +111,10 @@ class FindCityTest extends TestDataLoader {
       "Delhi, 4",
       "Beijing,  1",
       "Manchester,  16",
+      "New York City,  1",
+      "Mexico,  4",
+      "Rio de Janeiro, 1",
+      "Los Angeles, 5",
       "San Francisco, 27"
   })
   void findAllCitiesByCityName_WhenStateNameExists_ThenReturnStates(
@@ -120,6 +124,9 @@ class FindCityTest extends TestDataLoader {
     var results = locationService.findAllCitiesByCityName(cityName);
 
     // Then
+    System.out.println("City name " + cityName);
+    System.out.println("\t" + results.stream().map(c -> c.getName() + ", " + c.getState().getName() + ", "
+        + c.getCountry().getName() + "\n").sorted().toList());
     assertThat(results).hasSize(expectedCount);
   }
 }
