@@ -1,3 +1,4 @@
 # Ignore generated binary file
 location4j/src/main/resources/location4j.bin
 
+target/

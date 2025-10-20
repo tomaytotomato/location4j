@@ -43,34 +43,40 @@ implementation group: 'com.tomaytotomato', name: 'location4j', version: '1.0.6'
 ## Quick Example 🏗
 
 ```java
+import com.tomaytotomato.location4j.model.search.CityResult;
+import com.tomaytotomato.location4j.model.search.CountryResult;
+import com.tomaytotomato.location4j.model.search.SearchLocationResult;
+import com.tomaytotomato.location4j.model.search.StateResult;
 import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
 
-public class Main {
+import java.util.List;
 
-    public static void main(String[] args) {
-        SearchLocationService searchLocationService = SearchLocationService.builder().build();
+public class QuickExample {
 
-        // Find all locations named San Francisco
-        List<Location> results = searchLocationService.search("san francisco");
-        printResults(results);
+  public static void main(String[] args) {
+    SearchLocationService searchLocationService = SearchLocationService.builder().build();
 
-        // Narrow search to the US
-        results = searchLocationService.search("san francisco, us");
-        printResults(results);
+    // Find all locations named San Francisco
+    printResults(searchLocationService.search("san francisco"));
 
-        // Narrow search further to California
-        results = searchLocationService.search("san francisco, us california");
-        printResults(results);
-    }
+    // Narrow search to the US
+    printResults(searchLocationService.search("san francisco, us"));
 
-    private static void printResults(List<Location> results) {
-        System.out.println("Locations found: " + results.size());
-        results.forEach(location -> {
-            System.out.println("Country: " + location.getCountryName());
-            System.out.println("State: " + location.getStateName());
-            System.out.println("City: " + location.getCityName());
-        });
-    }
+    // Narrow search further to California
+    printResults(searchLocationService.search("san francisco, us california"));
+  }
+
+  private static void printResults(List<SearchLocationResult> results) {
+    System.out.println("Locations found: " + results.size());
+
+    results.forEach(result -> {
+      switch (result) {
+        case CountryResult country -> System.out.println("Country: " + country.name());
+        case StateResult state -> System.out.println("State: " + state.country().name() + "/" + state.name());
+        case CityResult city -> System.out.println("City: " + city.country().name() + "/" + city.state().name() + "/" + city.name());
+      }
+    });
+  }
 }
 
 ```
@@ -116,28 +122,32 @@ countries, states and city information.
 
 ```java
 
+import com.tomaytotomato.location4j.model.lookup.City;
+import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.usecase.lookup.LocationService;
+
+import java.util.List;
+import java.util.Optional;
 
 public class LocationServiceExample {
 
-    public static void main(String[] args) {
-        LocationService locationService = LocationService.builder().build();
+  public static void main(String[] args) {
+    LocationService locationService = LocationService.builder().build();
 
-        // Get all countries
-        List<Country> countries = locationService.findAllCountries();
+    // Get all countries
+    List<Country> countries = locationService.findAllCountries();
 
-        // Filter European countries
-        List<Country> europeanCountries = countries.stream()
-                .filter(country -> "Europe".equals(country.getRegion()))
-                .toList();
+    // Filter European countries
+    List<Country> europeanCountries = countries.stream()
+      .filter(country -> "Europe".equals(country.getRegion()))
+      .toList();
 
-        // Find Afghanistan by ID
-        Country afghanistan = locationService.findCountryById(1);
+    // Find Afghanistan by ID
+    Optional<Country> afghanistan = locationService.findCountryById(1);
 
-        // Find all cities named San Francisco
-        List<City> cities = locationService.findAllCities("San Francisco");
-
-    }
+    // Find all cities named San Francisco
+    List<City> cities = locationService.findAllCitiesByCityName("San Francisco");
+  }
 }
 
 ```
@@ -149,24 +159,28 @@ text. It will try and find matches against a variety of keywords it has in its d
 
 ```java
 
+import com.tomaytotomato.location4j.model.search.SearchLocationResult;
+import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.usecase.search.SearchLocationService;
+
+import java.util.List;
 
 public class SearchLocationServiceExample {
 
-    public static void main(String[] args) {
-        SearchLocationService searchLocationService = SearchLocationService.builder()
-            .withTextNormaliser(new DefaultTextNormaliser())
-            .build();
+  public static void main(String[] args) {
+    SearchLocationService searchLocationService = SearchLocationService.builder()
+      .withTextNormaliser(new DefaultTextNormaliser())
+      .build();
 
-        // Search for Santa Clara
-        List<Location> results = searchLocationService.search("Santa Clara");
+    // Search for Santa Clara
+    List<SearchLocationResult> results = searchLocationService.search("Santa Clara");
 
-        // Search for Santa Clara in the USA
-        List<Location> resultsUnitedStates = searchLocationService.search("Santa Clara USA");
+    // Search for Santa Clara in the USA
+    List<SearchLocationResult> resultsUnitedStates = searchLocationService.search("Santa Clara USA");
 
-        // Search for Santa Clara in California (it works with ISO2 or ISO3) codes
-        List<Location> resultsCalifornia = searchLocationService.search("Santa Clara US CA");
-    }
+    // Search for Santa Clara in California (it works with ISO2 or ISO3) codes
+    List<SearchLocationResult> resultsCalifornia = searchLocationService.search("Santa Clara US CA");
+  }
 }
 
 ```
