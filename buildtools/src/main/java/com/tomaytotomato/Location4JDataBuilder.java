@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This tool is used to transform the opensource JSON data into a binary format for use by
@@ -34,7 +32,6 @@ public class Location4JDataBuilder {
 
   private static final String OUTPUT_FILE = "../location4j/location4j/target/generated-resources/location4j.bin";
 
-  private static final Logger logger = Logger.getLogger(Location4JDataBuilder.class.getName());
   private static final TextNormaliser textNormaliser = new DefaultTextNormaliser();
 
   private static int countryCounter = 0;
@@ -42,10 +39,8 @@ public class Location4JDataBuilder {
   private static int cityCounter = 0;
 
   public static void main(String[] args) {
-    logger.setLevel(Level.ALL);
-
     try (InputStream inputStream = getLocation4JDataset()) {
-      logger.info("Starting JSON deserialization...");
+      System.out.println("Starting JSON deserialization...");
 
       var jsonString = new String(inputStream.readAllBytes());
       var modifiedJson = fixJsonPropertyNames(jsonString);
@@ -63,7 +58,7 @@ public class Location4JDataBuilder {
       });
 
       countryCounter = countries.size();
-      logger.info("Number of countries loaded: " + countryCounter);
+      System.out.println("Number of countries loaded: " + countryCounter);
 
       List<Country> updatedCountries = countries.stream().map(country -> {
         List<State> updatedStates = country.getStates().stream().map(state -> {
@@ -81,27 +76,28 @@ public class Location4JDataBuilder {
         return buildCountry(country, updatedStates);
       }).toList();
 
-      logger.info("Number of states processed: " + stateCounter);
-      logger.info("Number of cities processed: " + cityCounter);
+      System.out.println("Number of states processed: " + stateCounter);
+      System.out.println("Number of cities processed: " + cityCounter);
 
       var location4JData = buildLocation4JData(updatedCountries);
 
       var outputFile = Paths.get(OUTPUT_FILE).toAbsolutePath();
       outputFile.getParent().toFile().mkdirs();
-      logger.log(Level.INFO,
-          () -> String.format("Serializing data to binary file at:  %s", outputFile));
+      System.out.println("Serializing data to binary file at: " + outputFile);
 
       try (var fileOutputStream = new FileOutputStream(outputFile.toFile());
           var objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
         objectOutputStream.writeObject(location4JData);
-        logger.info("Data successfully serialized to binary format.");
+        System.out.println("Data successfully serialized to binary format.");
       }
-      logger.info(String.format("Summary: Countries=%d, States=%d, Cities=%d", countryCounter, stateCounter, cityCounter));
+      System.out.println(String.format("Summary: Countries=%d, States=%d, Cities=%d",
+          countryCounter, stateCounter, cityCounter));
     } catch (IOException e) {
-      logger.log(Level.SEVERE,
-          String.format("IO Exception occurred during serialization: %s", e.getMessage()), e);
+      System.err.println("IO Exception occurred during serialization: " + e.getMessage());
+      e.printStackTrace();
     } catch (IllegalArgumentException e) {
-      logger.log(Level.SEVERE, String.format("Argument exception: %s", e.getMessage()), e);
+      System.err.println("Argument exception: " + e.getMessage());
+      e.printStackTrace();
     }
   }
 
@@ -109,8 +105,8 @@ public class Location4JDataBuilder {
    * Pre-builds all data structures used by LocationService and SearchLocationService
    */
   private static Location4JData buildLocation4JData(List<Country> countries) {
-    logger.info("Building pre-computed data structures...");
-    logger.info("Countries to process in data structures: " + countries.size());
+    System.out.println("Building pre-computed data structures...");
+    System.out.println("Countries to process in data structures: " + countries.size());
 
     var data = new Location4JData();
     data.setCountries(countries);
@@ -188,7 +184,7 @@ public class Location4JDataBuilder {
     data.setStateIso361662ToStateMap(stateIso31662ToStateMap);
     data.setCityNameToCitiesMap(cityNameToCitiesMap);
 
-    logger.info("Pre-computed data structures built successfully.");
+    System.out.println("Pre-computed data structures built successfully.");
     return data;
   }
 
