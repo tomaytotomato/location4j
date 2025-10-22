@@ -36,7 +36,6 @@ public class Location4JDataBuilder {
   private static final Logger logger = Logger.getLogger(Location4JDataBuilder.class.getName());
   private static final TextNormaliser textNormaliser = new DefaultTextNormaliser();
 
-  // Add counters for logging
   private static int countryCounter = 0;
   private static int stateCounter = 0;
   private static int cityCounter = 0;
@@ -54,7 +53,6 @@ public class Location4JDataBuilder {
 
       var jsonString = new String(inputStream.readAllBytes());
 
-      // Fix data for inconsistent namings of JSON properties
       var modifiedJson = fixJSONPropertyNames(jsonString);
 
       ObjectMapper mapper = new ObjectMapper();
@@ -72,20 +70,17 @@ public class Location4JDataBuilder {
       countryCounter = countries.size();
       logger.info("Number of countries loaded: " + countryCounter);
 
-      // Build links between each object
       List<Country> updatedCountries = countries.stream().map(country -> {
         List<State> updatedStates = country.getStates().stream().map(state -> {
 
           List<City> cities = state.getCities().stream()
               .map(city -> buildCityLinksToStateAndCountry(city, state, country)).toList();
 
-          // Increment city counter
           cityCounter += cities.size();
 
           return buildStateLinksToCountry(country, state, cities);
         }).toList();
 
-        // Increment state counter
         stateCounter += updatedStates.size();
 
         return buildCountry(country, updatedStates);
@@ -98,7 +93,6 @@ public class Location4JDataBuilder {
       Location4JData location4JData = buildLocation4JData(updatedCountries);
 
       Path outputFile = Paths.get(OUTPUT_FILE).toAbsolutePath();
-      // Ensure parent directories exist
       outputFile.getParent().toFile().mkdirs();
       logger.log(Level.INFO,
           () -> String.format("Serializing data to binary file at:  %s", outputFile));
@@ -190,8 +184,10 @@ public class Location4JDataBuilder {
     return data;
   }
 
+  /**
+   * Fixes property names in the JSON string to match the expected Java field names.
+   */
   private static String fixJSONPropertyNames(String jsonString) {
-    // Use String::replace for simple string replacements
     var modifiedJson = jsonString.replace("\"native\"", "\"native_name\"");
     modifiedJson = modifiedJson.replace("\"zoneName\"", "\"zone_name\"");
     modifiedJson = modifiedJson.replace("\"phonecode\"", "\"phone_code\"");
@@ -200,7 +196,6 @@ public class Location4JDataBuilder {
     modifiedJson = modifiedJson.replace("\"tzName\"", "\"tz_name\"");
     modifiedJson = modifiedJson.replace("\"emojiU\"", "\"emoji_u\"");
     modifiedJson = modifiedJson.replace("\"iso3166_2\"", "\"iso31662\"");
-    // Remove problematic timezone strings that can't be deserialized
     modifiedJson = modifiedJson.replaceAll("\"timezone\":\\s*\"[^\"]*\"", "\"timezone\": null");
 
     return modifiedJson;
@@ -232,6 +227,8 @@ public class Location4JDataBuilder {
         .longitude(country.getLongitude())
         .emoji(country.getEmoji())
         .emojiU(country.getEmojiU())
+        .population(country.getPopulation())
+        .gdp(country.getGdp())
         .build();
   }
 
@@ -239,6 +236,8 @@ public class Location4JDataBuilder {
     return State.builder()
         .id(state.getId())
         .name(state.getName())
+        .nativeName(state.getNativeName())
+        .iso31662(state.getIso31662())
         .type(state.getType())
         .country(country)
         .iso2(state.getIso2())
