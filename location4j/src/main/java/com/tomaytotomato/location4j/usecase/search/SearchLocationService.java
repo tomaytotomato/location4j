@@ -263,23 +263,40 @@ public class SearchLocationService implements SearchLocation {
   /**
    * Calculate score for a city based on hierarchical reinforcement.
    * Higher score if the city's state and country are also in the matches.
+   * Penalties applied if contradictory state/country matches exist.
    */
   private int calculateCityScore(CityResult city, List<CountryResult> countryMatches,
       List<StateResult> stateMatches) {
     int score = 100; // Base score for city match
 
     // Check if the city's state is in the state matches (reinforcement)
-    boolean stateMatched = stateMatches.stream()
+    boolean cityStateMatched = stateMatches.stream()
         .anyMatch(state -> state.id().equals(city.state().id()));
-    if (stateMatched) {
+
+    // Check if there are OTHER states that don't match (contradiction)
+    boolean hasContradictoryState = stateMatches.stream()
+        .anyMatch(state -> !state.id().equals(city.state().id()));
+
+    if (cityStateMatched) {
       score += 50; // Hierarchical reinforcement bonus
+    } else if (hasContradictoryState) {
+      // There's a state match, but it's NOT this city's state - strong contradiction
+      score -= 100; // Heavy penalty for contradicting state
     }
 
     // Check if the city's country is in the country matches (reinforcement)
-    boolean countryMatched = countryMatches.stream()
+    boolean cityCountryMatched = countryMatches.stream()
         .anyMatch(country -> country.id().equals(city.country().id()));
-    if (countryMatched) {
+
+    // Check if there are OTHER countries that don't match (contradiction)
+    boolean hasContradictoryCountry = countryMatches.stream()
+        .anyMatch(country -> !country.id().equals(city.country().id()));
+
+    if (cityCountryMatched) {
       score += 50; // Hierarchical reinforcement bonus
+    } else if (hasContradictoryCountry) {
+      // There's a country match, but it's NOT this city's country - strong contradiction
+      score -= 100; // Heavy penalty for contradicting country
     }
 
     return score;
@@ -288,15 +305,24 @@ public class SearchLocationService implements SearchLocation {
   /**
    * Calculate score for a state based on hierarchical reinforcement.
    * Higher score if the state's country is also in the matches.
+   * Penalties applied if contradictory country matches exist.
    */
   private int calculateStateScore(StateResult state, List<CountryResult> countryMatches) {
     int score = 50; // Base score for state match
 
     // Check if the state's country is in the country matches (reinforcement)
-    boolean countryMatched = countryMatches.stream()
+    boolean stateCountryMatched = countryMatches.stream()
         .anyMatch(country -> country.id().equals(state.country().id()));
-    if (countryMatched) {
+
+    // Check if there are OTHER countries that don't match (contradiction)
+    boolean hasContradictoryCountry = countryMatches.stream()
+        .anyMatch(country -> !country.id().equals(state.country().id()));
+
+    if (stateCountryMatched) {
       score += 50; // Hierarchical reinforcement bonus
+    } else if (hasContradictoryCountry) {
+      // There's a country match, but it's NOT this state's country - contradiction
+      score -= 75; // Penalty for contradicting country
     }
 
     return score;

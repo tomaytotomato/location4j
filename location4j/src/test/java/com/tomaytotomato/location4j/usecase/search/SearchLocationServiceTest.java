@@ -11,7 +11,6 @@ import com.tomaytotomato.location4j.model.search.StateResult;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -203,13 +202,12 @@ class SearchLocationServiceTest extends TestDataLoader {
    * Test cases for special city combinations that include state and country information
    * Note: Core ambiguity issue fixed, but these edge cases need further refinement
    */
-  @Disabled
   @ParameterizedTest
   @DisplayName("Handling special city combinations: {0}")
   @CsvSource(delimiter = '|', value = {
       "New York, NY, USA|United States|US|USA|New York|New York City",
       "Los Angeles CA|United States|US|USA|California|Los Angeles",
-      "Mexico|Mexico|MX|MEX|Mexico City|Mexico",
+      "Mexico City|Mexico|MX|MEX|Mexico City|Mexico",
       "Rio de Janeiro Brazil|Brazil|BR|BRA|Rio de Janeiro|Rio de Janeiro"
   })
   void search_WithSpecialCityCombinations_ReturnsCityResult(

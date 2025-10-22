@@ -1,5 +1,8 @@
 package com.tomaytotomato;
 
+import static com.tomaytotomato.Location4JDataTools.fixJsonPropertyNames;
+import static com.tomaytotomato.Location4JDataTools.getLocation4JDataset;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +32,6 @@ import java.util.logging.Logger;
  */
 public class Location4JDataBuilder {
 
-  private static final String JSON_FILE = "/location4j-countries.json";
   private static final String OUTPUT_FILE = "../location4j/location4j/target/generated-resources/location4j.bin";
 
   private static final Logger logger = Logger.getLogger(Location4JDataBuilder.class.getName());
@@ -42,17 +44,11 @@ public class Location4JDataBuilder {
   public static void main(String[] args) {
     logger.setLevel(Level.ALL);
 
-    try (InputStream inputStream = Location4JDataBuilder.class.getResourceAsStream(JSON_FILE)) {
-      if (inputStream == null) {
-        logger.severe("JSON file not found at path: " + JSON_FILE);
-        throw new IllegalArgumentException("File not found!");
-      }
-
+    try (InputStream inputStream = getLocation4JDataset()) {
       logger.info("Starting JSON deserialization...");
 
       var jsonString = new String(inputStream.readAllBytes());
-
-      var modifiedJson = fixJSONPropertyNames(jsonString);
+      var modifiedJson = fixJsonPropertyNames(jsonString);
 
       ObjectMapper mapper = new ObjectMapper();
       mapper.setPropertyNamingStrategy(new SnakeCaseStrategy());
@@ -194,23 +190,6 @@ public class Location4JDataBuilder {
 
     logger.info("Pre-computed data structures built successfully.");
     return data;
-  }
-
-  /**
-   * Fixes property names in the JSON string to match the expected Java field names.
-   */
-  private static String fixJSONPropertyNames(String jsonString) {
-    var modifiedJson = jsonString.replace("\"native\"", "\"native_name\"");
-    modifiedJson = modifiedJson.replace("\"zoneName\"", "\"zone_name\"");
-    modifiedJson = modifiedJson.replace("\"phonecode\"", "\"phone_code\"");
-    modifiedJson = modifiedJson.replace("\"gmtOffset\"", "\"gmt_offset\"");
-    modifiedJson = modifiedJson.replace("\"gmtOffsetName\"", "\"gmt_offset_name\"");
-    modifiedJson = modifiedJson.replace("\"tzName\"", "\"tz_name\"");
-    modifiedJson = modifiedJson.replace("\"emojiU\"", "\"emoji_u\"");
-    modifiedJson = modifiedJson.replace("\"iso3166_2\"", "\"iso31662\"");
-    modifiedJson = modifiedJson.replaceAll("\"timezone\":\\s*\"[^\"]*\"", "\"timezone\": null");
-
-    return modifiedJson;
   }
 
   private static Country buildCountry(Country country, List<State> states) {
