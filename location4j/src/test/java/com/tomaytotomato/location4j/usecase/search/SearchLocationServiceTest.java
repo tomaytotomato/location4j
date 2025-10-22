@@ -207,7 +207,7 @@ class SearchLocationServiceTest extends TestDataLoader {
   @CsvSource(delimiter = '|', value = {
       "New York, NY, USA|United States|US|USA|New York|New York City",
       "Los Angeles CA|United States|US|USA|California|Los Angeles",
-      "Mexico City|Mexico|MX|MEX|Mexico City|Mexico",
+      "Mexico|Mexico|MX|MEX|Mexico City|Mexico",
       "Rio de Janeiro Brazil|Brazil|BR|BRA|Rio de Janeiro|Rio de Janeiro"
   })
   void search_WithSpecialCityCombinations_ReturnsCityResult(

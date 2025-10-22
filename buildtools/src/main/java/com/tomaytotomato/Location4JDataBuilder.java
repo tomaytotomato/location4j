@@ -1,7 +1,7 @@
 package com.tomaytotomato;
 
-import static com.tomaytotomato.Location4JDataTools.fixJsonPropertyNames;
-import static com.tomaytotomato.Location4JDataTools.getLocation4JDataset;
+import static com.tomaytotomato.Location4JDataUtils.fixJsonPropertyNames;
+import static com.tomaytotomato.Location4JDataUtils.getLocation4JDataset;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;

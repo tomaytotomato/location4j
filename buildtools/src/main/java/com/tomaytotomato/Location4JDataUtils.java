@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-public class Location4JDataTools {
+public class Location4JDataUtils {
 
   public static final String LOCATION4J_DATASET_PATH = "/location4j-countries.json";
 
-  private Location4JDataTools() {}
+  private Location4JDataUtils() {}
 
   public static InputStream getLocation4JDataset() throws IOException {
     return getLocation4JDataset(LOCATION4J_DATASET_PATH);
