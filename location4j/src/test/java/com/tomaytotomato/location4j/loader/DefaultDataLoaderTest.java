@@ -61,8 +61,8 @@ class DefaultDataLoaderTest {
     assertThat(data.getStateIdToStateMap()).isNotNull();
     assertThat(data.getCityIdToCityMap()).isNotNull();
     assertThat(data.getStateNameToStatesMap()).isNotNull();
-    assertThat(data.getStateCodeToStatesMap()).isNotNull();
+    assertThat(data.getStateIso2CodeToStateMap()).isNotNull();
     assertThat(data.getCityNameToCitiesMap()).isNotNull();
-    assertThat(data.getSearchCityNameToCitiesMap()).isNotNull();
+    assertThat(data.getCityNameToCitiesMap()).isNotNull();
   }
 }

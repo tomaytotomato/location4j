@@ -6,11 +6,13 @@ import com.tomaytotomato.location4j.loader.DataLoader;
 import com.tomaytotomato.location4j.loader.DefaultDataLoader;
 import com.tomaytotomato.location4j.mapper.DefaultSearchLocationResultMapper;
 import com.tomaytotomato.location4j.mapper.SearchLocationResultMapper;
-import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
+import com.tomaytotomato.location4j.model.search.CityResult;
+import com.tomaytotomato.location4j.model.search.CountryResult;
 import com.tomaytotomato.location4j.model.search.SearchLocationResult;
+import com.tomaytotomato.location4j.model.search.StateResult;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
@@ -32,11 +34,15 @@ public class SearchLocationService implements SearchLocation {
 
   private final Map<Integer, Country> countryIdToCountryMap;
   private final Map<String, Country> countryNameToCountryMap;
+  private final Map<String, Country> countryNativeNameToCountryMap;
   private final Map<String, Country> iso2CodeToCountryMap;
   private final Map<String, Country> iso3CodeToCountryMap;
+
   private final Map<Integer, State> stateIdToStateMap;
   private final Map<String, List<State>> stateNameToStatesMap;
+  private final Map<String, List<State>> stateNativeNameToStateMap;
   private final Map<String, List<State>> stateCodeToStatesMap;
+
   private final Map<String, List<City>> cityNameToCitiesMap;
 
   private final TextTokeniser textTokeniser;
@@ -52,18 +58,18 @@ public class SearchLocationService implements SearchLocation {
     this.searchLocationResultMapper = searchLocationResultMapper;
     this.locationAliases = locationAliases;
 
-    // Load pre-built data structures
-    Location4JData location4JData = dataLoader.getLocation4JData();
+    var location4JData = dataLoader.getLocation4JData();
     this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
     this.countryNameToCountryMap = new HashMap<>(location4JData.getCountryNameToCountryMap());
+    this.countryNativeNameToCountryMap = new HashMap<>(location4JData.getCountryNativeNameToCountryMap());
     this.iso2CodeToCountryMap = new HashMap<>(location4JData.getIso2CodeToCountryMap());
     this.iso3CodeToCountryMap = new HashMap<>(location4JData.getIso3CodeToCountryMap());
     this.stateIdToStateMap = location4JData.getStateIdToStateMap();
     this.stateNameToStatesMap = new HashMap<>(location4JData.getStateNameToStatesMap());
-    this.stateCodeToStatesMap = new HashMap<>(location4JData.getStateCodeToStatesMap());
-    this.cityNameToCitiesMap = new HashMap<>(location4JData.getSearchCityNameToCitiesMap());
+    this.stateNativeNameToStateMap = new HashMap<>(location4JData.getStateNativeNameToStateMap());
+    this.stateCodeToStatesMap = new HashMap<>(location4JData.getStateIso2CodeToStateMap());
+    this.cityNameToCitiesMap = new HashMap<>(location4JData.getCityNameToCitiesMap());
 
-    // Add custom aliases on top of pre-built data structures
     addAliases();
   }
 
@@ -128,13 +134,11 @@ public class SearchLocationService implements SearchLocation {
 
     text = textNormaliser.normalise(text);
 
-    // Direct matches
-    List<SearchLocationResult> directMatches = findDirectMatches(text);
+    var directMatches = findDirectMatches(text);
     if (!directMatches.isEmpty()) {
       return directMatches;
     }
 
-    // Tokenized search
     return findTokenizedMatches(textTokeniser.tokenise(text));
   }
 
@@ -183,26 +187,207 @@ public class SearchLocationService implements SearchLocation {
   }
 
   /**
-   * Finds matches for the given tokenized text.
+   * Finds matches for the given tokenized text and then prioritizes them based on hit counts.
    *
    * @param tokenizedText The tokenized search text.
    * @return A list of matching locations.
    */
   private List<SearchLocationResult> findTokenizedMatches(List<String> tokenizedText) {
-    Map<Country, Integer> countryHitsCount = new HashMap<>();
-    Map<State, Integer> stateHitsCount = new HashMap<>();
-    Map<City, Integer> cityHitsCount = new HashMap<>();
 
-    boolean countryFound = populateCountryHits(tokenizedText, countryHitsCount);
+    var countryMatches = findAllCountryMatches(tokenizedText);
+    var stateMatches = findAllStateMatches(tokenizedText);
+    var cityMatches = findAllCityMatches(tokenizedText);
 
-    if (!countryFound) {
-      populateStateAndCityHits(tokenizedText, countryHitsCount, stateHitsCount, cityHitsCount);
-    } else {
-      filterAndPopulateStateAndCityHits(tokenizedText, countryHitsCount, stateHitsCount,
-          cityHitsCount);
+    return buildSearchResults(countryMatches, stateMatches, cityMatches, tokenizedText);
+  }
+
+  /**
+   * This method builds the final search results based on the matches found.
+   * Needs to use an improved scoring mechanism that considers hierarchical reinforcement.
+   * @param countryMatches
+   * @param stateMatches
+   * @param cityMatches
+   * @param tokenizedText
+   * @return
+   */
+  private List<SearchLocationResult> buildSearchResults(List<CountryResult> countryMatches,
+      List<StateResult> stateMatches, List<CityResult> cityMatches, List<String> tokenizedText) {
+
+    // If no matches at all, return empty list
+    if (countryMatches.isEmpty() && stateMatches.isEmpty() && cityMatches.isEmpty()) {
+      return List.of();
     }
 
-    return getTopMatchingLocations(countryHitsCount, stateHitsCount, cityHitsCount);
+    // Calculate scores for each type of match based on hierarchical reinforcement
+    List<ScoredResult> scoredResults = new ArrayList<>();
+
+    // Score cities with hierarchical reinforcement
+    for (CityResult city : cityMatches) {
+      int score = calculateCityScore(city, countryMatches, stateMatches);
+      scoredResults.add(new ScoredResult(city, score));
+    }
+
+    // Score states with hierarchical reinforcement
+    for (StateResult state : stateMatches) {
+      int score = calculateStateScore(state, countryMatches);
+      scoredResults.add(new ScoredResult(state, score));
+    }
+
+    // Score countries (baseline score)
+    for (CountryResult country : countryMatches) {
+      int score = calculateCountryScore(country);
+      scoredResults.add(new ScoredResult(country, score));
+    }
+
+    // Sort by score descending, prioritize more specific results (city > state > country) on ties
+    scoredResults.sort((a, b) -> {
+      int scoreCompare = Integer.compare(b.score, a.score);
+      if (scoreCompare != 0) {
+        return scoreCompare;
+      }
+      // On tie, prefer more specific results
+      return Integer.compare(getSpecificityLevel(b.result), getSpecificityLevel(a.result));
+    });
+
+    // Filter out duplicates and low-scoring results
+    var searchResults = new ArrayList<SearchLocationResult>();
+    if (!scoredResults.isEmpty()) {
+      // Add the best result(s) - for now, return top result
+      // Could be extended to return multiple high-scoring results
+      searchResults.add(scoredResults.get(0).result);
+    }
+
+    return searchResults;
+  }
+
+  /**
+   * Calculate score for a city based on hierarchical reinforcement.
+   * Higher score if the city's state and country are also in the matches.
+   */
+  private int calculateCityScore(CityResult city, List<CountryResult> countryMatches,
+      List<StateResult> stateMatches) {
+    int score = 100; // Base score for city match
+
+    // Check if the city's state is in the state matches (reinforcement)
+    boolean stateMatched = stateMatches.stream()
+        .anyMatch(state -> state.id().equals(city.state().id()));
+    if (stateMatched) {
+      score += 50; // Hierarchical reinforcement bonus
+    }
+
+    // Check if the city's country is in the country matches (reinforcement)
+    boolean countryMatched = countryMatches.stream()
+        .anyMatch(country -> country.id().equals(city.country().id()));
+    if (countryMatched) {
+      score += 50; // Hierarchical reinforcement bonus
+    }
+
+    return score;
+  }
+
+  /**
+   * Calculate score for a state based on hierarchical reinforcement.
+   * Higher score if the state's country is also in the matches.
+   */
+  private int calculateStateScore(StateResult state, List<CountryResult> countryMatches) {
+    int score = 50; // Base score for state match
+
+    // Check if the state's country is in the country matches (reinforcement)
+    boolean countryMatched = countryMatches.stream()
+        .anyMatch(country -> country.id().equals(state.country().id()));
+    if (countryMatched) {
+      score += 50; // Hierarchical reinforcement bonus
+    }
+
+    return score;
+  }
+
+  /**
+   * Calculate score for a country.
+   */
+  private int calculateCountryScore(CountryResult country) {
+    return 10; // Base score for country match
+  }
+
+  /**
+   * Get specificity level for tie-breaking (higher = more specific).
+   */
+  private int getSpecificityLevel(SearchLocationResult result) {
+    return switch (result) {
+      case CityResult _ -> 3;
+      case StateResult _ -> 2;
+      case CountryResult _ -> 1;
+    };
+  }
+
+  /**
+   * Helper class to hold a result with its calculated score.
+   */
+  private static class ScoredResult {
+    final SearchLocationResult result;
+    final int score;
+
+    ScoredResult(SearchLocationResult result, int score) {
+      this.result = result;
+      this.score = score;
+    }
+  }
+
+  private List<CityResult> findAllCityMatches(List<String> tokenizedText) {
+    var cityMatches = new ArrayList<CityResult>();
+    for (String token : tokenizedText) {
+      if (cityNameToCitiesMap.containsKey(token)) {
+        cityNameToCitiesMap.get(token).forEach(city -> {
+          cityMatches.add(searchLocationResultMapper.toCityResult(city));
+        });
+      }
+    }
+    return cityMatches;
+  }
+
+  private List<StateResult> findAllStateMatches(List<String> tokenizedText) {
+    var stateMatches = new ArrayList<StateResult>();
+    for (String token : tokenizedText) {
+      if (stateNameToStatesMap.containsKey(token)) {
+        stateNameToStatesMap.get(token).forEach(state -> {
+          stateMatches.add(searchLocationResultMapper.toStateResult(state));
+        });
+      } else if (stateNativeNameToStateMap.containsKey(token)) {
+        stateNativeNameToStateMap.get(token).forEach(state -> {
+          stateMatches.add(searchLocationResultMapper.toStateResult(state));
+        });
+      } else if (stateCodeToStatesMap.containsKey(token)) {
+        stateCodeToStatesMap.get(token).forEach(state -> {
+          stateMatches.add(searchLocationResultMapper.toStateResult(state));
+        });
+      }
+    }
+    return stateMatches;
+  }
+
+  /**
+   * Find all country matches from the tokenized text.
+   * @param tokenizedText List<String> tokenizedText
+   * @return List<CountryResult> country matches
+   */
+  private List<CountryResult> findAllCountryMatches(List<String> tokenizedText) {
+    var countryMatches = new ArrayList<CountryResult>();
+    for (String token : tokenizedText) {
+      if (countryNameToCountryMap.containsKey(token)) {
+        var country = countryNameToCountryMap.get(token);
+        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+      } else if (countryNativeNameToCountryMap.containsKey(token)) {
+        var country = countryNativeNameToCountryMap.get(token);
+        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+      } else if (iso3CodeToCountryMap.containsKey(token)) {
+        var country = iso3CodeToCountryMap.get(token);
+        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+      } else if (iso2CodeToCountryMap.containsKey(token)) {
+        var country = iso2CodeToCountryMap.get(token);
+        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+      }
+    }
+    return countryMatches;
   }
 
   /**
@@ -257,7 +442,7 @@ public class SearchLocationService implements SearchLocation {
           countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
         });
       }
-      
+
       // Check for state matches by code
       if (stateCodeToStatesMap.containsKey(token)) {
         stateCodeToStatesMap.get(token).forEach(state -> {
@@ -266,7 +451,7 @@ public class SearchLocationService implements SearchLocation {
           countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
         });
       }
-      
+
       // Check for city matches by name
       if (cityNameToCitiesMap.containsKey(token)) {
         cityNameToCitiesMap.get(token).forEach(city -> {
@@ -341,42 +526,42 @@ public class SearchLocationService implements SearchLocation {
     // Calculate composite scores for cities that consider hierarchical reinforcement
     City bestCity = null;
     int bestCityScore = 0;
-    
+
     for (Map.Entry<City, Integer> cityEntry : cityHitsCount.entrySet()) {
       City city = cityEntry.getKey();
       int cityHits = cityEntry.getValue();
-      
+
       // Get hits for the city's state and country
       State cityState = stateIdToStateMap.get(city.getState().getId());
       Country cityCountry = countryIdToCountryMap.get(city.getCountry().getId());
-      
+
       int stateHits = stateHitsCount.getOrDefault(cityState, 0);
       int countryHits = countryHitsCount.getOrDefault(cityCountry, 0);
-      
+
       // Calculate composite score: city hits + state hits + country hits
       // This favors cities where the state/country also have matches (hierarchical reinforcement)
       int compositeScore = cityHits + stateHits + countryHits;
-      
+
       if (compositeScore > bestCityScore) {
         bestCityScore = compositeScore;
         bestCity = city;
       }
     }
-    
+
     // Find best state (with hierarchical reinforcement)
     State bestState = null;
     int bestStateScore = 0;
-    
+
     for (Map.Entry<State, Integer> stateEntry : stateHitsCount.entrySet()) {
       State state = stateEntry.getKey();
       int stateHits = stateEntry.getValue();
-      
+
       Country stateCountry = countryIdToCountryMap.get(state.getCountry().getId());
       int countryHits = countryHitsCount.getOrDefault(stateCountry, 0);
-      
+
       // Calculate composite score: state hits + country hits
       int compositeScore = stateHits + countryHits;
-      
+
       if (compositeScore > bestStateScore) {
         bestStateScore = compositeScore;
         bestState = state;

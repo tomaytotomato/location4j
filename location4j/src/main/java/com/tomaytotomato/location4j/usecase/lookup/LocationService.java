@@ -2,7 +2,6 @@ package com.tomaytotomato.location4j.usecase.lookup;
 
 import com.tomaytotomato.location4j.loader.DataLoader;
 import com.tomaytotomato.location4j.loader.DefaultDataLoader;
-import com.tomaytotomato.location4j.model.Location4JData;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
@@ -37,8 +36,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
   protected LocationService(TextNormaliser textNormaliser, DataLoader dataLoader) {
     this.textNormaliser = textNormaliser;
 
-    // Load pre-built data structures
-    Location4JData location4JData = dataLoader.getLocation4JData();
+    var location4JData = dataLoader.getLocation4JData();
     this.countries = location4JData.getCountries();
     this.countryNameToCountryMap = location4JData.getCountryNameToCountryMap();
     this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
@@ -48,7 +46,7 @@ public class LocationService implements FindCountry, FindState, FindCity {
     this.stateIdToStateMap = location4JData.getStateIdToStateMap();
     this.cityIdToCityMap = location4JData.getCityIdToCityMap();
     this.stateNameToStatesMap = location4JData.getStateNameToStatesMap();
-    this.stateCodeToStatesMap = location4JData.getStateCodeToStatesMap();
+    this.stateCodeToStatesMap = location4JData.getStateIso2CodeToStateMap();
     this.cityNameToCitiesMap = location4JData.getCityNameToCitiesMap();
   }
 

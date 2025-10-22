@@ -3,40 +3,44 @@ package com.tomaytotomato.location4j.model;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Wrapper class containing pre-built data structures for location4j.
- * This class is serialized to the binary file to avoid runtime data structure building.
+ * Holds all location data which is de/serialized from the location4j.bin file
+ * Note: this class is mutable and is not thread-safe, data structures should be
+ * copied and not accessed directly.
  */
 public class Location4JData implements Serializable {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
-  // Raw data
   private List<Country> countries;
 
-  // LocationService data structures
   private Map<String, Country> countryNameToCountryMap;
+  private Map<String, Country> countryNativeNameToCountryMap;
   private Map<Integer, Country> countryIdToCountryMap;
   private Map<String, Country> localisedNameToCountryMap;
   private Map<String, Country> iso2CodeToCountryMap;
   private Map<String, Country> iso3CodeToCountryMap;
+
   private Map<Integer, State> stateIdToStateMap;
-  private Map<Integer, City> cityIdToCityMap;
   private Map<String, List<State>> stateNameToStatesMap;
-  private Map<String, List<State>> stateCodeToStatesMap;
+  private Map<String, List<State>> stateNativeNameToStateMap;
+  private Map<String, List<State>> stateIso2CodeToStateMap;
+  private Map<String, State> stateIso361662ToStateMap;
+
+  private Map<Integer, City> cityIdToCityMap;
   private Map<String, List<City>> cityNameToCitiesMap;
 
-  // SearchLocationService additional data structures
   private Map<String, List<City>> searchCityNameToCitiesMap;
 
   public Location4JData() {
   }
 
-  // Getters and setters
   public List<Country> getCountries() {
     return countries;
   }
@@ -49,15 +53,26 @@ public class Location4JData implements Serializable {
     return countryNameToCountryMap;
   }
 
-  public void setCountryNameToCountryMap(Map<String, Country> countryNameToCountryMap) {
+  public void setCountryNameToCountryMap(
+      Map<String, Country> countryNameToCountryMap) {
     this.countryNameToCountryMap = countryNameToCountryMap;
+  }
+
+  public Map<String, Country> getCountryNativeNameToCountryMap() {
+    return countryNativeNameToCountryMap;
+  }
+
+  public void setCountryNativeNameToCountryMap(
+      Map<String, Country> countryNativeNameToCountryMap) {
+    this.countryNativeNameToCountryMap = countryNativeNameToCountryMap;
   }
 
   public Map<Integer, Country> getCountryIdToCountryMap() {
     return countryIdToCountryMap;
   }
 
-  public void setCountryIdToCountryMap(Map<Integer, Country> countryIdToCountryMap) {
+  public void setCountryIdToCountryMap(
+      Map<Integer, Country> countryIdToCountryMap) {
     this.countryIdToCountryMap = countryIdToCountryMap;
   }
 
@@ -65,7 +80,8 @@ public class Location4JData implements Serializable {
     return localisedNameToCountryMap;
   }
 
-  public void setLocalisedNameToCountryMap(Map<String, Country> localisedNameToCountryMap) {
+  public void setLocalisedNameToCountryMap(
+      Map<String, Country> localisedNameToCountryMap) {
     this.localisedNameToCountryMap = localisedNameToCountryMap;
   }
 
@@ -73,7 +89,8 @@ public class Location4JData implements Serializable {
     return iso2CodeToCountryMap;
   }
 
-  public void setIso2CodeToCountryMap(Map<String, Country> iso2CodeToCountryMap) {
+  public void setIso2CodeToCountryMap(
+      Map<String, Country> iso2CodeToCountryMap) {
     this.iso2CodeToCountryMap = iso2CodeToCountryMap;
   }
 
@@ -81,7 +98,8 @@ public class Location4JData implements Serializable {
     return iso3CodeToCountryMap;
   }
 
-  public void setIso3CodeToCountryMap(Map<String, Country> iso3CodeToCountryMap) {
+  public void setIso3CodeToCountryMap(
+      Map<String, Country> iso3CodeToCountryMap) {
     this.iso3CodeToCountryMap = iso3CodeToCountryMap;
   }
 
@@ -89,47 +107,67 @@ public class Location4JData implements Serializable {
     return stateIdToStateMap;
   }
 
-  public void setStateIdToStateMap(Map<Integer, State> stateIdToStateMap) {
+  public void setStateIdToStateMap(
+      Map<Integer, State> stateIdToStateMap) {
     this.stateIdToStateMap = stateIdToStateMap;
-  }
-
-  public Map<Integer, City> getCityIdToCityMap() {
-    return cityIdToCityMap;
-  }
-
-  public void setCityIdToCityMap(Map<Integer, City> cityIdToCityMap) {
-    this.cityIdToCityMap = cityIdToCityMap;
   }
 
   public Map<String, List<State>> getStateNameToStatesMap() {
     return stateNameToStatesMap;
   }
 
-  public void setStateNameToStatesMap(Map<String, List<State>> stateNameToStatesMap) {
+  public void setStateNameToStatesMap(
+      Map<String, List<State>> stateNameToStatesMap) {
     this.stateNameToStatesMap = stateNameToStatesMap;
   }
 
-  public Map<String, List<State>> getStateCodeToStatesMap() {
-    return stateCodeToStatesMap;
+  public Map<String, List<State>> getStateNativeNameToStateMap() {
+    return stateNativeNameToStateMap;
   }
 
-  public void setStateCodeToStatesMap(Map<String, List<State>> stateCodeToStatesMap) {
-    this.stateCodeToStatesMap = stateCodeToStatesMap;
+  public void setStateNativeNameToStateMap(
+      Map<String, List<State>> stateNativeNameToStateMap) {
+    this.stateNativeNameToStateMap = stateNativeNameToStateMap;
+  }
+
+  public Map<String, List<State>> getStateIso2CodeToStateMap() {
+    return stateIso2CodeToStateMap;
+  }
+
+  public void setStateIso2CodeToStatesMap(
+      Map<String, List<State>> stateIso2CodeToStateMap) {
+    this.stateIso2CodeToStateMap = stateIso2CodeToStateMap;
+  }
+
+  public Map<String, State> getStateIso361662ToStateMap() {
+    return stateIso361662ToStateMap;
+  }
+
+  public void setStateIso361662ToStateMap(
+      Map<String, State> stateIso361662ToStateMap) {
+    this.stateIso361662ToStateMap = stateIso361662ToStateMap;
+  }
+
+  public Map<Integer, City> getCityIdToCityMap() {
+    return cityIdToCityMap;
+  }
+
+  public void setCityIdToCityMap(
+      Map<Integer, City> cityIdToCityMap) {
+    this.cityIdToCityMap = cityIdToCityMap;
   }
 
   public Map<String, List<City>> getCityNameToCitiesMap() {
     return cityNameToCitiesMap;
   }
 
-  public void setCityNameToCitiesMap(Map<String, List<City>> cityNameToCitiesMap) {
+  public void setCityNameToCitiesMap(
+      Map<String, List<City>> cityNameToCitiesMap) {
     this.cityNameToCitiesMap = cityNameToCitiesMap;
   }
 
-  public Map<String, List<City>> getSearchCityNameToCitiesMap() {
-    return searchCityNameToCitiesMap;
-  }
-
-  public void setSearchCityNameToCitiesMap(Map<String, List<City>> searchCityNameToCitiesMap) {
+  public void setSearchCityNameToCitiesMap(
+      Map<String, List<City>> searchCityNameToCitiesMap) {
     this.searchCityNameToCitiesMap = searchCityNameToCitiesMap;
   }
 }

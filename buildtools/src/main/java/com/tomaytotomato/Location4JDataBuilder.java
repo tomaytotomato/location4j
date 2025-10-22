@@ -123,20 +123,24 @@ public class Location4JDataBuilder {
 
     // Initialize maps
     Map<String, Country> countryNameToCountryMap = new HashMap<>();
+    Map<String, Country> countryNativeNameToCountryMap = new HashMap<>();
     Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
     Map<String, Country> localisedNameToCountryMap = new HashMap<>();
     Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
     Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
+
+
     Map<Integer, State> stateIdToStateMap = new HashMap<>();
-    Map<Integer, City> cityIdToCityMap = new HashMap<>();
     Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
-    Map<String, List<State>> stateCodeToStatesMap = new HashMap<>();
+    Map<String, List<State>> stateIso2CodeToStateMap = new HashMap<>();
+    Map<String, State> stateIso31662ToStateMap = new HashMap<>();
+    Map<Integer, City> cityIdToCityMap = new HashMap<>();
     Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
 
     countries.forEach(country -> {
       countryIdToCountryMap.put(country.getId(), country);
       countryNameToCountryMap.put(keyMaker(country.getName()), country);
-
+      countryNativeNameToCountryMap.put(keyMaker(country.getNativeName()), country);
       localisedNameToCountryMap.put(keyMaker(country.getNativeName()), country);
       country.getTranslations().values().stream()
           .map(Location4JDataBuilder::keyMaker)
@@ -151,7 +155,7 @@ public class Location4JDataBuilder {
             .add(state);
 
         if (!Objects.isNull(state.getIso2())) {
-          stateCodeToStatesMap
+          stateIso2CodeToStateMap
               .computeIfAbsent(keyMaker(state.getIso2()), k -> new ArrayList<>())
               .add(state);
         }
@@ -167,7 +171,6 @@ public class Location4JDataBuilder {
       });
     });
 
-    // Set all the maps
     data.setCountryNameToCountryMap(countryNameToCountryMap);
     data.setCountryIdToCountryMap(countryIdToCountryMap);
     data.setLocalisedNameToCountryMap(localisedNameToCountryMap);
@@ -176,7 +179,8 @@ public class Location4JDataBuilder {
     data.setStateIdToStateMap(stateIdToStateMap);
     data.setCityIdToCityMap(cityIdToCityMap);
     data.setStateNameToStatesMap(stateNameToStatesMap);
-    data.setStateCodeToStatesMap(stateCodeToStatesMap);
+    data.setStateIso2CodeToStatesMap(stateIso2CodeToStateMap);
+    data.setStateIso361662ToStateMap(stateIso31662ToStateMap);
     data.setCityNameToCitiesMap(cityNameToCitiesMap);
     data.setSearchCityNameToCitiesMap(new HashMap<>(cityNameToCitiesMap)); // Copy for search service
 
