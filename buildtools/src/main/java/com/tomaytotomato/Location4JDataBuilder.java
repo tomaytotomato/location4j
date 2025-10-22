@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,10 +88,9 @@ public class Location4JDataBuilder {
       logger.info("Number of states processed: " + stateCounter);
       logger.info("Number of cities processed: " + cityCounter);
 
-      // Pre-build all data structures
-      Location4JData location4JData = buildLocation4JData(updatedCountries);
+      var location4JData = buildLocation4JData(updatedCountries);
 
-      Path outputFile = Paths.get(OUTPUT_FILE).toAbsolutePath();
+      var outputFile = Paths.get(OUTPUT_FILE).toAbsolutePath();
       outputFile.getParent().toFile().mkdirs();
       logger.log(Level.INFO,
           () -> String.format("Serializing data to binary file at:  %s", outputFile));
@@ -118,10 +116,10 @@ public class Location4JDataBuilder {
     logger.info("Building pre-computed data structures...");
     logger.info("Countries to process in data structures: " + countries.size());
 
-    Location4JData data = new Location4JData();
+    var data = new Location4JData();
     data.setCountries(countries);
 
-    // Initialize maps
+    // Country Maps
     Map<String, Country> countryNameToCountryMap = new HashMap<>();
     Map<String, Country> countryNativeNameToCountryMap = new HashMap<>();
     Map<Integer, Country> countryIdToCountryMap = new HashMap<>();
@@ -129,11 +127,14 @@ public class Location4JDataBuilder {
     Map<String, Country> iso2CodeToCountryMap = new HashMap<>();
     Map<String, Country> iso3CodeToCountryMap = new HashMap<>();
 
-
+    // State Maps
     Map<Integer, State> stateIdToStateMap = new HashMap<>();
     Map<String, List<State>> stateNameToStatesMap = new HashMap<>();
+    Map<String, List<State>> stateNativeNameToStateMap = new HashMap<>();
     Map<String, List<State>> stateIso2CodeToStateMap = new HashMap<>();
     Map<String, State> stateIso31662ToStateMap = new HashMap<>();
+
+    // City Maps
     Map<Integer, City> cityIdToCityMap = new HashMap<>();
     Map<String, List<City>> cityNameToCitiesMap = new HashMap<>();
 
@@ -154,6 +155,12 @@ public class Location4JDataBuilder {
             .computeIfAbsent(keyMaker(state.getName()), k -> new ArrayList<>())
             .add(state);
 
+        if (!Objects.isNull(state.getNativeName()) && !state.getNativeName().isEmpty()) {
+          stateNativeNameToStateMap
+              .computeIfAbsent(keyMaker(state.getNativeName()), k -> new ArrayList<>())
+              .add(state);
+        }
+
         if (!Objects.isNull(state.getIso2())) {
           stateIso2CodeToStateMap
               .computeIfAbsent(keyMaker(state.getIso2()), k -> new ArrayList<>())
@@ -172,6 +179,7 @@ public class Location4JDataBuilder {
     });
 
     data.setCountryNameToCountryMap(countryNameToCountryMap);
+    data.setCountryNativeNameToCountryMap(countryNativeNameToCountryMap);
     data.setCountryIdToCountryMap(countryIdToCountryMap);
     data.setLocalisedNameToCountryMap(localisedNameToCountryMap);
     data.setIso2CodeToCountryMap(iso2CodeToCountryMap);
@@ -179,10 +187,10 @@ public class Location4JDataBuilder {
     data.setStateIdToStateMap(stateIdToStateMap);
     data.setCityIdToCityMap(cityIdToCityMap);
     data.setStateNameToStatesMap(stateNameToStatesMap);
-    data.setStateIso2CodeToStatesMap(stateIso2CodeToStateMap);
+    data.setStateNativeNameToStateMap(stateNativeNameToStateMap);
+    data.setStateIso2CodeToStateMap(stateIso2CodeToStateMap);
     data.setStateIso361662ToStateMap(stateIso31662ToStateMap);
     data.setCityNameToCitiesMap(cityNameToCitiesMap);
-    data.setSearchCityNameToCitiesMap(new HashMap<>(cityNameToCitiesMap)); // Copy for search service
 
     logger.info("Pre-computed data structures built successfully.");
     return data;

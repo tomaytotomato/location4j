@@ -36,8 +36,6 @@ public class Location4JData implements Serializable {
   private Map<Integer, City> cityIdToCityMap;
   private Map<String, List<City>> cityNameToCitiesMap;
 
-  private Map<String, List<City>> searchCityNameToCitiesMap;
-
   public Location4JData() {
   }
 
@@ -134,7 +132,7 @@ public class Location4JData implements Serializable {
     return stateIso2CodeToStateMap;
   }
 
-  public void setStateIso2CodeToStatesMap(
+  public void setStateIso2CodeToStateMap(
       Map<String, List<State>> stateIso2CodeToStateMap) {
     this.stateIso2CodeToStateMap = stateIso2CodeToStateMap;
   }
@@ -166,9 +164,4 @@ public class Location4JData implements Serializable {
     this.cityNameToCitiesMap = cityNameToCitiesMap;
   }
 
-  public void setSearchCityNameToCitiesMap(
-      Map<String, List<City>> searchCityNameToCitiesMap) {
-    this.searchCityNameToCitiesMap = searchCityNameToCitiesMap;
-  }
 }
-
