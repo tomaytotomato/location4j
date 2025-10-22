@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 public class Location4JDataBuilder {
 
   private static final String JSON_FILE = "/location4j-countries.json";
-  private static final String OUTPUT_FILE = "../location4j/target/generated-resources/location4j.bin";
+  private static final String OUTPUT_FILE = "../location4j/location4j/target/generated-resources/location4j.bin";
 
   private static final Logger logger = Logger.getLogger(Location4JDataBuilder.class.getName());
   private static final TextNormaliser textNormaliser = new DefaultTextNormaliser();
