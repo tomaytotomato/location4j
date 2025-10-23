@@ -1,8 +1,5 @@
 package com.tomaytotomato;
 
-import static com.tomaytotomato.Location4JDataUtils.fixJsonPropertyNames;
-import static com.tomaytotomato.Location4JDataUtils.getLocation4JDataset;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,94 +7,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-/**
- * Analyzes the geographical dataset to identify name clashes between countries, states, and cities.
- * This tool helps identify ambiguous location names that may cause issues in search algorithms.
- *
- * <p>Name clashes occur when the same name is used for multiple geographical entity types.
- * For example, "Mexico" is both a country and appears as city names in multiple locations.
- *
- * <p>Severity levels:
- * <ul>
- *   <li><strong>CRITICAL:</strong> Same name used as Country + State + City</li>
- *   <li><strong>HIGH:</strong> Same name used as Country + City</li>
- *   <li><strong>MEDIUM:</strong> Same name used as Country + State</li>
- *   <li><strong>LOW:</strong> Same name used as State + City (most common, usually not problematic)</li>
- * </ul>
- *
- * <p>Usage:
- * <pre>
- * mvn exec:java -Dexec.mainClass="com.tomaytotomato.Location4JDataAnalyser"
- * </pre>
- */
+import static com.tomaytotomato.Location4JDataUtils.fixJsonPropertyNames;
+import static com.tomaytotomato.Location4JDataUtils.getLocation4JDataset;
+
 public class Location4JDataAnalyser {
-
-  private static final Logger logger = Logger.getLogger(Location4JDataAnalyser.class.getName());
-
-  private static class NameClash {
-        String name;
-        List<String> countries = new ArrayList<>();
-        List<String> states = new ArrayList<>();
-        List<String> cities = new ArrayList<>();
-
-        void addCountry(String country) {
-            countries.add(country);
-        }
-
-        void addState(String state, String country) {
-            states.add(state + " (in " + country + ")");
-        }
-
-        void addCity(String city, String state, String country) {
-            cities.add(city + " (in " + state + ", " + country + ")");
-        }
-
-        boolean hasClash() {
-            int types = 0;
-            if (!countries.isEmpty()) types++;
-            if (!states.isEmpty()) types++;
-            if (!cities.isEmpty()) types++;
-            return types > 1;
-        }
-
-        String getSeverity() {
-            if (!countries.isEmpty() && !states.isEmpty() && !cities.isEmpty()) {
-                return "CRITICAL (Country + State + City)";
-            } else if (!countries.isEmpty() && !cities.isEmpty()) {
-                return "HIGH (Country + City)";
-            } else if (!countries.isEmpty() && !states.isEmpty()) {
-                return "MEDIUM (Country + State)";
-            } else if (!states.isEmpty() && !cities.isEmpty()) {
-                return "LOW (State + City)";
-            }
-            return "NONE";
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("\n  NAME: ").append(name);
-            sb.append("\n  SEVERITY: ").append(getSeverity());
-            if (!countries.isEmpty()) {
-                sb.append("\n  → Countries: ").append(countries);
-            }
-            if (!states.isEmpty()) {
-                sb.append("\n  → States: ").append(states);
-            }
-            if (!cities.isEmpty()) {
-                sb.append("\n  → Cities: ").append(cities);
-            }
-            return sb.toString();
-        }
-    }
 
     public static void main(String[] args) throws Exception {
         System.out.println("================================================================================");
@@ -114,33 +34,34 @@ public class Location4JDataAnalyser {
         mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
         mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
 
-        List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {});
+        List<Country> countries = mapper.readValue(modifiedJson, new TypeReference<>() {
+        });
 
         Map<String, NameClash> nameIndex = new HashMap<>();
 
         System.out.println("\n[1/3] Indexing all location names...");
 
         for (Country country : countries) {
-            String countryName = normalize(country.getName());
+            var countryName = normalize(country.getName());
             nameIndex.computeIfAbsent(countryName, k -> {
-                NameClash nc = new NameClash();
-                nc.name = country.getName();
+                var nc = new NameClash();
+                nc.setName(country.getName());
                 return nc;
             }).addCountry(country.getName());
 
             for (State state : country.getStates()) {
-                String stateName = normalize(state.getName());
+                var stateName = normalize(state.getName());
                 nameIndex.computeIfAbsent(stateName, k -> {
-                    NameClash nc = new NameClash();
-                    nc.name = state.getName();
+                    var nc = new NameClash();
+                    nc.setName(state.getName());
                     return nc;
                 }).addState(state.getName(), country.getName());
 
                 for (City city : state.getCities()) {
-                    String cityName = normalize(city.getName());
+                    var cityName = normalize(city.getName());
                     nameIndex.computeIfAbsent(cityName, k -> {
-                        NameClash nc = new NameClash();
-                        nc.name = city.getName();
+                        var nc = new NameClash();
+                        nc.setName(city.getName());
                         return nc;
                     }).addCity(city.getName(), state.getName(), country.getName());
                 }
@@ -151,13 +72,13 @@ public class Location4JDataAnalyser {
 
         System.out.println("\n[2/3] Analyzing clashes...");
 
-        List<NameClash> clashes = nameIndex.values().stream()
+        var clashes = nameIndex.values().stream()
                 .filter(NameClash::hasClash)
                 .sorted((a, b) -> {
                     int severityCompare = getSeverityRank(b.getSeverity()) - getSeverityRank(a.getSeverity());
                     if (severityCompare != 0) return severityCompare;
-                    int aTotal = a.countries.size() + a.states.size() + a.cities.size();
-                    int bTotal = b.countries.size() + b.states.size() + b.cities.size();
+                    int aTotal = a.getCountries().size() + a.getStates().size() + a.getCities().size();
+                    int bTotal = b.getCountries().size() + b.getStates().size() + b.getCities().size();
                     return bTotal - aTotal;
                 })
                 .toList();
@@ -167,7 +88,7 @@ public class Location4JDataAnalyser {
         System.out.println("\n[3/3] CLASH REPORT");
         System.out.println("================================================================================");
 
-        Map<String, List<NameClash>> bySeverity = clashes.stream()
+        var bySeverity = clashes.stream()
                 .collect(Collectors.groupingBy(NameClash::getSeverity));
 
         for (String severity : Arrays.asList(

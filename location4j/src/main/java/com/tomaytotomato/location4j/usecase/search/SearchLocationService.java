@@ -9,660 +9,376 @@ import com.tomaytotomato.location4j.mapper.SearchLocationResultMapper;
 import com.tomaytotomato.location4j.model.lookup.City;
 import com.tomaytotomato.location4j.model.lookup.Country;
 import com.tomaytotomato.location4j.model.lookup.State;
-import com.tomaytotomato.location4j.model.search.CityResult;
-import com.tomaytotomato.location4j.model.search.CountryResult;
-import com.tomaytotomato.location4j.model.search.SearchLocationResult;
-import com.tomaytotomato.location4j.model.search.StateResult;
+import com.tomaytotomato.location4j.model.search.*;
 import com.tomaytotomato.location4j.text.normaliser.DefaultTextNormaliser;
 import com.tomaytotomato.location4j.text.normaliser.TextNormaliser;
 import com.tomaytotomato.location4j.text.tokeniser.DefaultTextTokeniser;
 import com.tomaytotomato.location4j.text.tokeniser.TextTokeniser;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Provides search functionality to find a Country, State or City based on text input
- */
 public class SearchLocationService implements SearchLocation {
 
-  private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private static final int COUNTRY_BASE_SCORE = 10;
+    public static final int STATE_BASE_SCORE = 50;
+    public static final int STATE_PUNISHMENT_SCORE = STATE_BASE_SCORE + 25;
+    public static final int STATE_REWARD_SCORE = 50;
+    public static final int CITY_BASE_SCORE = 100;
+    public static final int CITY_PUNISHMENT_SCORE = 100;
+    public static final int CITY_REWARD_SCORE = 50;
 
-  private final Map<Integer, Country> countryIdToCountryMap;
-  private final Map<String, Country> countryNameToCountryMap;
-  private final Map<String, Country> countryNativeNameToCountryMap;
-  private final Map<String, Country> iso2CodeToCountryMap;
-  private final Map<String, Country> iso3CodeToCountryMap;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-  private final Map<Integer, State> stateIdToStateMap;
-  private final Map<String, List<State>> stateNameToStatesMap;
-  private final Map<String, List<State>> stateNativeNameToStateMap;
-  private final Map<String, List<State>> stateCodeToStatesMap;
+    private final Map<Integer, Country> countryIdToCountryMap;
+    private final Map<String, Country> countryNameToCountryMap;
+    private final Map<String, Country> countryNativeNameToCountryMap;
+    private final Map<String, Country> iso2CodeToCountryMap;
+    private final Map<String, Country> iso3CodeToCountryMap;
 
-  private final Map<String, List<City>> cityNameToCitiesMap;
+    private final Map<Integer, State> stateIdToStateMap;
+    private final Map<String, List<State>> stateNameToStatesMap;
+    private final Map<String, List<State>> stateNativeNameToStateMap;
+    private final Map<String, List<State>> stateCodeToStatesMap;
 
-  private final TextTokeniser textTokeniser;
-  private final TextNormaliser textNormaliser;
-  private final SearchLocationResultMapper searchLocationResultMapper;
-  private final LocationAliases locationAliases;
+    private final Map<String, List<City>> cityNameToCitiesMap;
 
-  protected SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser,
-      SearchLocationResultMapper searchLocationResultMapper, DataLoader dataLoader,
-      LocationAliases locationAliases) {
-    this.textTokeniser = textTokeniser;
-    this.textNormaliser = textNormaliser;
-    this.searchLocationResultMapper = searchLocationResultMapper;
-    this.locationAliases = locationAliases;
+    private final TextTokeniser textTokeniser;
+    private final TextNormaliser textNormaliser;
+    private final SearchLocationResultMapper searchLocationResultMapper;
+    private final LocationAliases locationAliases;
 
-    var location4JData = dataLoader.getLocation4JData();
-    this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
-    this.countryNameToCountryMap = new HashMap<>(location4JData.getCountryNameToCountryMap());
-    this.countryNativeNameToCountryMap = new HashMap<>(location4JData.getCountryNativeNameToCountryMap());
-    this.iso2CodeToCountryMap = new HashMap<>(location4JData.getIso2CodeToCountryMap());
-    this.iso3CodeToCountryMap = new HashMap<>(location4JData.getIso3CodeToCountryMap());
-    this.stateIdToStateMap = location4JData.getStateIdToStateMap();
-    this.stateNameToStatesMap = new HashMap<>(location4JData.getStateNameToStatesMap());
-    this.stateNativeNameToStateMap = new HashMap<>(location4JData.getStateNativeNameToStateMap());
-    this.stateCodeToStatesMap = new HashMap<>(location4JData.getStateIso2CodeToStateMap());
-    this.cityNameToCitiesMap = new HashMap<>(location4JData.getCityNameToCitiesMap());
+    protected SearchLocationService(TextTokeniser textTokeniser, TextNormaliser textNormaliser, SearchLocationResultMapper searchLocationResultMapper, DataLoader dataLoader, LocationAliases locationAliases) {
+        this.textTokeniser = textTokeniser;
+        this.textNormaliser = textNormaliser;
+        this.searchLocationResultMapper = searchLocationResultMapper;
+        this.locationAliases = locationAliases;
 
-    addAliases();
-  }
+        var location4JData = dataLoader.getLocation4JData();
+        this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
+        this.countryNameToCountryMap = new HashMap<>(location4JData.getCountryNameToCountryMap());
+        this.countryNativeNameToCountryMap = new HashMap<>(location4JData.getCountryNativeNameToCountryMap());
+        this.iso2CodeToCountryMap = new HashMap<>(location4JData.getIso2CodeToCountryMap());
+        this.iso3CodeToCountryMap = new HashMap<>(location4JData.getIso3CodeToCountryMap());
+        this.stateIdToStateMap = location4JData.getStateIdToStateMap();
+        this.stateNameToStatesMap = new HashMap<>(location4JData.getStateNameToStatesMap());
+        this.stateNativeNameToStateMap = new HashMap<>(location4JData.getStateNativeNameToStateMap());
+        this.stateCodeToStatesMap = new HashMap<>(location4JData.getStateIso2CodeToStateMap());
+        this.cityNameToCitiesMap = new HashMap<>(location4JData.getCityNameToCitiesMap());
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  /**
-   * Adds custom aliases for lookups for country, state and city..
-   */
-  private void addAliases() {
-
-    logger.info("Adding aliases for location lookups");
-
-    locationAliases.getCountryNameAliases().forEach((alias, originalKey) -> {
-      var country = countryNameToCountryMap.get(keyMaker(originalKey));
-      countryNameToCountryMap.put(keyMaker(alias), country);
-    });
-
-    locationAliases.getCountryIso2Aliases().forEach((alias, originalKey) -> {
-      var country = iso2CodeToCountryMap.get(keyMaker(originalKey));
-      countryNameToCountryMap.put(keyMaker(alias), country);
-    });
-
-    locationAliases.getCountryIso3Aliases().forEach((alias, originalKey) -> {
-      var country = iso3CodeToCountryMap.get(keyMaker(originalKey));
-      countryNameToCountryMap.put(keyMaker(alias), country);
-    });
-
-    locationAliases.getStateNameAliases().forEach((alias, originalKey) -> {
-      var states = stateNameToStatesMap.get(keyMaker(originalKey));
-      stateNameToStatesMap.put(alias, states);
-    });
-
-    locationAliases.getCityNameAliases().forEach((alias, originalKey) -> {
-      var cities = cityNameToCitiesMap.get(keyMaker(originalKey));
-      cityNameToCitiesMap.put(alias, cities);
-    });
-  }
-
-
-  /**
-   * Normalizes a key for consistent lookup.
-   *
-   * @param key The key to be normalized.
-   * @return The normalized key.
-   */
-  private String keyMaker(String key) {
-    if (Objects.isNull(key) || key.isEmpty()) {
-      throw new IllegalArgumentException("Key cannot be null or empty");
-    }
-    return textNormaliser.normalise(key);
-  }
-
-  @Override
-  public List<SearchLocationResult> search(String text) {
-    if (Objects.isNull(text) || text.isEmpty()) {
-      throw new IllegalArgumentException("SearchLocation Text cannot be null or empty");
-    } else if (text.length() < 2) {
-      return List.of();
+        addAliases();
     }
 
-    text = textNormaliser.normalise(text);
-
-    var directMatches = findDirectMatches(text);
-    if (!directMatches.isEmpty()) {
-      return directMatches;
+    public static Builder builder() {
+        return new Builder();
     }
 
-    return findTokenizedMatches(textTokeniser.tokenise(text));
-  }
+    /**
+     * Adds custom aliases for lookups for country, state and city..
+     */
+    private void addAliases() {
 
-  /**
-   * Finds direct matches by looking up the text against various lookup maps
-   *
-   * @param text The normalized search text.
-   * @return A list of matching locations.
-   */
-  private List<SearchLocationResult> findDirectMatches(String text) {
-    List<SearchLocationResult> matches = new ArrayList<>();
+        logger.info("Adding aliases for location lookups");
 
-    if (countryNameToCountryMap.containsKey(text)) {
-      matches.add(searchLocationResultMapper.toCountryResult(countryNameToCountryMap.get(text)));
-      return matches;
-    }
-
-    if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
-      matches.add(searchLocationResultMapper.toCountryResult(iso3CodeToCountryMap.get(text)));
-      return matches;
-    }
-
-    if (text.length() == 2) {
-      if (iso2CodeToCountryMap.containsKey(text)) {
-        matches.add(searchLocationResultMapper.toCountryResult(iso2CodeToCountryMap.get(text)));
-      }
-      if (stateCodeToStatesMap.containsKey(text)) {
-        stateCodeToStatesMap.get(text)
-            .forEach(state -> matches.add(searchLocationResultMapper.toStateResult(state)));
-      }
-      return matches;
-    }
-
-    if (stateNameToStatesMap.containsKey(text)) {
-      stateNameToStatesMap.get(text)
-          .forEach(state -> matches.add(searchLocationResultMapper.toStateResult(state)));
-      return matches;
-    }
-
-    if (cityNameToCitiesMap.containsKey(text)) {
-      cityNameToCitiesMap.get(text).forEach(city -> matches.add(searchLocationResultMapper.toCityResult(city)));
-      return matches;
-    }
-
-    return matches;
-  }
-
-  /**
-   * Finds matches for the given tokenized text and then prioritizes them based on hit counts.
-   *
-   * @param tokenizedText The tokenized search text.
-   * @return A list of matching locations.
-   */
-  private List<SearchLocationResult> findTokenizedMatches(List<String> tokenizedText) {
-
-    var countryMatches = findAllCountryMatches(tokenizedText);
-    var stateMatches = findAllStateMatches(tokenizedText);
-    var cityMatches = findAllCityMatches(tokenizedText);
-
-    return buildSearchResults(countryMatches, stateMatches, cityMatches, tokenizedText);
-  }
-
-  /**
-   * This method builds the final search results based on the matches found.
-   * Needs to use an improved scoring mechanism that considers hierarchical reinforcement.
-   * @param countryMatches
-   * @param stateMatches
-   * @param cityMatches
-   * @param tokenizedText
-   * @return
-   */
-  private List<SearchLocationResult> buildSearchResults(List<CountryResult> countryMatches,
-      List<StateResult> stateMatches, List<CityResult> cityMatches, List<String> tokenizedText) {
-
-    // If no matches at all, return empty list
-    if (countryMatches.isEmpty() && stateMatches.isEmpty() && cityMatches.isEmpty()) {
-      return List.of();
-    }
-
-    // Calculate scores for each type of match based on hierarchical reinforcement
-    List<ScoredResult> scoredResults = new ArrayList<>();
-
-    // Score cities with hierarchical reinforcement
-    for (CityResult city : cityMatches) {
-      int score = calculateCityScore(city, countryMatches, stateMatches);
-      scoredResults.add(new ScoredResult(city, score));
-    }
-
-    // Score states with hierarchical reinforcement
-    for (StateResult state : stateMatches) {
-      int score = calculateStateScore(state, countryMatches);
-      scoredResults.add(new ScoredResult(state, score));
-    }
-
-    // Score countries (baseline score)
-    for (CountryResult country : countryMatches) {
-      int score = calculateCountryScore(country);
-      scoredResults.add(new ScoredResult(country, score));
-    }
-
-    // Sort by score descending, prioritize more specific results (city > state > country) on ties
-    scoredResults.sort((a, b) -> {
-      int scoreCompare = Integer.compare(b.score, a.score);
-      if (scoreCompare != 0) {
-        return scoreCompare;
-      }
-      // On tie, prefer more specific results
-      return Integer.compare(getSpecificityLevel(b.result), getSpecificityLevel(a.result));
-    });
-
-    // Filter out duplicates and low-scoring results
-    var searchResults = new ArrayList<SearchLocationResult>();
-    if (!scoredResults.isEmpty()) {
-      // Add the best result(s) - for now, return top result
-      // Could be extended to return multiple high-scoring results
-      searchResults.add(scoredResults.get(0).result);
-    }
-
-    return searchResults;
-  }
-
-  /**
-   * Calculate score for a city based on hierarchical reinforcement.
-   * Higher score if the city's state and country are also in the matches.
-   * Penalties applied if contradictory state/country matches exist.
-   */
-  private int calculateCityScore(CityResult city, List<CountryResult> countryMatches,
-      List<StateResult> stateMatches) {
-    int score = 100; // Base score for city match
-
-    // Check if the city's state is in the state matches (reinforcement)
-    boolean cityStateMatched = stateMatches.stream()
-        .anyMatch(state -> state.id().equals(city.state().id()));
-
-    // Check if there are OTHER states that don't match (contradiction)
-    boolean hasContradictoryState = stateMatches.stream()
-        .anyMatch(state -> !state.id().equals(city.state().id()));
-
-    if (cityStateMatched) {
-      score += 50; // Hierarchical reinforcement bonus
-    } else if (hasContradictoryState) {
-      // There's a state match, but it's NOT this city's state - strong contradiction
-      score -= 100; // Heavy penalty for contradicting state
-    }
-
-    // Check if the city's country is in the country matches (reinforcement)
-    boolean cityCountryMatched = countryMatches.stream()
-        .anyMatch(country -> country.id().equals(city.country().id()));
-
-    // Check if there are OTHER countries that don't match (contradiction)
-    boolean hasContradictoryCountry = countryMatches.stream()
-        .anyMatch(country -> !country.id().equals(city.country().id()));
-
-    if (cityCountryMatched) {
-      score += 50; // Hierarchical reinforcement bonus
-    } else if (hasContradictoryCountry) {
-      // There's a country match, but it's NOT this city's country - strong contradiction
-      score -= 100; // Heavy penalty for contradicting country
-    }
-
-    return score;
-  }
-
-  /**
-   * Calculate score for a state based on hierarchical reinforcement.
-   * Higher score if the state's country is also in the matches.
-   * Penalties applied if contradictory country matches exist.
-   */
-  private int calculateStateScore(StateResult state, List<CountryResult> countryMatches) {
-    int score = 50; // Base score for state match
-
-    // Check if the state's country is in the country matches (reinforcement)
-    boolean stateCountryMatched = countryMatches.stream()
-        .anyMatch(country -> country.id().equals(state.country().id()));
-
-    // Check if there are OTHER countries that don't match (contradiction)
-    boolean hasContradictoryCountry = countryMatches.stream()
-        .anyMatch(country -> !country.id().equals(state.country().id()));
-
-    if (stateCountryMatched) {
-      score += 50; // Hierarchical reinforcement bonus
-    } else if (hasContradictoryCountry) {
-      // There's a country match, but it's NOT this state's country - contradiction
-      score -= 75; // Penalty for contradicting country
-    }
-
-    return score;
-  }
-
-  /**
-   * Calculate score for a country.
-   */
-  private int calculateCountryScore(CountryResult country) {
-    return 10; // Base score for country match
-  }
-
-  /**
-   * Get specificity level for tie-breaking (higher = more specific).
-   */
-  private int getSpecificityLevel(SearchLocationResult result) {
-    return switch (result) {
-      case CityResult _ -> 3;
-      case StateResult _ -> 2;
-      case CountryResult _ -> 1;
-    };
-  }
-
-  /**
-   * Helper class to hold a result with its calculated score.
-   */
-  private static class ScoredResult {
-    final SearchLocationResult result;
-    final int score;
-
-    ScoredResult(SearchLocationResult result, int score) {
-      this.result = result;
-      this.score = score;
-    }
-  }
-
-  private List<CityResult> findAllCityMatches(List<String> tokenizedText) {
-    var cityMatches = new ArrayList<CityResult>();
-    for (String token : tokenizedText) {
-      if (cityNameToCitiesMap.containsKey(token)) {
-        cityNameToCitiesMap.get(token).forEach(city -> {
-          cityMatches.add(searchLocationResultMapper.toCityResult(city));
+        locationAliases.getCountryNameAliases().forEach((alias, originalKey) -> {
+            var country = countryNameToCountryMap.get(keyMaker(originalKey));
+            countryNameToCountryMap.put(keyMaker(alias), country);
         });
-      }
-    }
-    return cityMatches;
-  }
 
-  private List<StateResult> findAllStateMatches(List<String> tokenizedText) {
-    var stateMatches = new ArrayList<StateResult>();
-    for (String token : tokenizedText) {
-      if (stateNameToStatesMap.containsKey(token)) {
-        stateNameToStatesMap.get(token).forEach(state -> {
-          stateMatches.add(searchLocationResultMapper.toStateResult(state));
+        locationAliases.getCountryIso2Aliases().forEach((alias, originalKey) -> {
+            var country = iso2CodeToCountryMap.get(keyMaker(originalKey));
+            countryNameToCountryMap.put(keyMaker(alias), country);
         });
-      } else if (stateNativeNameToStateMap.containsKey(token)) {
-        stateNativeNameToStateMap.get(token).forEach(state -> {
-          stateMatches.add(searchLocationResultMapper.toStateResult(state));
+
+        locationAliases.getCountryIso3Aliases().forEach((alias, originalKey) -> {
+            var country = iso3CodeToCountryMap.get(keyMaker(originalKey));
+            countryNameToCountryMap.put(keyMaker(alias), country);
         });
-      } else if (stateCodeToStatesMap.containsKey(token)) {
-        stateCodeToStatesMap.get(token).forEach(state -> {
-          stateMatches.add(searchLocationResultMapper.toStateResult(state));
+
+        locationAliases.getStateNameAliases().forEach((alias, originalKey) -> {
+            var states = stateNameToStatesMap.get(keyMaker(originalKey));
+            stateNameToStatesMap.put(alias, states);
         });
-      }
-    }
-    return stateMatches;
-  }
 
-  /**
-   * Find all country matches from the tokenized text.
-   * @param tokenizedText List<String> tokenizedText
-   * @return List<CountryResult> country matches
-   */
-  private List<CountryResult> findAllCountryMatches(List<String> tokenizedText) {
-    var countryMatches = new ArrayList<CountryResult>();
-    for (String token : tokenizedText) {
-      if (countryNameToCountryMap.containsKey(token)) {
-        var country = countryNameToCountryMap.get(token);
-        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
-      } else if (countryNativeNameToCountryMap.containsKey(token)) {
-        var country = countryNativeNameToCountryMap.get(token);
-        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
-      } else if (iso3CodeToCountryMap.containsKey(token)) {
-        var country = iso3CodeToCountryMap.get(token);
-        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
-      } else if (iso2CodeToCountryMap.containsKey(token)) {
-        var country = iso2CodeToCountryMap.get(token);
-        countryMatches.add(searchLocationResultMapper.toCountryResult(country));
-      }
-    }
-    return countryMatches;
-  }
-
-  /**
-   * Populates country hit counts based on tokenized text.
-   *
-   * @param tokenizedText    The tokenized search text.
-   * @param countryHitsCount The map to populate with country hits.
-   * @return true if a country is found, false otherwise.
-   */
-  private boolean populateCountryHits(List<String> tokenizedText,
-      Map<Country, Integer> countryHitsCount) {
-    Iterator<String> iterator = tokenizedText.iterator();
-
-    while (iterator.hasNext()) {
-      String token = iterator.next();
-      if (countryNameToCountryMap.containsKey(token)) {
-        var country = countryNameToCountryMap.get(token);
-        countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
-        iterator.remove();
-        return true;
-      }
-      if (iso3CodeToCountryMap.containsKey(token)) {
-        var country = iso3CodeToCountryMap.get(token);
-        countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
-        iterator.remove();
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Populates state and city hit counts based on tokenized text without filtering.
-   * All tokens are processed to allow for disambiguation - no early termination.
-   *
-   * @param tokenizedText    The tokenized search text.
-   * @param countryHitsCount The map to populate with country hits.
-   * @param stateHitsCount   The map to populate with state hits.
-   * @param cityHitsCount    The map to populate with city hits.
-   */
-  private void populateStateAndCityHits(List<String> tokenizedText,
-      Map<Country, Integer> countryHitsCount,
-      Map<State, Integer> stateHitsCount,
-      Map<City, Integer> cityHitsCount) {
-
-    for (String token : tokenizedText) {
-      // Check for state matches by name
-      if (stateNameToStatesMap.containsKey(token)) {
-        stateNameToStatesMap.get(token).forEach(state -> {
-          var country = countryIdToCountryMap.get(state.getCountry().getId());
-          stateHitsCount.put(state, stateHitsCount.getOrDefault(state, 0) + 1);
-          countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
+        locationAliases.getCityNameAliases().forEach((alias, originalKey) -> {
+            var cities = cityNameToCitiesMap.get(keyMaker(originalKey));
+            cityNameToCitiesMap.put(alias, cities);
         });
-      }
+    }
 
-      // Check for state matches by code
-      if (stateCodeToStatesMap.containsKey(token)) {
-        stateCodeToStatesMap.get(token).forEach(state -> {
-          var country = countryIdToCountryMap.get(state.getCountry().getId());
-          stateHitsCount.put(state, stateHitsCount.getOrDefault(state, 0) + 1);
-          countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
+
+    /**
+     * Normalizes a key for consistent lookup.
+     *
+     * @param key The key to be normalized.
+     * @return The normalized key.
+     */
+    private String keyMaker(String key) {
+        if (Objects.isNull(key) || key.isEmpty()) {
+            throw new IllegalArgumentException("Key cannot be null or empty");
+        }
+        return textNormaliser.normalise(key);
+    }
+
+    @Override
+    public List<SearchLocationResult> search(String text) {
+        if (Objects.isNull(text) || text.isEmpty()) {
+            throw new IllegalArgumentException("SearchLocation Text cannot be null or empty");
+        } else if (text.length() < 2) {
+            return List.of();
+        }
+
+        text = textNormaliser.normalise(text);
+
+        var directMatches = findDirectMatches(text);
+        if (!directMatches.isEmpty()) {
+            return directMatches;
+        }
+
+        return findTokenizedMatches(textTokeniser.tokenise(text));
+    }
+
+    /**
+     * Attempts to find direct matches for the given normalized search text.
+     *
+     * @param text the normalized search text
+     * @return a list of search location results for direct matches
+     * Note: results size will be 0 or 1 for countries, states, and cities respectively
+     */
+    private List<SearchLocationResult> findDirectMatches(String text) {
+        List<SearchLocationResult> matches = new ArrayList<>();
+
+        if (countryNameToCountryMap.containsKey(text)) {
+            matches.add(searchLocationResultMapper.toCountryResult(countryNameToCountryMap.get(text)));
+            return matches;
+        }
+
+        if (text.length() == 3 && iso3CodeToCountryMap.containsKey(text)) {
+            matches.add(searchLocationResultMapper.toCountryResult(iso3CodeToCountryMap.get(text)));
+            return matches;
+        }
+
+        if (text.length() == 2) {
+            if (iso2CodeToCountryMap.containsKey(text)) {
+                matches.add(searchLocationResultMapper.toCountryResult(iso2CodeToCountryMap.get(text)));
+            }
+            if (stateCodeToStatesMap.containsKey(text)) {
+                stateCodeToStatesMap.get(text).forEach(state -> matches.add(searchLocationResultMapper.toStateResult(state)));
+            }
+            return matches;
+        }
+
+        if (stateNameToStatesMap.containsKey(text)) {
+            stateNameToStatesMap.get(text).forEach(state -> matches.add(searchLocationResultMapper.toStateResult(state)));
+            return matches;
+        }
+
+        if (cityNameToCitiesMap.containsKey(text)) {
+            cityNameToCitiesMap.get(text).forEach(city -> matches.add(searchLocationResultMapper.toCityResult(city)));
+            return matches;
+        }
+
+        return matches;
+    }
+
+    /**
+     * Finds all matches for countries, states, and cities from the tokenized text.
+     * Then builds and prioritizes search results based on hierarchical scoring.
+     * @param tokenizedText tokenized search text
+     * @return list of prioritized search location results
+     */
+    private List<SearchLocationResult> findTokenizedMatches(List<String> tokenizedText) {
+
+        var countryMatches = findAllCountryMatches(tokenizedText);
+        var stateMatches = findAllStateMatches(tokenizedText);
+        var cityMatches = findAllCityMatches(tokenizedText);
+
+        return buildSearchResults(countryMatches, stateMatches, cityMatches, tokenizedText);
+    }
+
+    /**
+     * Builds and prioritizes search results based on hierarchical scoring.
+     * All countries are given a baseline score as they are at the top of the hierarchy.
+     * States are scored higher if their parent country is also matched.
+     * Cities are scored highest if both their parent state and country are matched.
+     * @param countryMatches list of matched countries
+     * @param stateMatches list of matched states
+     * @param cityMatches list of matched cities
+     * @param tokenizedText the tokenized search text
+     * @return list of prioritized search location results
+     */
+    private List<SearchLocationResult> buildSearchResults(List<CountryResult> countryMatches, List<StateResult> stateMatches, List<CityResult> cityMatches, List<String> tokenizedText) {
+
+        if (countryMatches.isEmpty() && stateMatches.isEmpty() && cityMatches.isEmpty()) {
+            return List.of();
+        }
+
+        List<ScoredResult> scoredResults = new ArrayList<>();
+
+        for (CityResult city : cityMatches) {
+            int score = calculateCityScore(city, countryMatches, stateMatches);
+            scoredResults.add(new ScoredResult(city, score));
+        }
+
+        for (StateResult state : stateMatches) {
+            int score = calculateStateScore(state, countryMatches);
+            scoredResults.add(new ScoredResult(state, score));
+        }
+
+        for (CountryResult country : countryMatches) {
+            int score = calculateCountryScore(country);
+            scoredResults.add(new ScoredResult(country, score));
+        }
+
+        scoredResults.sort((a, b) -> {
+            int scoreCompare = Integer.compare(b.score(), a.score());
+            if (scoreCompare != 0) {
+                return scoreCompare;
+            }
+            return Integer.compare(getSpecificityLevel(b.result()), getSpecificityLevel(a.result()));
         });
-      }
 
-      // Check for city matches by name
-      if (cityNameToCitiesMap.containsKey(token)) {
-        cityNameToCitiesMap.get(token).forEach(city -> {
-          var country = countryIdToCountryMap.get(city.getCountry().getId());
-          var state = stateIdToStateMap.get(city.getState().getId());
-          stateHitsCount.put(state, stateHitsCount.getOrDefault(state, 0) + 1);
-          cityHitsCount.put(city, cityHitsCount.getOrDefault(city, 0) + 1);
-          countryHitsCount.put(country, countryHitsCount.getOrDefault(country, 0) + 1);
-        });
-      }
-    }
-  }
+        var searchResults = new ArrayList<SearchLocationResult>();
+        if (!scoredResults.isEmpty()) {
+            searchResults.add(scoredResults.get(0).result());
+        }
 
-  /**
-   * Filters and populates state and city hit counts based on tokenized text.
-   *
-   * @param tokenizedText    The tokenized search text.
-   * @param countryHitsCount The map to populate with country hits.
-   * @param stateHitsCount   The map to populate with state hits.
-   * @param cityHitsCount    The map to populate with city hits.
-   */
-  private void filterAndPopulateStateAndCityHits(List<String> tokenizedText,
-      Map<Country, Integer> countryHitsCount,
-      Map<State, Integer> stateHitsCount,
-      Map<City, Integer> cityHitsCount) {
-    var topCountry = getTopCountry(countryHitsCount);
-    var stateFound = false;
-    var cityFound = false;
-
-    for (String token : tokenizedText) {
-      if (stateNameToStatesMap.containsKey(token) && !stateFound) {
-        stateNameToStatesMap.get(token).stream()
-            .filter(state -> state.getCountry().getName().equals(topCountry.getName()))
-            .forEach(state -> stateHitsCount.put(state,
-                stateHitsCount.getOrDefault(state, 0) + 1));
-        stateFound = true;
-      }
-      if (stateCodeToStatesMap.containsKey(token) && !stateFound) {
-        stateCodeToStatesMap.get(token).stream()
-            .filter(state -> state.getCountry().getName().equals(topCountry.getName()))
-            .forEach(state -> stateHitsCount.put(state,
-                stateHitsCount.getOrDefault(state, 0) + 1));
-        stateFound = true;
-      }
-      if (cityNameToCitiesMap.containsKey(token) && !cityFound) {
-        cityNameToCitiesMap.get(token).stream()
-            .filter(city -> city.getCountry().getName().equals(topCountry.getName()))
-            .forEach(city -> {
-              var state = stateIdToStateMap.get(city.getState().getId());
-              cityHitsCount.put(city, cityHitsCount.getOrDefault(city, 0) + 1);
-              stateHitsCount.put(state,
-                  stateHitsCount.getOrDefault(state, 0) + 1);
-            });
-        cityFound = true;
-      }
-    }
-  }
-
-  /**
-   * Retrieves the top matching locations based on hit counts.
-   * Uses improved scoring that considers hierarchical reinforcement.
-   *
-   * @param countryHitsCount The map of country hits.
-   * @param stateHitsCount   The map of state hits.
-   * @param cityHitsCount    The map of city hits.
-   * @return A list of top matching locations.
-   */
-  private List<SearchLocationResult> getTopMatchingLocations(Map<Country, Integer> countryHitsCount,
-      Map<State, Integer> stateHitsCount,
-      Map<City, Integer> cityHitsCount) {
-
-    // Calculate composite scores for cities that consider hierarchical reinforcement
-    City bestCity = null;
-    int bestCityScore = 0;
-
-    for (Map.Entry<City, Integer> cityEntry : cityHitsCount.entrySet()) {
-      City city = cityEntry.getKey();
-      int cityHits = cityEntry.getValue();
-
-      // Get hits for the city's state and country
-      State cityState = stateIdToStateMap.get(city.getState().getId());
-      Country cityCountry = countryIdToCountryMap.get(city.getCountry().getId());
-
-      int stateHits = stateHitsCount.getOrDefault(cityState, 0);
-      int countryHits = countryHitsCount.getOrDefault(cityCountry, 0);
-
-      // Calculate composite score: city hits + state hits + country hits
-      // This favors cities where the state/country also have matches (hierarchical reinforcement)
-      int compositeScore = cityHits + stateHits + countryHits;
-
-      if (compositeScore > bestCityScore) {
-        bestCityScore = compositeScore;
-        bestCity = city;
-      }
+        return searchResults;
     }
 
-    // Find best state (with hierarchical reinforcement)
-    State bestState = null;
-    int bestStateScore = 0;
-
-    for (Map.Entry<State, Integer> stateEntry : stateHitsCount.entrySet()) {
-      State state = stateEntry.getKey();
-      int stateHits = stateEntry.getValue();
-
-      Country stateCountry = countryIdToCountryMap.get(state.getCountry().getId());
-      int countryHits = countryHitsCount.getOrDefault(stateCountry, 0);
-
-      // Calculate composite score: state hits + country hits
-      int compositeScore = stateHits + countryHits;
-
-      if (compositeScore > bestStateScore) {
-        bestStateScore = compositeScore;
-        bestState = state;
-      }
+    private int calculateCountryScore(CountryResult country) {
+        return COUNTRY_BASE_SCORE;
     }
 
-    // Find best country
-    Country bestCountry = getTopCountry(countryHitsCount);
+    private int calculateStateScore(StateResult state, List<CountryResult> countryMatches) {
+        var score = STATE_BASE_SCORE;
 
-    // Return the most specific result with the highest composite score
-    if (bestCity != null && bestCityScore > 0) {
-      return List.of(searchLocationResultMapper.toCityResult(bestCity));
-    } else if (bestState != null && bestStateScore > 0) {
-      return List.of(searchLocationResultMapper.toStateResult(bestState));
-    } else if (bestCountry != null) {
-      return List.of(searchLocationResultMapper.toCountryResult(bestCountry));
-    } else {
-      return List.of();
-    }
-  }
+        if (countryMatches.isEmpty()) {
+            return score;
+        }
 
-  /**
-   * Gets the top country based on hit counts.
-   *
-   * @param countryHitsCount The map of country hits.
-   * @return The top country name.
-   */
-  private Country getTopCountry(Map<Country, Integer> countryHitsCount) {
-    return countryHitsCount.entrySet().stream()
-        .max(Map.Entry.comparingByValue())
-        .map(Map.Entry::getKey)
-        .orElse(null);
-  }
+        var stateCountryMatched = countryMatches.stream().anyMatch(country -> country.id().equals(state.country().id()));
 
-  public static class Builder {
-
-    private TextTokeniser textTokeniser = new DefaultTextTokeniser();
-    private TextNormaliser textNormaliser = new DefaultTextNormaliser();
-    private SearchLocationResultMapper searchLocationResultMapper = new DefaultSearchLocationResultMapper();
-    private LocationAliases locationAliases = new DefaultLocationAliases();
-    private DataLoader dataLoader = new DefaultDataLoader();
-
-    Builder() {
+        if (stateCountryMatched) {
+            score += STATE_REWARD_SCORE;
+        } else {
+            score -= STATE_PUNISHMENT_SCORE;
+        }
+        return score;
     }
 
-    public Builder withTextTokeniser(TextTokeniser textTokeniser) {
-      this.textTokeniser = textTokeniser;
-      return this;
+    private int calculateCityScore(CityResult city, List<CountryResult> countryMatches, List<StateResult> stateMatches) {
+        int score = CITY_BASE_SCORE;
+
+        boolean cityStateMatched = stateMatches.stream().anyMatch(state -> state.id().equals(city.state().id()));
+
+        if (cityStateMatched) {
+            score += CITY_REWARD_SCORE;
+        } else {
+            score -= CITY_PUNISHMENT_SCORE;
+        }
+
+        boolean cityCountryMatched = countryMatches.stream().anyMatch(country -> country.id().equals(city.country().id()));
+
+        if (cityCountryMatched) {
+            score += CITY_REWARD_SCORE;
+        } else {
+            score -= CITY_PUNISHMENT_SCORE;
+        }
+
+        return score;
     }
 
-    public Builder withTextNormaliser(TextNormaliser textNormaliser) {
-      this.textNormaliser = textNormaliser;
-      return this;
+    private int getSpecificityLevel(SearchLocationResult result) {
+        return switch (result) {
+            case CityResult _ -> 3;
+            case StateResult _ -> 2;
+            case CountryResult _ -> 1;
+        };
     }
 
-    public Builder withLocationMapper(SearchLocationResultMapper searchLocationResultMapper) {
-      this.searchLocationResultMapper = searchLocationResultMapper;
-      return this;
+    private List<CityResult> findAllCityMatches(List<String> tokenizedText) {
+        var cityMatches = new ArrayList<CityResult>();
+        for (String token : tokenizedText) {
+            if (cityNameToCitiesMap.containsKey(token)) {
+                cityNameToCitiesMap.get(token).forEach(city -> cityMatches.add(searchLocationResultMapper.toCityResult(city)));
+            }
+        }
+        return cityMatches;
     }
 
-    public Builder withLocationAliases(LocationAliases locationAliases) {
-      this.locationAliases = locationAliases;
-      return this;
+    private List<StateResult> findAllStateMatches(List<String> tokenizedText) {
+        var stateMatches = new ArrayList<StateResult>();
+        for (String token : tokenizedText) {
+            if (stateNameToStatesMap.containsKey(token)) {
+                stateNameToStatesMap.get(token).forEach(state -> stateMatches.add(searchLocationResultMapper.toStateResult(state)));
+            } else if (stateNativeNameToStateMap.containsKey(token)) {
+                stateNativeNameToStateMap.get(token).forEach(state -> stateMatches.add(searchLocationResultMapper.toStateResult(state)));
+            } else if (stateCodeToStatesMap.containsKey(token)) {
+                stateCodeToStatesMap.get(token).forEach(state -> stateMatches.add(searchLocationResultMapper.toStateResult(state)));
+            }
+        }
+        return stateMatches;
     }
 
-    public Builder withDataLoader(
-        DataLoader dataLoader) {
-      this.dataLoader = dataLoader;
-      return this;
+    private List<CountryResult> findAllCountryMatches(List<String> tokenizedText) {
+        var countryMatches = new ArrayList<CountryResult>();
+        for (String token : tokenizedText) {
+            if (countryNameToCountryMap.containsKey(token)) {
+                var country = countryNameToCountryMap.get(token);
+                countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+            } else if (countryNativeNameToCountryMap.containsKey(token)) {
+                var country = countryNativeNameToCountryMap.get(token);
+                countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+            } else if (iso3CodeToCountryMap.containsKey(token)) {
+                var country = iso3CodeToCountryMap.get(token);
+                countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+            } else if (iso2CodeToCountryMap.containsKey(token)) {
+                var country = iso2CodeToCountryMap.get(token);
+                countryMatches.add(searchLocationResultMapper.toCountryResult(country));
+            }
+        }
+        return countryMatches;
     }
 
-    public SearchLocationService build() {
-      return new SearchLocationService(textTokeniser, textNormaliser, searchLocationResultMapper,
-          dataLoader,
-          locationAliases);
+    public static class Builder {
+
+        private TextTokeniser textTokeniser = new DefaultTextTokeniser();
+        private TextNormaliser textNormaliser = new DefaultTextNormaliser();
+        private SearchLocationResultMapper searchLocationResultMapper = new DefaultSearchLocationResultMapper();
+        private LocationAliases locationAliases = new DefaultLocationAliases();
+        private DataLoader dataLoader = new DefaultDataLoader();
+
+        Builder() {
+        }
+
+        public Builder withTextTokeniser(TextTokeniser textTokeniser) {
+            this.textTokeniser = textTokeniser;
+            return this;
+        }
+
+        public Builder withTextNormaliser(TextNormaliser textNormaliser) {
+            this.textNormaliser = textNormaliser;
+            return this;
+        }
+
+        public Builder withLocationMapper(SearchLocationResultMapper searchLocationResultMapper) {
+            this.searchLocationResultMapper = searchLocationResultMapper;
+            return this;
+        }
+
+        public Builder withLocationAliases(LocationAliases locationAliases) {
+            this.locationAliases = locationAliases;
+            return this;
+        }
+
+        public Builder withDataLoader(DataLoader dataLoader) {
+            this.dataLoader = dataLoader;
+            return this;
+        }
+
+        public SearchLocationService build() {
+            return new SearchLocationService(textTokeniser, textNormaliser, searchLocationResultMapper, dataLoader, locationAliases);
+        }
     }
-  }
 }
