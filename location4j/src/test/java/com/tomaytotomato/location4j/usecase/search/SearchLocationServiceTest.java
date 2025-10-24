@@ -1,21 +1,22 @@
 package com.tomaytotomato.location4j.usecase.search;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-
 import com.tomaytotomato.location4j.loader.TestDataLoader;
 import com.tomaytotomato.location4j.model.search.CityResult;
 import com.tomaytotomato.location4j.model.search.CountryResult;
 import com.tomaytotomato.location4j.model.search.SearchLocationResult;
 import com.tomaytotomato.location4j.model.search.StateResult;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SearchLocationServiceTest extends TestDataLoader {
@@ -205,9 +206,9 @@ class SearchLocationServiceTest extends TestDataLoader {
   @ParameterizedTest
   @DisplayName("Handling special city combinations: {0}")
   @CsvSource(delimiter = '|', value = {
-      "New York, NY, USA|United States|US|USA|New York|New York City",
+      "New YORK city, NY, USA|United States|US|USA|New York|New York City",
       "Los Angeles CA|United States|US|USA|California|Los Angeles",
-      "Mexico|Mexico|MX|MEX|Mexico City|Mexico",
+      "mexico city|Mexico|MX|MEX|Mexico City|Mexico",
       "Rio de Janeiro Brazil|Brazil|BR|BRA|Rio de Janeiro|Rio de Janeiro"
   })
   void search_WithSpecialCityCombinations_ReturnsCityResult(
@@ -218,7 +219,7 @@ class SearchLocationServiceTest extends TestDataLoader {
       String expectedState,
       String expectedCity) {
 
-    var results = searchLocationService.search(searchText);
+    var results = searchLocationService.search(searchText, CityResult.class);
 
     assertThat(results).isNotEmpty().hasSize(1);
     assertThat(results.getFirst()).isInstanceOf(CityResult.class);

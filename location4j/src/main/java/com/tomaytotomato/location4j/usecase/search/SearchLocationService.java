@@ -30,13 +30,11 @@ public class SearchLocationService implements SearchLocation {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    private final Map<Integer, Country> countryIdToCountryMap;
     private final Map<String, Country> countryNameToCountryMap;
     private final Map<String, Country> countryNativeNameToCountryMap;
     private final Map<String, Country> iso2CodeToCountryMap;
     private final Map<String, Country> iso3CodeToCountryMap;
 
-    private final Map<Integer, State> stateIdToStateMap;
     private final Map<String, List<State>> stateNameToStatesMap;
     private final Map<String, List<State>> stateNativeNameToStateMap;
     private final Map<String, List<State>> stateCodeToStatesMap;
@@ -55,12 +53,10 @@ public class SearchLocationService implements SearchLocation {
         this.locationAliases = locationAliases;
 
         var location4JData = dataLoader.getLocation4JData();
-        this.countryIdToCountryMap = location4JData.getCountryIdToCountryMap();
         this.countryNameToCountryMap = new HashMap<>(location4JData.getCountryNameToCountryMap());
         this.countryNativeNameToCountryMap = new HashMap<>(location4JData.getCountryNativeNameToCountryMap());
         this.iso2CodeToCountryMap = new HashMap<>(location4JData.getIso2CodeToCountryMap());
         this.iso3CodeToCountryMap = new HashMap<>(location4JData.getIso3CodeToCountryMap());
-        this.stateIdToStateMap = location4JData.getStateIdToStateMap();
         this.stateNameToStatesMap = new HashMap<>(location4JData.getStateNameToStatesMap());
         this.stateNativeNameToStateMap = new HashMap<>(location4JData.getStateNativeNameToStateMap());
         this.stateCodeToStatesMap = new HashMap<>(location4JData.getStateIso2CodeToStateMap());
@@ -136,6 +132,14 @@ public class SearchLocationService implements SearchLocation {
         }
 
         return findTokenizedMatches(textTokeniser.tokenise(text));
+    }
+
+    @Override
+    public List<SearchLocationResult> search(String text, Class<? extends SearchLocationResult> resultType) {
+        return search(text)
+                .stream()
+                .filter(resultType::isInstance)
+                .toList();
     }
 
     /**
