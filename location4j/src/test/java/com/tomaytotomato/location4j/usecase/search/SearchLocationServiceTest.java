@@ -1,22 +1,21 @@
 package com.tomaytotomato.location4j.usecase.search;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 import com.tomaytotomato.location4j.loader.TestDataLoader;
 import com.tomaytotomato.location4j.model.search.CityResult;
 import com.tomaytotomato.location4j.model.search.CountryResult;
 import com.tomaytotomato.location4j.model.search.SearchLocationResult;
 import com.tomaytotomato.location4j.model.search.StateResult;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SearchLocationServiceTest extends TestDataLoader {

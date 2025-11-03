@@ -19,6 +19,7 @@ public class City implements Serializable {
 
   private Integer id;
   private String name;
+  private String nativeName;
   private Country country;
   private State state;
   private BigDecimal latitude;
@@ -40,6 +41,10 @@ public class City implements Serializable {
     return name;
   }
 
+  public String getNativeName() {
+    return nativeName;
+  }
+
   public Country getCountry() {
     return country;
   }
@@ -57,7 +62,6 @@ public class City implements Serializable {
   }
 
   public double getLatitudeDouble() {
-    // If double value is not set (0.0) but BigDecimal value exists, convert it
     if (latitudeDouble == 0.0 && latitude != null && latitude.doubleValue() != 0.0) {
       return latitude.doubleValue();
     }
@@ -65,7 +69,6 @@ public class City implements Serializable {
   }
 
   public double getLongitudeDouble() {
-    // If double value is not set (0.0) but BigDecimal value exists, convert it
     if (longitudeDouble == 0.0 && longitude != null && longitude.doubleValue() != 0.0) {
       return longitude.doubleValue();
     }
@@ -82,24 +85,24 @@ public class City implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     City city = (City) o;
     return Double.compare(getLatitudeDouble(), city.getLatitudeDouble()) == 0
-        && Double.compare(getLongitudeDouble(), city.getLongitudeDouble()) == 0
-        && Objects.equals(getId(), city.getId()) && Objects.equals(getName(),
-        city.getName()) && Objects.equals(getCountry(), city.getCountry())
-        && Objects.equals(getState(), city.getState()) && Objects.equals(
-        getLatitude(), city.getLatitude()) && Objects.equals(getLongitude(),
-        city.getLongitude()) && Objects.equals(getTimezone(), city.getTimezone())
-        && Objects.equals(getWikiDataId(), city.getWikiDataId());
+        && Double.compare(getLongitudeDouble(), city.getLongitudeDouble()) == 0 && Objects.equals(
+        getId(), city.getId()) && Objects.equals(getName(), city.getName()) && Objects.equals(
+        getNativeName(), city.getNativeName()) && Objects.equals(getCountry(), city.getCountry())
+        && Objects.equals(getState(), city.getState()) && Objects.equals(getLatitude(),
+        city.getLatitude()) && Objects.equals(getLongitude(), city.getLongitude())
+        && Objects.equals(getTimezone(), city.getTimezone()) && Objects.equals(getWikiDataId(),
+        city.getWikiDataId());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getName(), getCountry(), getState(), getLatitude(), getLongitude(),
-        getLatitudeDouble(), getLongitudeDouble(), getTimezone(), getWikiDataId());
+    return Objects.hash(getId(), getName(), getNativeName(), getCountry(), getState(),
+        getLatitude(), getLongitude(), getLatitudeDouble(), getLongitudeDouble(), getTimezone(),
+        getWikiDataId());
   }
 
   public static Builder builder() {
@@ -110,6 +113,7 @@ public class City implements Serializable {
 
     private Integer id;
     private String name;
+    private String nativeName;
     private Country country;
     private State state;
     private BigDecimal latitude;
@@ -139,6 +143,11 @@ public class City implements Serializable {
 
     public Builder name(String name) {
       this.name = name;
+      return this;
+    }
+
+    public Builder nativeName(String nativeName) {
+      this.nativeName = nativeName;
       return this;
     }
 
@@ -181,6 +190,7 @@ public class City implements Serializable {
       City city = new City();
       city.id = this.id;
       city.name = this.name;
+      city.nativeName = this.nativeName;
       city.country = this.country;
       city.state = this.state;
       city.latitudeDouble = this.latitudeDouble;
